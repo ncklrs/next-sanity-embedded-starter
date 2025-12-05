@@ -1,0 +1,44 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-blogFeaturedPost" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#140f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#28232e;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-blogFeaturedPost">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-blogFeaturedPost)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-blogFeaturedPost" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ec4899" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-blogFeaturedPost)"/>
+
+  <!-- Wireframe representation -->
+  
+        <rect x="60" y="60" width="320" height="240" rx="8" fill="#ec4899" fill-opacity="0.15"/>
+        <rect x="400" y="70" width="180" height="14" rx="2" fill="#f9a8d4" fill-opacity="0.25"/>
+        <rect x="400" y="100" width="160" height="10" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+        <rect x="400" y="120" width="175" height="10" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+        <rect x="400" y="140" width="140" height="10" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+        <rect x="400" y="180" width="100" height="12" rx="2" fill="#ec4899" fill-opacity="0.3"/>
+        <circle cx="420" cy="230" r="20" fill="#ec4899" fill-opacity="0.2"/>
+        <rect x="450" y="220" width="80" height="10" rx="2" fill="#f9a8d4" fill-opacity="0.15"/>
+        <rect x="450" y="238" width="60" height="8" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+      
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="64" height="28" rx="4" fill="#ec4899" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#f9a8d4">Blog</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#f9a8d4" text-anchor="middle" fill-opacity="0.7">Blog Featured</text>
+</svg>

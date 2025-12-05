@@ -1,4 +1,11 @@
-import { page, post, siteSettings } from "./documents";
+import {
+  page,
+  post,
+  siteSettings,
+  formSubmission,
+  subscriber,
+  form,
+} from "./documents";
 import * as objects from "./objects";
 import * as modules from "./modules";
 
@@ -7,6 +14,9 @@ export const schemaTypes = [
   page,
   post,
   siteSettings,
+  formSubmission,
+  subscriber,
+  form,
   // Objects
   ...Object.values(objects),
   // Modules

@@ -375,3 +375,99 @@ export const formMultiStep = defineType({
     },
   },
 });
+
+// Dynamic Form - References a reusable Form document with full action configuration
+export const formDynamic = defineType({
+  name: 'formDynamic',
+  title: 'Dynamic Form',
+  type: 'object',
+  description: 'A form that references a reusable Form document with configurable actions',
+  fields: [
+    defineField({
+      name: 'form',
+      title: 'Form Configuration',
+      type: 'reference',
+      to: [{ type: 'form' }],
+      description: 'Select a form configuration to render',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'badge',
+      title: 'Badge',
+      type: 'string',
+      description: 'Optional badge text above the form',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading Override',
+      type: 'string',
+      description: 'Leave empty to use the form name',
+    }),
+    defineField({
+      name: 'headingHighlight',
+      title: 'Heading Highlight',
+      type: 'string',
+      description: 'Text to highlight in the heading',
+    }),
+    defineField({
+      name: 'subheading',
+      title: 'Subheading',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Centered', value: 'centered' },
+          { title: 'Side by Side', value: 'split' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'default',
+    }),
+    defineField({
+      name: 'maxWidth',
+      title: 'Max Width',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small (480px)', value: 'sm' },
+          { title: 'Medium (640px)', value: 'md' },
+          { title: 'Large (768px)', value: 'lg' },
+          { title: 'Full Width', value: 'full' },
+        ],
+      },
+      initialValue: 'md',
+    }),
+    defineField({
+      name: 'spacing',
+      title: 'Spacing',
+      type: 'reference',
+      to: [{ type: 'spacing' }],
+    }),
+    defineField({
+      name: 'backgroundColor',
+      title: 'Background Color',
+      type: 'reference',
+      to: [{ type: 'backgroundColor' }],
+    }),
+  ],
+  preview: {
+    select: {
+      heading: 'heading',
+      formName: 'form.name',
+      badge: 'badge',
+    },
+    prepare({ heading, formName, badge }) {
+      return {
+        title: heading || formName || 'Dynamic Form',
+        subtitle: badge || `Form: ${formName || 'Not selected'}`,
+        media: () => '📝',
+      };
+    },
+  },
+});

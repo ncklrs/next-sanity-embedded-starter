@@ -1,14 +1,70 @@
 import { defineField, defineType } from "sanity";
 
+// Reusable nav link object for both header and footer
+const navLinkFields = [
+  {
+    name: "label",
+    title: "Label",
+    type: "string",
+    validation: (rule: any) => rule.required(),
+  },
+  {
+    name: "linkType",
+    title: "Link Type",
+    type: "string",
+    options: {
+      list: [
+        { title: "Internal Page", value: "internal" },
+        { title: "External URL", value: "external" },
+        { title: "Anchor Link", value: "anchor" },
+      ],
+    },
+    initialValue: "internal",
+  },
+  {
+    name: "internalLink",
+    title: "Internal Page",
+    type: "reference",
+    to: [{ type: "page" }],
+    hidden: ({ parent }: { parent?: { linkType?: string } }) =>
+      parent?.linkType !== "internal",
+  },
+  {
+    name: "externalUrl",
+    title: "External URL",
+    type: "url",
+    hidden: ({ parent }: { parent?: { linkType?: string } }) =>
+      parent?.linkType !== "external",
+  },
+  {
+    name: "anchor",
+    title: "Anchor",
+    type: "string",
+    description: "e.g., #features, #pricing",
+    hidden: ({ parent }: { parent?: { linkType?: string } }) =>
+      parent?.linkType !== "anchor",
+  },
+];
+
 export const siteSettings = defineType({
   name: "siteSettings",
   title: "Site Settings",
   type: "document",
+  groups: [
+    { name: "general", title: "General", default: true },
+    { name: "header", title: "Header Navigation" },
+    { name: "footer", title: "Footer Navigation" },
+    { name: "seo", title: "SEO & Social" },
+  ],
   fields: [
+    // ─────────────────────────────────────────────
+    // General Settings
+    // ─────────────────────────────────────────────
     defineField({
       name: "title",
       title: "Site Title",
       type: "string",
+      group: "general",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -16,35 +72,284 @@ export const siteSettings = defineType({
       title: "Site Description",
       type: "text",
       rows: 3,
+      group: "general",
       description: "Used for SEO and social sharing",
     }),
     defineField({
-      name: "logo",
-      title: "Logo",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
+      name: "homepage",
+      title: "Homepage",
+      type: "reference",
+      to: [{ type: "page" }],
+      group: "general",
+      description: "Select the page to display as the homepage",
     }),
+
+    // ─────────────────────────────────────────────
+    // Header Navigation Settings
+    // ─────────────────────────────────────────────
+    defineField({
+      name: "headerNavigation",
+      title: "Header Navigation",
+      type: "object",
+      group: "header",
+      fields: [
+        defineField({
+          name: "logo",
+          title: "Logo",
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+        }),
+        defineField({
+          name: "navLinks",
+          title: "Navigation Links",
+          type: "array",
+          description: "Main navigation links in the header",
+          of: [
+            {
+              type: "object",
+              fields: navLinkFields,
+              preview: {
+                select: {
+                  title: "label",
+                  linkType: "linkType",
+                },
+                prepare({
+                  title,
+                  linkType,
+                }: {
+                  title?: string;
+                  linkType?: string;
+                }) {
+                  return {
+                    title: title || "Untitled link",
+                    subtitle: linkType,
+                  };
+                },
+              },
+            },
+          ],
+        }),
+        defineField({
+          name: "ctaButtons",
+          title: "CTA Buttons",
+          type: "array",
+          description: "Call-to-action buttons in the header (max 2)",
+          validation: (rule) => rule.max(2),
+          of: [{ type: "button" }],
+        }),
+        defineField({
+          name: "showCta",
+          title: "Show CTA Buttons",
+          type: "boolean",
+          initialValue: true,
+          description: "Toggle visibility of CTA buttons in header",
+        }),
+      ],
+    }),
+
+    // ─────────────────────────────────────────────
+    // Footer Navigation Settings
+    // ─────────────────────────────────────────────
+    defineField({
+      name: "footerNavigation",
+      title: "Footer Navigation",
+      type: "object",
+      group: "footer",
+      fields: [
+        defineField({
+          name: "description",
+          title: "Footer Description",
+          type: "text",
+          rows: 3,
+          description: "Brief description shown in footer (e.g., company tagline)",
+        }),
+        defineField({
+          name: "linkColumns",
+          title: "Link Columns",
+          type: "array",
+          description: "Footer link columns (e.g., Product, Company, Resources)",
+          of: [
+            {
+              type: "object",
+              fields: [
+                {
+                  name: "title",
+                  title: "Column Title",
+                  type: "string",
+                  validation: (rule: any) => rule.required(),
+                },
+                {
+                  name: "links",
+                  title: "Links",
+                  type: "array",
+                  of: [
+                    {
+                      type: "object",
+                      fields: navLinkFields,
+                      preview: {
+                        select: {
+                          title: "label",
+                          linkType: "linkType",
+                        },
+                        prepare({
+                          title,
+                          linkType,
+                        }: {
+                          title?: string;
+                          linkType?: string;
+                        }) {
+                          return {
+                            title: title || "Untitled link",
+                            subtitle: linkType,
+                          };
+                        },
+                      },
+                    },
+                  ],
+                },
+              ],
+              preview: {
+                select: {
+                  title: "title",
+                  links: "links",
+                },
+                prepare({
+                  title,
+                  links,
+                }: {
+                  title?: string;
+                  links?: any[];
+                }) {
+                  return {
+                    title: title || "Untitled column",
+                    subtitle: `${links?.length || 0} links`,
+                  };
+                },
+              },
+            },
+          ],
+        }),
+        defineField({
+          name: "socialLinks",
+          title: "Social Links",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                {
+                  name: "platform",
+                  title: "Platform",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Twitter/X", value: "twitter" },
+                      { title: "Facebook", value: "facebook" },
+                      { title: "Instagram", value: "instagram" },
+                      { title: "LinkedIn", value: "linkedin" },
+                      { title: "YouTube", value: "youtube" },
+                      { title: "GitHub", value: "github" },
+                      { title: "TikTok", value: "tiktok" },
+                      { title: "Discord", value: "discord" },
+                    ],
+                  },
+                  validation: (rule: any) => rule.required(),
+                },
+                {
+                  name: "url",
+                  title: "URL",
+                  type: "url",
+                  validation: (rule: any) => rule.required(),
+                },
+              ],
+              preview: {
+                select: {
+                  title: "platform",
+                  subtitle: "url",
+                },
+              },
+            },
+          ],
+        }),
+        defineField({
+          name: "bottomLinks",
+          title: "Bottom Links",
+          type: "array",
+          description: "Links shown at the bottom of footer (e.g., Privacy, Terms)",
+          of: [
+            {
+              type: "object",
+              fields: navLinkFields,
+              preview: {
+                select: {
+                  title: "label",
+                  linkType: "linkType",
+                },
+                prepare({
+                  title,
+                  linkType,
+                }: {
+                  title?: string;
+                  linkType?: string;
+                }) {
+                  return {
+                    title: title || "Untitled link",
+                    subtitle: linkType,
+                  };
+                },
+              },
+            },
+          ],
+        }),
+        defineField({
+          name: "copyrightText",
+          title: "Copyright Text",
+          type: "string",
+          description: "Copyright text (year will be added automatically)",
+        }),
+      ],
+    }),
+
+    // ─────────────────────────────────────────────
+    // SEO & Social Settings
+    // ─────────────────────────────────────────────
     defineField({
       name: "favicon",
       title: "Favicon",
       type: "image",
+      group: "seo",
       description: "Upload a square image (recommended 32x32 or larger)",
     }),
     defineField({
       name: "ogImage",
       title: "Default Social Share Image",
       type: "image",
+      group: "seo",
       description: "Default image for social media sharing (recommended 1200x630)",
+      options: {
+        hotspot: true,
+      },
+    }),
+
+    // ─────────────────────────────────────────────
+    // Legacy fields (kept for backwards compatibility)
+    // ─────────────────────────────────────────────
+    defineField({
+      name: "logo",
+      title: "Logo (Legacy)",
+      type: "image",
+      hidden: true,
       options: {
         hotspot: true,
       },
     }),
     defineField({
       name: "socialLinks",
-      title: "Social Links",
+      title: "Social Links (Legacy)",
       type: "array",
+      hidden: true,
       of: [
         {
           type: "object",
@@ -53,16 +358,6 @@ export const siteSettings = defineType({
               name: "platform",
               title: "Platform",
               type: "string",
-              options: {
-                list: [
-                  { title: "Twitter/X", value: "twitter" },
-                  { title: "Facebook", value: "facebook" },
-                  { title: "Instagram", value: "instagram" },
-                  { title: "LinkedIn", value: "linkedin" },
-                  { title: "YouTube", value: "youtube" },
-                  { title: "GitHub", value: "github" },
-                ],
-              },
             },
             {
               name: "url",
@@ -70,88 +365,24 @@ export const siteSettings = defineType({
               type: "url",
             },
           ],
-          preview: {
-            select: {
-              title: "platform",
-              subtitle: "url",
-            },
-          },
         },
       ],
     }),
     defineField({
       name: "footerText",
-      title: "Footer Text",
+      title: "Footer Text (Legacy)",
       type: "string",
-      description: "Copyright or other footer text",
-    }),
-    defineField({
-      name: "homepage",
-      title: "Homepage",
-      type: "reference",
-      to: [{ type: "page" }],
-      description: "Select the page to display as the homepage",
+      hidden: true,
     }),
     defineField({
       name: "mainNavigation",
-      title: "Main Navigation",
+      title: "Main Navigation (Legacy)",
       type: "array",
+      hidden: true,
       of: [
         {
           type: "object",
-          fields: [
-            {
-              name: "label",
-              title: "Label",
-              type: "string",
-              validation: (rule) => rule.required(),
-            },
-            {
-              name: "linkType",
-              title: "Link Type",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Internal Page", value: "internal" },
-                  { title: "External URL", value: "external" },
-                  { title: "Anchor Link", value: "anchor" },
-                ],
-              },
-              initialValue: "internal",
-            },
-            {
-              name: "internalLink",
-              title: "Internal Page",
-              type: "reference",
-              to: [{ type: "page" }],
-              hidden: ({ parent }) => parent?.linkType !== "internal",
-            },
-            {
-              name: "externalUrl",
-              title: "External URL",
-              type: "url",
-              hidden: ({ parent }) => parent?.linkType !== "external",
-            },
-            {
-              name: "anchor",
-              title: "Anchor",
-              type: "string",
-              description: "e.g., #features, #pricing",
-              hidden: ({ parent }) => parent?.linkType !== "anchor",
-            },
-          ],
-          preview: {
-            select: {
-              title: "label",
-              linkType: "linkType",
-            },
-            prepare({ title, linkType }) {
-              return {
-                title,
-                subtitle: linkType,
-              };
-            },
-          },
+          fields: navLinkFields,
         },
       ],
     }),

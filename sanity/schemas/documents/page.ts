@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import ModulePickerInput from "../../components/ModulePickerInput";
 
 export const page = defineType({
   name: "page",
@@ -57,14 +58,14 @@ export const page = defineType({
         { type: "teamCards" },
         { type: "teamCompact" },
         // CTA
-        { type: "ctaDefault" },
-        { type: "ctaNewsletter" },
-        { type: "ctaSplit" },
-        { type: "ctaBanner" },
-        { type: "ctaStats" },
+        { type: "cta.default" },
+        { type: "cta.newsletter" },
+        { type: "cta.split" },
+        { type: "cta.banner" },
+        { type: "cta.stats" },
         // Social Proof
-        { type: "socialProofLogos" },
-        { type: "socialProofStats" },
+        { type: "socialProof.logos" },
+        { type: "socialProof.stats" },
         // Logo Cloud
         { type: "logoCloudSimple" },
         { type: "logoCloudMarquee" },
@@ -90,6 +91,9 @@ export const page = defineType({
         { type: "formWithImage" },
         { type: "formMultiStep" },
       ],
+      components: {
+        input: ModulePickerInput,
+      },
     }),
     // SEO fields in seo group
     defineField({

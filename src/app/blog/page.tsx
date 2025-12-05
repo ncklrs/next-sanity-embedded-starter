@@ -1,4 +1,4 @@
-import { client } from "../../../sanity/lib/client";
+import { sanityFetch } from "../../../sanity/lib/client";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
@@ -18,7 +18,10 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await client.fetch(postsQuery);
+  const posts = await sanityFetch<any[]>({
+    query: postsQuery,
+    tags: ["posts"],
+  });
 
   return (
     <main className="min-h-screen">

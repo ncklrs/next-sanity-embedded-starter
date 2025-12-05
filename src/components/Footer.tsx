@@ -1,25 +1,88 @@
 import Link from "next/link";
 import { AuroraLogo } from "@/components/icons";
 
-interface FooterProps {
+interface NavLink {
+  label: string;
+  linkType: "internal" | "external" | "anchor";
+  internalLink?: {
+    slug: {
+      current: string;
+    };
+  };
+  externalUrl?: string;
+  anchor?: string;
+}
+
+interface LinkColumn {
+  title: string;
+  links: NavLink[];
+}
+
+interface FooterNavigation {
+  description?: string;
+  linkColumns?: LinkColumn[];
+  socialLinks?: Array<{ platform: string; url: string }>;
+  bottomLinks?: NavLink[];
+  copyrightText?: string;
+}
+
+export interface FooterProps {
   settings?: {
     title?: string;
     description?: string;
+    footerNavigation?: FooterNavigation;
+    // Legacy fields for backwards compatibility
     socialLinks?: Array<{ platform: string; url: string }>;
     footerText?: string;
   };
 }
 
-const footerLinks = {
-  Product: ["Features", "Pricing", "Changelog", "Roadmap", "Integrations"],
-  Company: ["About", "Blog", "Careers", "Press", "Partners"],
-  Resources: ["Documentation", "API Reference", "Guides", "Status", "Support"],
-  Legal: ["Privacy", "Terms", "Security", "Cookies"],
-};
+// Fallback link columns when none configured
+const defaultLinkColumns: LinkColumn[] = [
+  { title: "Product", links: [
+    { label: "Features", linkType: "anchor", anchor: "#features" },
+    { label: "Pricing", linkType: "anchor", anchor: "#pricing" },
+    { label: "Changelog", linkType: "anchor", anchor: "#changelog" },
+  ]},
+  { title: "Company", links: [
+    { label: "About", linkType: "anchor", anchor: "#about" },
+    { label: "Blog", linkType: "internal" },
+    { label: "Careers", linkType: "anchor", anchor: "#careers" },
+  ]},
+  { title: "Resources", links: [
+    { label: "Documentation", linkType: "anchor", anchor: "#docs" },
+    { label: "Support", linkType: "anchor", anchor: "#support" },
+  ]},
+  { title: "Legal", links: [
+    { label: "Privacy", linkType: "anchor", anchor: "#privacy" },
+    { label: "Terms", linkType: "anchor", anchor: "#terms" },
+  ]},
+];
 
 const currentYear = new Date().getFullYear();
 
 export function Footer({ settings }: FooterProps) {
+  const getHref = (item: NavLink) => {
+    switch (item.linkType) {
+      case "internal":
+        return item.internalLink?.slug?.current ? `/${item.internalLink.slug.current}` : "/";
+      case "external":
+        return item.externalUrl || "#";
+      case "anchor":
+        return item.anchor || "#";
+      default:
+        return "#";
+    }
+  };
+
+  // Use new structure with fallback to legacy fields
+  const footerNav = settings?.footerNavigation;
+  const description = footerNav?.description || settings?.description;
+  const socialLinks = footerNav?.socialLinks || settings?.socialLinks || [];
+  const linkColumns = footerNav?.linkColumns || defaultLinkColumns;
+  const bottomLinks = footerNav?.bottomLinks || [];
+  const copyrightText = footerNav?.copyrightText || settings?.footerText;
+
   return (
     <footer className="footer">
       <div className="container">
@@ -27,11 +90,11 @@ export function Footer({ settings }: FooterProps) {
           <div className="footer-brand">
             <AuroraLogo className="mb-4" />
             <p className="text-[var(--foreground-muted)] mb-6">
-              {settings?.description || "The modern platform for building exceptional digital experiences."}
+              {description || "The modern platform for building exceptional digital experiences."}
             </p>
             <div className="flex gap-4">
-              {settings?.socialLinks && settings.socialLinks.length > 0 ? (
-                settings.socialLinks.map((social, index) => (
+              {socialLinks.length > 0 ? (
+                socialLinks.map((social, index) => (
                   <a
                     key={index}
                     href={social.url}
@@ -56,14 +119,19 @@ export function Footer({ settings }: FooterProps) {
             </div>
           </div>
 
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="footer-heading">{category}</h4>
+          {linkColumns.map((column, colIndex) => (
+            <div key={colIndex}>
+              <h4 className="footer-heading">{column.title}</h4>
               <ul className="space-y-1">
-                {links.map((link) => (
-                  <li key={link}>
-                    <Link href="#" className="footer-link">
-                      {link}
+                {column.links?.map((link, linkIndex) => (
+                  <li key={linkIndex}>
+                    <Link
+                      href={getHref(link)}
+                      className="footer-link"
+                      target={link.linkType === "external" ? "_blank" : undefined}
+                      rel={link.linkType === "external" ? "noopener noreferrer" : undefined}
+                    >
+                      {link.label}
                     </Link>
                   </li>
                 ))}
@@ -73,14 +141,29 @@ export function Footer({ settings }: FooterProps) {
         </div>
 
         <div className="footer-bottom">
-          <p>{settings?.footerText || `© ${currentYear} Aurora. All rights reserved.`}</p>
+          <p>{copyrightText ? `© ${currentYear} ${copyrightText}` : `© ${currentYear} Aurora. All rights reserved.`}</p>
           <div className="flex items-center gap-6">
-            <Link href="#" className="hover:text-[var(--foreground)] transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="#" className="hover:text-[var(--foreground)] transition-colors">
-              Terms of Service
-            </Link>
+            {bottomLinks.length > 0 ? (
+              bottomLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  href={getHref(link)}
+                  className="hover:text-[var(--foreground)] transition-colors"
+                  target={link.linkType === "external" ? "_blank" : undefined}
+                >
+                  {link.label}
+                </Link>
+              ))
+            ) : (
+              <>
+                <Link href="#" className="hover:text-[var(--foreground)] transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link href="#" className="hover:text-[var(--foreground)] transition-colors">
+                  Terms of Service
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

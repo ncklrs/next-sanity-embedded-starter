@@ -1,11 +1,14 @@
-import { client } from "../../sanity/lib/client";
+import { sanityFetch } from "../../sanity/lib/client";
 import { homepageQuery, siteSettingsQuery } from "@/lib/sanity";
 import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
 export async function generateMetadata() {
-  const data = await client.fetch(homepageQuery);
+  const data = await sanityFetch<{ homepage: any }>({
+    query: homepageQuery,
+    tags: ["pages", "site-settings"],
+  });
   const page = data?.homepage;
 
   return {
@@ -16,8 +19,14 @@ export async function generateMetadata() {
 
 export default async function Home() {
   const [homepageData, settings] = await Promise.all([
-    client.fetch(homepageQuery),
-    client.fetch(siteSettingsQuery),
+    sanityFetch<{ homepage: any }>({
+      query: homepageQuery,
+      tags: ["pages", "site-settings"],
+    }),
+    sanityFetch<any>({
+      query: siteSettingsQuery,
+      tags: ["site-settings"],
+    }),
   ]);
 
   const page = homepageData?.homepage;

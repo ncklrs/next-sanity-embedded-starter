@@ -786,6 +786,9 @@ export const FormMultiStep = ({
   );
 };
 
+// Re-export dynamic form component
+export { FormDynamic } from "./FormDynamic";
+
 // Default export with all components
 export default {
   FormContact,

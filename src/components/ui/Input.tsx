@@ -1,8 +1,35 @@
 "use client";
 
+import * as React from "react";
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+/**
+ * Simple Input component (shadcn-style)
+ * Used by react-hook-form and form components
+ */
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-violet)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Input.displayName = "Input";
+
+/**
+ * Extended Input component with label, error, and icons
+ * Used by standalone form implementations
+ */
+interface ExtendedInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
@@ -10,7 +37,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: ReactNode;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+const ExtendedInput = forwardRef<HTMLInputElement, ExtendedInputProps>(
   (
     {
       label,
@@ -45,13 +72,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`input ${leftIcon ? "pl-10" : ""} ${
-              rightIcon ? "pr-10" : ""
-            } ${
-              error
-                ? "border-[var(--error)] focus:border-[var(--error)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.15)]"
-                : ""
-            } ${className}`}
+            className={cn(
+              "input",
+              leftIcon && "pl-10",
+              rightIcon && "pr-10",
+              error && "border-[var(--error)] focus:border-[var(--error)] focus:shadow-[0_0_0_3px_rgba(239,68,68,0.15)]",
+              className
+            )}
             {...props}
           />
           {rightIcon && (
@@ -71,6 +98,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-Input.displayName = "Input";
+ExtendedInput.displayName = "ExtendedInput";
 
-export default Input;
+export { Input, ExtendedInput };
+export default ExtendedInput;

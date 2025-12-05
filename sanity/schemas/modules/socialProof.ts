@@ -76,8 +76,15 @@ export const socialProofLogos = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -177,8 +184,15 @@ export const socialProofStats = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {

@@ -1,0 +1,40 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-cta.newsletter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f0f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#33232e;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-cta.newsletter">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-cta.newsletter)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-cta.newsletter" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#a855f7" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-cta.newsletter)"/>
+
+  <!-- Wireframe representation -->
+  
+        <rect x="120" y="110" width="400" height="140" rx="12" fill="#a855f7" fill-opacity="0.15"/>
+        <rect x="180" y="135" width="280" height="20" rx="3" fill="#d8b4fe" fill-opacity="0.25"/>
+        <rect x="200" y="170" width="240" height="12" rx="2" fill="#d8b4fe" fill-opacity="0.1"/>
+        <rect x="160" y="200" width="240" height="36" rx="6" fill="#d8b4fe" fill-opacity="0.1" stroke="#a855f7" stroke-opacity="0.3"/>
+        <rect x="410" y="200" width="80" height="36" rx="6" fill="#a855f7"/>
+      
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="54" height="28" rx="4" fill="#a855f7" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#d8b4fe">CTA</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#d8b4fe" text-anchor="middle" fill-opacity="0.7">CTA Newsletter</text>
+</svg>

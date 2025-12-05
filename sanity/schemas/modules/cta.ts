@@ -93,8 +93,15 @@ export const ctaDefault = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -169,8 +176,15 @@ export const ctaNewsletter = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -304,8 +318,15 @@ export const ctaSplit = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -390,8 +411,15 @@ export const ctaBanner = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
       hidden: ({ parent }) => parent?.backgroundStyle === 'image',
     }),
   ],
@@ -530,8 +558,15 @@ export const ctaStats = defineType({
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'color.theme' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {

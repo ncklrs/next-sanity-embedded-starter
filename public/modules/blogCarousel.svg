@@ -1,0 +1,56 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-blogCarousel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#140f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#28232e;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-blogCarousel">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-blogCarousel)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-blogCarousel" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ec4899" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-blogCarousel)"/>
+
+  <!-- Wireframe representation -->
+  
+        
+          <g transform="translate(65, 80)">
+            <rect width="155" height="100" rx="6" fill="#ec4899" fill-opacity="0.2"/>
+            <rect x="10" y="115" width="100" height="12" rx="2" fill="#f9a8d4" fill-opacity="0.2"/>
+            <rect x="10" y="135" width="130" height="8" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+          </g>
+        
+          <g transform="translate(240, 80)">
+            <rect width="155" height="100" rx="6" fill="#ec4899" fill-opacity="0.17"/>
+            <rect x="10" y="115" width="100" height="12" rx="2" fill="#f9a8d4" fill-opacity="0.2"/>
+            <rect x="10" y="135" width="130" height="8" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+          </g>
+        
+          <g transform="translate(415, 80)">
+            <rect width="155" height="100" rx="6" fill="#ec4899" fill-opacity="0.14"/>
+            <rect x="10" y="115" width="100" height="12" rx="2" fill="#f9a8d4" fill-opacity="0.2"/>
+            <rect x="10" y="135" width="130" height="8" rx="2" fill="#f9a8d4" fill-opacity="0.1"/>
+          </g>
+        
+        <circle cx="40" cy="180" r="20" fill="#ec4899" fill-opacity="0.2"/>
+        <circle cx="600" cy="180" r="20" fill="#ec4899" fill-opacity="0.2"/>
+      
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="64" height="28" rx="4" fill="#ec4899" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#f9a8d4">Blog</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#f9a8d4" text-anchor="middle" fill-opacity="0.7">Blog Carousel</text>
+</svg>

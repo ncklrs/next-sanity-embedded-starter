@@ -1,0 +1,68 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-faqWithCategories" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0f0f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e2323;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-faqWithCategories">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-faqWithCategories)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-faqWithCategories" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ef4444" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-faqWithCategories)"/>
+
+  <!-- Wireframe representation -->
+  
+        <rect x="60" y="60" width="120" height="240" rx="6" fill="#ef4444" fill-opacity="0.1"/>
+        
+          <rect x="75" y="80" width="90" height="24" rx="3" fill="#ef4444" fill-opacity="0.3"/>
+        
+          <rect x="75" y="120" width="90" height="24" rx="3" fill="#ef4444" fill-opacity="0.1"/>
+        
+          <rect x="75" y="160" width="90" height="24" rx="3" fill="#ef4444" fill-opacity="0.1"/>
+        
+          <rect x="75" y="200" width="90" height="24" rx="3" fill="#ef4444" fill-opacity="0.1"/>
+        
+          <rect x="75" y="240" width="90" height="24" rx="3" fill="#ef4444" fill-opacity="0.1"/>
+        
+        
+          <g transform="translate(200, 80)">
+            <rect width="380" height="45" rx="4" fill="#ef4444" fill-opacity="0.1"/>
+            <rect x="15" y="17" width="200" height="10" rx="2" fill="#fca5a5" fill-opacity="0.2"/>
+          </g>
+        
+          <g transform="translate(200, 140)">
+            <rect width="380" height="45" rx="4" fill="#ef4444" fill-opacity="0.1"/>
+            <rect x="15" y="17" width="200" height="10" rx="2" fill="#fca5a5" fill-opacity="0.2"/>
+          </g>
+        
+          <g transform="translate(200, 200)">
+            <rect width="380" height="45" rx="4" fill="#ef4444" fill-opacity="0.1"/>
+            <rect x="15" y="17" width="200" height="10" rx="2" fill="#fca5a5" fill-opacity="0.2"/>
+          </g>
+        
+          <g transform="translate(200, 260)">
+            <rect width="380" height="45" rx="4" fill="#ef4444" fill-opacity="0.1"/>
+            <rect x="15" y="17" width="200" height="10" rx="2" fill="#fca5a5" fill-opacity="0.2"/>
+          </g>
+        
+      
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="54" height="28" rx="4" fill="#ef4444" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#fca5a5">FAQ</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#fca5a5" text-anchor="middle" fill-opacity="0.7">FAQ Categories</text>
+</svg>

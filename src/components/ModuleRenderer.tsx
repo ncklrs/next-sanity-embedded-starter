@@ -11,7 +11,7 @@ import { LogoCloudSimple, LogoCloudMarquee, LogoCloudGrid } from "./modules/Logo
 import { FAQAccordion, FAQTwoColumn, FAQWithCategories, FAQSimple } from "./modules/FAQ";
 import { GalleryGrid, GalleryMasonry, GalleryCarousel } from "./modules/Gallery";
 import { BlogFeaturedPost, BlogGrid, BlogList, BlogCarousel, BlogMinimal } from "./modules/BlogFeature";
-import { FormContact, FormNewsletter, FormWithImage, FormMultiStep } from "./modules/Form";
+import { FormContact, FormNewsletter, FormWithImage, FormMultiStep, FormDynamic } from "./modules/Form";
 
 // Map of module type names to components
 const moduleComponents: Record<string, React.ComponentType<any>> = {
@@ -71,6 +71,7 @@ const moduleComponents: Record<string, React.ComponentType<any>> = {
   formNewsletter: FormNewsletter,
   formWithImage: FormWithImage,
   formMultiStep: FormMultiStep,
+  formDynamic: FormDynamic,
 };
 
 interface Module {

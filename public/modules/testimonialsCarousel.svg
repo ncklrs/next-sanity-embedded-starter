@@ -1,0 +1,43 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-testimonialsCarousel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#232e2e;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-testimonialsCarousel">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-testimonialsCarousel)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-testimonialsCarousel" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#14b8a6" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-testimonialsCarousel)"/>
+
+  <!-- Wireframe representation -->
+  
+        <rect x="160" y="80" width="320" height="180" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" stroke-opacity="0.25"/>
+        <circle cx="320" cy="130" r="30" fill="#14b8a6" fill-opacity="0.3"/>
+        <rect x="220" y="180" width="200" height="12" rx="2" fill="#5eead4" fill-opacity="0.2"/>
+        <rect x="240" y="200" width="160" height="10" rx="2" fill="#5eead4" fill-opacity="0.1"/>
+        <circle cx="80" cy="180" r="20" fill="#14b8a6" fill-opacity="0.2"/>
+        <circle cx="560" cy="180" r="20" fill="#14b8a6" fill-opacity="0.2"/>
+        <text x="80" y="186" font-family="system-ui" font-size="16" fill="#5eead4" text-anchor="middle">‹</text>
+        <text x="560" y="186" font-family="system-ui" font-size="16" fill="#5eead4" text-anchor="middle">›</text>
+      
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="144" height="28" rx="4" fill="#14b8a6" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#5eead4">Testimonials</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#5eead4" text-anchor="middle" fill-opacity="0.7">Testimonials Carousel</text>
+</svg>

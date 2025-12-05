@@ -73,4 +73,5 @@ export {
   formNewsletter,
   formWithImage,
   formMultiStep,
+  formDynamic,
 } from "./form";
