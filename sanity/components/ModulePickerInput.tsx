@@ -105,15 +105,50 @@ const SelectModuleModal = ({
     )
   })
 
-  // Extract category from module name (handles both "cta.default" and "heroDefault" patterns)
+  // Map module names to their categories
+  const moduleToCategory: Record<string, string> = {
+    // Hero
+    heroDefault: 'hero', heroCentered: 'hero', heroSplit: 'hero', heroVideo: 'hero', heroMinimal: 'hero',
+    // Features
+    featuresGrid: 'features', featuresAlternating: 'features', featuresIconCards: 'features',
+    // Pricing
+    pricingCards: 'pricing', pricingComparison: 'pricing', pricingSimple: 'pricing',
+    // Testimonials
+    testimonialsGrid: 'testimonials', testimonialsCarousel: 'testimonials',
+    testimonialsFeatured: 'testimonials', testimonialsCarouselLarge: 'testimonials',
+    // Team
+    teamGrid: 'team', teamCards: 'team', teamCompact: 'team',
+    // CTA
+    'cta.default': 'cta', 'cta.newsletter': 'cta', 'cta.split': 'cta', 'cta.banner': 'cta', 'cta.stats': 'cta',
+    // Social Proof
+    'socialProof.logos': 'socialProof', 'socialProof.stats': 'socialProof',
+    // Logo Cloud
+    logoCloudSimple: 'logoCloud', logoCloudMarquee: 'logoCloud', logoCloudGrid: 'logoCloud',
+    // FAQ
+    faqAccordion: 'faq', faqTwoColumn: 'faq', faqWithCategories: 'faq', faqSimple: 'faq',
+    // Gallery
+    galleryGrid: 'gallery', galleryMasonry: 'gallery', galleryCarousel: 'gallery',
+    // Blog
+    blogFeaturedPost: 'blog', blogGrid: 'blog', blogList: 'blog', blogCarousel: 'blog', blogMinimal: 'blog',
+    // Form
+    formContact: 'form', formNewsletter: 'form', formWithImage: 'form', formMultiStep: 'form',
+    // Content (NEW)
+    richTextBlock: 'content', quote: 'content', statsCounter: 'content', comparisonTable: 'content',
+    // Media (NEW)
+    videoEmbed: 'media', beforeAfter: 'media', codeBlock: 'media', embedBlock: 'media',
+    // Interactive (NEW)
+    tabs: 'interactive', accordion: 'interactive', steps: 'interactive', timeline: 'interactive',
+    // Engagement (NEW)
+    announcementBar: 'engagement', countdown: 'engagement', stickyCta: 'engagement', modal: 'engagement',
+    // Trust (NEW)
+    awards: 'trust', pressMentions: 'trust', caseStudyCards: 'trust', integrationGrid: 'trust',
+    // Utility (NEW)
+    spacer: 'utility', anchorPoint: 'utility', banner: 'utility', downloadCards: 'utility', multiColumn: 'utility',
+  }
+
+  // Get category for a module
   const getCategory = (name: string): string => {
-    // First check for dot notation (e.g., "cta.default" -> "cta")
-    if (name.includes('.')) {
-      return name.split('.')[0]
-    }
-    // Otherwise extract camelCase prefix (e.g., "heroDefault" -> "hero", "blogFeaturedPost" -> "blog")
-    const match = name.match(/^([a-z]+)/)
-    return match ? match[1] : 'other'
+    return moduleToCategory[name] || 'other'
   }
 
   // Group modules by category
@@ -127,16 +162,22 @@ const SelectModuleModal = ({
   const categoryOrder = [
     'hero',
     'features',
+    'content',
+    'media',
+    'interactive',
     'pricing',
     'testimonials',
     'cta',
+    'engagement',
     'socialProof',
+    'trust',
     'team',
-    'logo',      // logoCloud* modules extract as "logo"
+    'logoCloud',
     'faq',
     'gallery',
-    'blog',      // blogFeatured*, blogGrid, etc. extract as "blog"
-    'form'
+    'blog',
+    'form',
+    'utility'
   ]
 
   return (
@@ -170,16 +211,22 @@ const SelectModuleModal = ({
           const categoryTitles: Record<string, string> = {
             hero: 'Hero Sections',
             features: 'Features',
+            content: 'Content & Text',
+            media: 'Media & Embeds',
+            interactive: 'Interactive',
             pricing: 'Pricing',
             testimonials: 'Testimonials',
             cta: 'Call to Action',
+            engagement: 'Engagement',
             socialProof: 'Social Proof',
+            trust: 'Trust & Credibility',
             team: 'Team',
-            logo: 'Logo Cloud',
+            logoCloud: 'Logo Cloud',
             faq: 'FAQ',
             gallery: 'Gallery',
             blog: 'Blog',
-            form: 'Forms'
+            form: 'Forms',
+            utility: 'Utility'
           }
           const categoryTitle = categoryTitles[category] || category.charAt(0).toUpperCase() + category.slice(1)
 

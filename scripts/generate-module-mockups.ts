@@ -71,6 +71,43 @@ const modules = [
   { name: "formNewsletter", title: "Newsletter Form", category: "Form", icon: "✉" },
   { name: "formWithImage", title: "Form with Image", category: "Form", icon: "▤" },
   { name: "formMultiStep", title: "Multi-Step Form", category: "Form", icon: "①②③" },
+
+  // Content modules (NEW)
+  { name: "richTextBlock", title: "Rich Text Block", category: "Content", icon: "¶" },
+  { name: "quote", title: "Quote", category: "Content", icon: "❝" },
+  { name: "statsCounter", title: "Stats Counter", category: "Content", icon: "№" },
+  { name: "comparisonTable", title: "Comparison Table", category: "Content", icon: "⊞" },
+
+  // Media modules (NEW)
+  { name: "videoEmbed", title: "Video Embed", category: "Media", icon: "▶" },
+  { name: "beforeAfter", title: "Before/After", category: "Media", icon: "⇆" },
+  { name: "codeBlock", title: "Code Block", category: "Media", icon: "</>" },
+  { name: "embedBlock", title: "Embed Block", category: "Media", icon: "⧉" },
+
+  // Interactive modules (NEW)
+  { name: "tabs", title: "Tabs", category: "Interactive", icon: "☰" },
+  { name: "accordion", title: "Accordion", category: "Interactive", icon: "▼" },
+  { name: "steps", title: "Steps", category: "Interactive", icon: "①②③" },
+  { name: "timeline", title: "Timeline", category: "Interactive", icon: "─●─" },
+
+  // Engagement modules (NEW)
+  { name: "announcementBar", title: "Announcement Bar", category: "Engagement", icon: "📢" },
+  { name: "countdown", title: "Countdown", category: "Engagement", icon: "⏱" },
+  { name: "stickyCta", title: "Sticky CTA", category: "Engagement", icon: "📌" },
+  { name: "modal", title: "Modal", category: "Engagement", icon: "◻" },
+
+  // Trust modules (NEW)
+  { name: "awards", title: "Awards", category: "Trust", icon: "🏆" },
+  { name: "pressMentions", title: "Press Mentions", category: "Trust", icon: "📰" },
+  { name: "caseStudyCards", title: "Case Studies", category: "Trust", icon: "📊" },
+  { name: "integrationGrid", title: "Integrations", category: "Trust", icon: "🔗" },
+
+  // Utility modules (NEW)
+  { name: "spacer", title: "Spacer", category: "Utility", icon: "⋮" },
+  { name: "anchorPoint", title: "Anchor Point", category: "Utility", icon: "⚓" },
+  { name: "banner", title: "Banner", category: "Utility", icon: "⚠" },
+  { name: "downloadCards", title: "Download Cards", category: "Utility", icon: "⬇" },
+  { name: "multiColumn", title: "Multi-Column", category: "Utility", icon: "▥" },
 ];
 
 // Category colors (Aurora theme inspired)
@@ -78,6 +115,12 @@ const categoryColors: Record<string, { bg: string; accent: string; text: string 
   "Hero": { bg: "#0f0f23", accent: "#6366f1", text: "#a5b4fc" },
   "Features": { bg: "#0f1419", accent: "#10b981", text: "#6ee7b7" },
   "Pricing": { bg: "#1a0f1f", accent: "#f472b6", text: "#f9a8d4" },
+  "Content": { bg: "#0f1720", accent: "#06b6d4", text: "#67e8f9" },
+  "Media": { bg: "#1a0f23", accent: "#8b5cf6", text: "#c4b5fd" },
+  "Interactive": { bg: "#0f1a1a", accent: "#14b8a6", text: "#5eead4" },
+  "Engagement": { bg: "#1f0f14", accent: "#f43f5e", text: "#fda4af" },
+  "Trust": { bg: "#0f1419", accent: "#3b82f6", text: "#93c5fd" },
+  "Utility": { bg: "#14140f", accent: "#a3a3a3", text: "#d4d4d4" },
   "Testimonials": { bg: "#0f1a1a", accent: "#14b8a6", text: "#5eead4" },
   "Team": { bg: "#1a1a0f", accent: "#eab308", text: "#fde047" },
   "CTA": { bg: "#1f0f1a", accent: "#a855f7", text: "#d8b4fe" },
@@ -675,6 +718,297 @@ function getWireframe(moduleName: string, colors: { accent: string; text: string
         <rect x="380" y="240" width="100" height="32" rx="4" fill="${accent}"/>
       `;
     }
+  }
+
+  // Content modules
+  if (moduleName === "richTextBlock") {
+    return `
+      <rect x="120" y="70" width="400" height="20" rx="3" fill="${text}" fill-opacity="0.3"/>
+      <rect x="120" y="110" width="380" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="120" y="132" width="400" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="120" y="154" width="360" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="120" y="186" width="340" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="120" y="208" width="380" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="120" y="240" width="200" height="16" rx="3" fill="${text}" fill-opacity="0.2"/>
+      <rect x="120" y="270" width="320" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+    `;
+  }
+  if (moduleName === "quote") {
+    return `
+      <text x="100" y="120" font-family="serif" font-size="80" fill="${accent}" fill-opacity="0.3">"</text>
+      <rect x="140" y="130" width="360" height="16" rx="2" fill="${text}" fill-opacity="0.25"/>
+      <rect x="140" y="160" width="320" height="14" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="140" y="185" width="280" height="14" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <circle cx="160" cy="250" r="25" fill="${accent}" fill-opacity="0.2"/>
+      <rect x="200" y="240" width="100" height="12" rx="2" fill="${text}" fill-opacity="0.2"/>
+      <rect x="200" y="258" width="70" height="10" rx="2" fill="${text}" fill-opacity="0.1"/>
+    `;
+  }
+  if (moduleName === "statsCounter") {
+    return `
+      <rect x="170" y="60" width="300" height="24" rx="3" fill="${text}" fill-opacity="0.25"/>
+      ${[0, 1, 2, 3].map(i => `
+        <g transform="translate(${90 + i * 125}, 120)">
+          <rect x="0" y="0" width="100" height="100" rx="8" fill="${accent}" fill-opacity="0.1"/>
+          <rect x="20" y="25" width="60" height="30" rx="4" fill="${text}" fill-opacity="0.3"/>
+          <rect x="25" y="65" width="50" height="10" rx="2" fill="${text}" fill-opacity="0.15"/>
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "comparisonTable") {
+    return `
+      <rect x="80" y="60" width="480" height="240" rx="8" fill="${accent}" fill-opacity="0.1"/>
+      <line x1="200" y1="60" x2="200" y2="300" stroke="${accent}" stroke-opacity="0.2"/>
+      <line x1="320" y1="60" x2="320" y2="300" stroke="${accent}" stroke-opacity="0.2"/>
+      <line x1="440" y1="60" x2="440" y2="300" stroke="${accent}" stroke-opacity="0.2"/>
+      <rect x="210" y="70" width="100" height="20" rx="3" fill="${accent}" fill-opacity="0.3"/>
+      ${[0, 1, 2, 3, 4].map(i => `
+        <line x1="80" y1="${110 + i * 38}" x2="560" y2="${110 + i * 38}" stroke="${accent}" stroke-opacity="0.1"/>
+        <rect x="95" y="${120 + i * 38}" width="80" height="10" rx="2" fill="${text}" fill-opacity="0.15"/>
+      `).join("")}
+    `;
+  }
+
+  // Media modules
+  if (moduleName === "videoEmbed") {
+    return `
+      <rect x="100" y="70" width="440" height="220" rx="8" fill="${accent}" fill-opacity="0.15"/>
+      <circle cx="320" cy="180" r="40" fill="${accent}" fill-opacity="0.3"/>
+      <polygon points="308,160 308,200 345,180" fill="${text}" fill-opacity="0.8"/>
+    `;
+  }
+  if (moduleName === "beforeAfter") {
+    return `
+      <rect x="80" y="80" width="230" height="200" rx="6" fill="${accent}" fill-opacity="0.2"/>
+      <rect x="330" y="80" width="230" height="200" rx="6" fill="${accent}" fill-opacity="0.1"/>
+      <line x1="320" y1="80" x2="320" y2="280" stroke="${text}" stroke-width="3"/>
+      <circle cx="320" cy="180" r="16" fill="${text}"/>
+      <text x="160" y="300" font-family="system-ui" font-size="12" fill="${text}" fill-opacity="0.5" text-anchor="middle">Before</text>
+      <text x="460" y="300" font-family="system-ui" font-size="12" fill="${text}" fill-opacity="0.5" text-anchor="middle">After</text>
+    `;
+  }
+  if (moduleName === "codeBlock") {
+    return `
+      <rect x="100" y="60" width="440" height="240" rx="8" fill="#1e1e2e"/>
+      <rect x="100" y="60" width="440" height="35" rx="8" fill="${accent}" fill-opacity="0.15"/>
+      <circle cx="125" cy="78" r="6" fill="#ff5f56"/>
+      <circle cx="145" cy="78" r="6" fill="#ffbd2e"/>
+      <circle cx="165" cy="78" r="6" fill="#27c93f"/>
+      <rect x="400" y="68" width="60" height="18" rx="4" fill="${accent}" fill-opacity="0.2"/>
+      ${[0, 1, 2, 3, 4, 5].map(i => `
+        <text x="120" y="${120 + i * 28}" font-family="monospace" font-size="10" fill="${text}" fill-opacity="0.3">${i + 1}</text>
+        <rect x="145" y="${108 + i * 28}" width="${[180, 220, 140, 200, 160, 100][i]}" height="12" rx="2" fill="${accent}" fill-opacity="${i === 2 ? 0.3 : 0.15}"/>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "embedBlock") {
+    return `
+      <rect x="120" y="80" width="400" height="200" rx="8" fill="${accent}" fill-opacity="0.1" stroke="${accent}" stroke-opacity="0.3" stroke-dasharray="8 4"/>
+      <text x="320" y="170" font-family="system-ui" font-size="14" fill="${text}" fill-opacity="0.4" text-anchor="middle">Embedded Content</text>
+      <rect x="260" y="190" width="120" height="30" rx="4" fill="${accent}" fill-opacity="0.2"/>
+    `;
+  }
+
+  // Interactive modules
+  if (moduleName === "tabs") {
+    return `
+      <rect x="100" y="80" width="100" height="35" rx="4" fill="${accent}" fill-opacity="0.3"/>
+      <rect x="210" y="80" width="100" height="35" rx="4" fill="${accent}" fill-opacity="0.1"/>
+      <rect x="320" y="80" width="100" height="35" rx="4" fill="${accent}" fill-opacity="0.1"/>
+      <rect x="100" y="130" width="440" height="160" rx="8" fill="${accent}" fill-opacity="0.1"/>
+      <rect x="130" y="160" width="200" height="14" rx="2" fill="${text}" fill-opacity="0.2"/>
+      <rect x="130" y="190" width="380" height="10" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="130" y="210" width="350" height="10" rx="2" fill="${text}" fill-opacity="0.1"/>
+    `;
+  }
+  if (moduleName === "accordion") {
+    return `
+      ${[0, 1, 2, 3].map(i => `
+        <g transform="translate(100, ${70 + i * 65})">
+          <rect width="440" height="${i === 1 ? 55 : 45}" rx="6" fill="${accent}" fill-opacity="${i === 1 ? 0.15 : 0.08}"/>
+          <rect x="20" y="17" width="200" height="12" rx="2" fill="${text}" fill-opacity="0.2"/>
+          <text x="420" y="28" font-family="system-ui" font-size="16" fill="${text}" fill-opacity="0.3">${i === 1 ? "−" : "+"}</text>
+          ${i === 1 ? `<rect x="20" y="38" width="300" height="8" rx="2" fill="${text}" fill-opacity="0.1"/>` : ""}
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "steps") {
+    return `
+      <rect x="170" y="50" width="300" height="20" rx="3" fill="${text}" fill-opacity="0.2"/>
+      ${[0, 1, 2, 3].map(i => `
+        <g transform="translate(${100 + i * 120}, 100)">
+          <circle cx="40" cy="40" r="30" fill="${accent}" fill-opacity="0.2"/>
+          <text x="40" y="47" font-family="system-ui" font-size="20" fill="${text}" text-anchor="middle">${i + 1}</text>
+          <rect x="5" y="90" width="70" height="12" rx="2" fill="${text}" fill-opacity="0.2"/>
+          <rect x="0" y="110" width="80" height="8" rx="2" fill="${text}" fill-opacity="0.1"/>
+          ${i < 3 ? `<line x1="80" y1="40" x2="120" y2="40" stroke="${accent}" stroke-opacity="0.3" stroke-width="2" stroke-dasharray="4 4"/>` : ""}
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "timeline") {
+    return `
+      <line x1="200" y1="60" x2="200" y2="300" stroke="${accent}" stroke-width="3" stroke-opacity="0.3"/>
+      ${[0, 1, 2, 3].map(i => `
+        <g transform="translate(0, ${70 + i * 60})">
+          <circle cx="200" cy="15" r="10" fill="${accent}"/>
+          <rect x="230" y="5" width="60" height="20" rx="4" fill="${accent}" fill-opacity="0.2"/>
+          <rect x="230" y="35" width="200" height="12" rx="2" fill="${text}" fill-opacity="0.2"/>
+        </g>
+      `).join("")}
+    `;
+  }
+
+  // Engagement modules
+  if (moduleName === "announcementBar") {
+    return `
+      <rect x="60" y="140" width="520" height="60" rx="6" fill="${accent}" fill-opacity="0.2"/>
+      <rect x="100" y="160" width="300" height="14" rx="2" fill="${text}" fill-opacity="0.3"/>
+      <rect x="420" y="155" width="80" height="28" rx="4" fill="${accent}" fill-opacity="0.5"/>
+      <text x="540" y="175" font-family="system-ui" font-size="16" fill="${text}" fill-opacity="0.4">×</text>
+    `;
+  }
+  if (moduleName === "countdown") {
+    return `
+      <rect x="170" y="60" width="300" height="24" rx="3" fill="${text}" fill-opacity="0.25"/>
+      ${["Days", "Hours", "Min", "Sec"].map((label, i) => `
+        <g transform="translate(${110 + i * 115}, 110)">
+          <rect width="90" height="100" rx="8" fill="${accent}" fill-opacity="0.15"/>
+          <rect x="20" y="25" width="50" height="35" rx="4" fill="${text}" fill-opacity="0.3"/>
+          <text x="45" y="80" font-family="system-ui" font-size="10" fill="${text}" fill-opacity="0.5" text-anchor="middle">${label}</text>
+        </g>
+      `).join("")}
+      <rect x="250" y="240" width="140" height="40" rx="6" fill="${accent}"/>
+    `;
+  }
+  if (moduleName === "stickyCta") {
+    return `
+      <rect x="120" y="80" width="400" height="140" rx="8" fill="${accent}" fill-opacity="0.05" stroke="${accent}" stroke-opacity="0.1" stroke-dasharray="8 4"/>
+      <text x="320" y="160" font-family="system-ui" font-size="12" fill="${text}" fill-opacity="0.3" text-anchor="middle">Page Content Area</text>
+      <rect x="440" y="260" width="140" height="50" rx="25" fill="${accent}"/>
+      <text x="510" y="292" font-family="system-ui" font-size="14" fill="${text}" text-anchor="middle">Get Started →</text>
+    `;
+  }
+  if (moduleName === "modal") {
+    return `
+      <rect x="0" y="0" width="640" height="360" fill="#000" fill-opacity="0.5"/>
+      <rect x="140" y="60" width="360" height="240" rx="12" fill="#1a1a2e"/>
+      <text x="480" y="85" font-family="system-ui" font-size="20" fill="${text}" fill-opacity="0.5">×</text>
+      <rect x="170" y="100" width="200" height="20" rx="3" fill="${text}" fill-opacity="0.25"/>
+      <rect x="170" y="140" width="300" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="170" y="165" width="280" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="170" y="190" width="260" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="240" y="240" width="160" height="40" rx="6" fill="${accent}"/>
+    `;
+  }
+
+  // Trust modules
+  if (moduleName === "awards") {
+    return `
+      <rect x="200" y="50" width="240" height="20" rx="3" fill="${text}" fill-opacity="0.2"/>
+      ${[0, 1, 2, 3, 4].map(i => `
+        <g transform="translate(${80 + i * 105}, 100)">
+          <rect width="80" height="100" rx="6" fill="${accent}" fill-opacity="0.1"/>
+          <rect x="15" y="15" width="50" height="50" rx="4" fill="${accent}" fill-opacity="0.2"/>
+          <rect x="10" y="75" width="60" height="10" rx="2" fill="${text}" fill-opacity="0.15"/>
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "pressMentions") {
+    return `
+      <rect x="200" y="60" width="240" height="16" rx="2" fill="${text}" fill-opacity="0.2"/>
+      ${[0, 1, 2, 3, 4, 5].map(i => `
+        <rect x="${70 + i * 90}" y="120" width="70" height="40" rx="4" fill="${accent}" fill-opacity="0.15"/>
+      `).join("")}
+      <rect x="150" y="200" width="340" height="80" rx="6" fill="${accent}" fill-opacity="0.08"/>
+      <rect x="180" y="220" width="280" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="200" y="245" width="240" height="10" rx="2" fill="${text}" fill-opacity="0.1"/>
+    `;
+  }
+  if (moduleName === "caseStudyCards") {
+    return `
+      ${[0, 1, 2].map(i => `
+        <g transform="translate(${80 + i * 165}, 70)">
+          <rect width="145" height="200" rx="8" fill="${accent}" fill-opacity="0.1"/>
+          <rect x="10" y="10" width="125" height="80" rx="4" fill="${accent}" fill-opacity="0.15"/>
+          <rect x="15" y="105" width="90" height="14" rx="2" fill="${text}" fill-opacity="0.2"/>
+          <rect x="15" y="130" width="50" height="24" rx="3" fill="${accent}" fill-opacity="0.3"/>
+          <rect x="15" y="165" width="115" height="10" rx="2" fill="${text}" fill-opacity="0.1"/>
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "integrationGrid") {
+    return `
+      <rect x="200" y="50" width="240" height="20" rx="3" fill="${text}" fill-opacity="0.2"/>
+      <rect x="200" y="80" width="240" height="30" rx="4" fill="${accent}" fill-opacity="0.1"/>
+      ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `
+        <rect x="${90 + (i % 4) * 120}" y="${130 + Math.floor(i / 4) * 90}" width="100" height="70" rx="6" fill="${accent}" fill-opacity="${i === 1 ? 0.2 : 0.1}"/>
+      `).join("")}
+    `;
+  }
+
+  // Utility modules
+  if (moduleName === "spacer") {
+    return `
+      <rect x="100" y="100" width="440" height="60" rx="4" fill="${accent}" fill-opacity="0.05" stroke="${accent}" stroke-opacity="0.1" stroke-dasharray="4 4"/>
+      <line x1="150" y1="180" x2="490" y2="180" stroke="${accent}" stroke-opacity="0.3" stroke-width="1"/>
+      <text x="320" y="130" font-family="system-ui" font-size="10" fill="${text}" fill-opacity="0.3" text-anchor="middle">Spacer / Divider</text>
+      <rect x="100" y="210" width="440" height="60" rx="4" fill="${accent}" fill-opacity="0.05" stroke="${accent}" stroke-opacity="0.1" stroke-dasharray="4 4"/>
+    `;
+  }
+  if (moduleName === "anchorPoint") {
+    return `
+      <rect x="100" y="80" width="440" height="80" rx="4" fill="${accent}" fill-opacity="0.05"/>
+      <rect x="100" y="180" width="440" height="80" rx="4" fill="${accent}" fill-opacity="0.05"/>
+      <line x1="320" y1="160" x2="320" y2="180" stroke="${accent}" stroke-width="2"/>
+      <circle cx="320" cy="170" r="8" fill="${accent}" fill-opacity="0.5"/>
+      <text x="320" y="300" font-family="system-ui" font-size="10" fill="${text}" fill-opacity="0.3" text-anchor="middle">#anchor-id</text>
+    `;
+  }
+  if (moduleName === "banner") {
+    return `
+      <rect x="100" y="130" width="440" height="100" rx="8" fill="${accent}" fill-opacity="0.15"/>
+      <rect x="100" y="130" width="6" height="100" rx="3" fill="${accent}"/>
+      <circle cx="140" cy="160" r="16" fill="${accent}" fill-opacity="0.3"/>
+      <rect x="175" y="150" width="160" height="16" rx="2" fill="${text}" fill-opacity="0.25"/>
+      <rect x="175" y="180" width="300" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <text x="510" y="185" font-family="system-ui" font-size="16" fill="${text}" fill-opacity="0.3">×</text>
+    `;
+  }
+  if (moduleName === "downloadCards") {
+    return `
+      <rect x="200" y="50" width="240" height="20" rx="3" fill="${text}" fill-opacity="0.2"/>
+      ${[0, 1, 2].map(i => `
+        <g transform="translate(${80 + i * 165}, 90)">
+          <rect width="145" height="180" rx="8" fill="${accent}" fill-opacity="0.1"/>
+          <rect x="10" y="10" width="125" height="70" rx="4" fill="${accent}" fill-opacity="0.15"/>
+          <rect x="15" y="95" width="90" height="12" rx="2" fill="${text}" fill-opacity="0.2"/>
+          <rect x="15" y="115" width="115" height="8" rx="2" fill="${text}" fill-opacity="0.1"/>
+          <rect x="15" y="140" width="115" height="30" rx="4" fill="${accent}" fill-opacity="0.3"/>
+          <rect x="100" y="15" width="30" height="16" rx="3" fill="${accent}" fill-opacity="0.5"/>
+        </g>
+      `).join("")}
+    `;
+  }
+  if (moduleName === "multiColumn") {
+    return `
+      <rect x="60" y="80" width="250" height="200" rx="8" fill="${accent}" fill-opacity="0.1" stroke="${accent}" stroke-opacity="0.2"/>
+      <rect x="330" y="80" width="250" height="200" rx="8" fill="${accent}" fill-opacity="0.1" stroke="${accent}" stroke-opacity="0.2"/>
+      <rect x="80" y="100" width="210" height="40" rx="4" fill="${accent}" fill-opacity="0.15"/>
+      <rect x="80" y="155" width="210" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="80" y="175" width="180" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="80" y="195" width="150" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="80" y="230" width="100" height="30" rx="4" fill="${accent}" fill-opacity="0.3"/>
+      <rect x="350" y="100" width="210" height="80" rx="4" fill="${accent}" fill-opacity="0.15"/>
+      <rect x="350" y="195" width="210" height="12" rx="2" fill="${text}" fill-opacity="0.15"/>
+      <rect x="350" y="215" width="180" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <rect x="350" y="235" width="160" height="12" rx="2" fill="${text}" fill-opacity="0.1"/>
+      <text x="320" y="60" font-family="system-ui" font-size="10" fill="${text}" fill-opacity="0.3" text-anchor="middle">2 Columns</text>
+    `;
   }
 
   // Default fallback

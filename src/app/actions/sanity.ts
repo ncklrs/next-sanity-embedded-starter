@@ -1,6 +1,7 @@
 "use server";
 
 import { writeClient } from "../../../sanity/lib/client";
+import { subscriberExistsQuery } from "../../../sanity/queries";
 
 interface FormSubmission {
   formId: string;
@@ -53,10 +54,7 @@ export async function subscribeToNewsletter(email: string, source?: string) {
 
   try {
     // Check if email already exists
-    const existing = await writeClient.fetch(
-      `*[_type == "subscriber" && email == $email][0]`,
-      { email }
-    );
+    const existing = await writeClient.fetch(subscriberExistsQuery, { email });
 
     if (existing) {
       return { success: true, id: existing._id, alreadySubscribed: true };

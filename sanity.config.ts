@@ -2,14 +2,90 @@
 
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import type { StructureResolver } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { unsplashImageAsset } from "sanity-plugin-asset-source-unsplash";
 import { media } from "sanity-plugin-media";
 import { assist } from "@sanity/assist";
+import { CogIcon, DocumentsIcon, ControlsIcon } from "@sanity/icons";
 import { schemaTypes } from "./sanity/schemas";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!;
+
+// Singleton document types that should not show as lists
+const singletonTypes = new Set(["siteSettings"]);
+
+// Document types managed manually in structure (excluded from auto-generation)
+const structuredTypes = new Set([
+  ...singletonTypes,
+  "page",
+  "post",
+  "form",
+  "formSubmission",
+  "subscriber",
+  "media.tag",
+  "sanity.assist.schemaType.annotations",
+  "assist.instruction.context",
+]);
+
+// Structure resolver for custom studio layout
+const structure: StructureResolver = (S) =>
+  S.list()
+    .title("Content")
+    .items([
+      // Content
+      S.documentTypeListItem("page").title("Pages"),
+      S.documentTypeListItem("post").title("Posts"),
+
+      // Forms group
+      S.listItem()
+        .title("Forms")
+        .icon(DocumentsIcon)
+        .child(
+          S.list()
+            .title("Forms")
+            .items([
+              S.documentTypeListItem("form").title("Form Templates"),
+              S.documentTypeListItem("formSubmission").title("Submissions"),
+              S.documentTypeListItem("subscriber").title("Subscribers"),
+            ])
+        ),
+
+      S.divider(),
+
+      // Config group
+      S.listItem()
+        .title("Config")
+        .icon(ControlsIcon)
+        .child(
+          S.list()
+            .title("Config")
+            .items([
+              S.documentTypeListItem("media.tag").title("Media Tags"),
+              S.documentTypeListItem("sanity.assist.schemaType.annotations").title("AI Schema Instructions"),
+              S.documentTypeListItem("assist.instruction.context").title("AI Context Documents"),
+            ])
+        ),
+
+      // Site Settings singleton
+      S.listItem()
+        .title("Site Settings")
+        .id("siteSettings")
+        .icon(CogIcon)
+        .child(
+          S.document()
+            .schemaType("siteSettings")
+            .documentId("siteSettings")
+        ),
+
+      S.divider(),
+
+      // Any remaining document types not explicitly structured
+      ...S.documentTypeListItems().filter(
+        (listItem) => !structuredTypes.has(listItem.getId() ?? "")
+      ),
+    ]);
 
 export default defineConfig({
   name: "default",
@@ -21,7 +97,7 @@ export default defineConfig({
   basePath: "/studio",
 
   plugins: [
-    structureTool(),
+    structureTool({ structure }),
     unsplashImageAsset(),
     media({
       creditLine: {
@@ -36,5 +112,15 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    // Prevent actions on singleton documents
+    actions: (input, context) =>
+      singletonTypes.has(context.schemaType)
+        ? input.filter(({ action }) =>
+            action && ["publish", "discardChanges", "restore"].includes(action)
+          )
+        : input,
   },
 });

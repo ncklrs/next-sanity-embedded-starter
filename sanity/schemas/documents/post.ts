@@ -77,18 +77,12 @@ export const post = defineType({
       title: "Published At",
       type: "datetime",
     }),
+    // SEO object with title, description, ogImage, noIndex
     defineField({
-      name: "seoTitle",
-      title: "SEO Title",
-      type: "string",
-      description: "Title for search engines (defaults to post title if empty)",
-    }),
-    defineField({
-      name: "seoDescription",
-      title: "SEO Description",
-      type: "text",
-      rows: 3,
-      description: "Description for search engines",
+      name: "seo",
+      title: "SEO",
+      type: "seo",
+      description: "Search engine optimization settings",
     }),
   ],
   orderings: [

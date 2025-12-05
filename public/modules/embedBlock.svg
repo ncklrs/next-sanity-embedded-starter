@@ -1,0 +1,38 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-embedBlock" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0f23;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e2337;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-embedBlock">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-embedBlock)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-embedBlock" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#8b5cf6" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-embedBlock)"/>
+
+  <!-- Wireframe representation -->
+  
+      <rect x="120" y="80" width="400" height="200" rx="8" fill="#8b5cf6" fill-opacity="0.1" stroke="#8b5cf6" stroke-opacity="0.3" stroke-dasharray="8 4"/>
+      <text x="320" y="170" font-family="system-ui" font-size="14" fill="#c4b5fd" fill-opacity="0.4" text-anchor="middle">Embedded Content</text>
+      <rect x="260" y="190" width="120" height="30" rx="4" fill="#8b5cf6" fill-opacity="0.2"/>
+    
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="74" height="28" rx="4" fill="#8b5cf6" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#c4b5fd">Media</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#c4b5fd" text-anchor="middle" fill-opacity="0.7">Embed Block</text>
+</svg>

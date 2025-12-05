@@ -15,6 +15,11 @@ import {
   type FormAction,
   type ActionResult,
 } from "../../lib/forms/handlers";
+import {
+  formConfigWithActionsQuery,
+  formConfigByIdQuery,
+  formConfigByIdentifierQuery,
+} from "../../../sanity/queries";
 
 /**
  * Types for dynamic form submission
@@ -70,35 +75,9 @@ export async function submitDynamicForm(
   }
 
   try {
-    // 1. Fetch form configuration
+    // 1. Fetch form configuration with actions (server-side only)
     const formConfig = await writeClient.fetch<FormConfig | null>(
-      `*[_type == "form" && _id == $formId][0]{
-        _id,
-        name,
-        identifier,
-        fields[]{
-          _key,
-          name,
-          label,
-          type,
-          required,
-          placeholder,
-          helpText,
-          options[]{label, value},
-          rows,
-          accept,
-          multiple,
-          validation
-        },
-        actions[]{
-          _type,
-          _key,
-          enabled,
-          name,
-          ...
-        },
-        settings
-      }`,
+      formConfigWithActionsQuery,
       { formId: submission.formId }
     );
 
@@ -262,32 +241,7 @@ export async function getFormConfig(formId: string) {
         errorMessage?: string;
         enableSpamProtection?: boolean;
       };
-    } | null>(
-      `*[_type == "form" && _id == $formId][0]{
-        _id,
-        name,
-        identifier,
-        description,
-        fields[]{
-          _key,
-          name,
-          label,
-          type,
-          required,
-          placeholder,
-          helpText,
-          defaultValue,
-          width,
-          options[]{label, value},
-          rows,
-          accept,
-          multiple,
-          validation
-        },
-        settings
-      }`,
-      { formId }
-    );
+    } | null>(formConfigByIdQuery, { formId });
 
     return formConfig;
   } catch (error) {
@@ -314,31 +268,7 @@ export async function getFormByIdentifier(identifier: string) {
         errorMessage?: string;
         enableSpamProtection?: boolean;
       };
-    } | null>(
-      `*[_type == "form" && identifier.current == $identifier][0]{
-        _id,
-        name,
-        identifier,
-        fields[]{
-          _key,
-          name,
-          label,
-          type,
-          required,
-          placeholder,
-          helpText,
-          defaultValue,
-          width,
-          options[]{label, value},
-          rows,
-          accept,
-          multiple,
-          validation
-        },
-        settings
-      }`,
-      { identifier }
-    );
+    } | null>(formConfigByIdentifierQuery, { identifier });
 
     return formConfig;
   } catch (error) {

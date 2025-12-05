@@ -2,15 +2,7 @@ import { sanityFetch } from "../../../sanity/lib/client";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
-
-const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
-  _id,
-  title,
-  slug,
-  excerpt,
-  featuredImage,
-  publishedAt
-}`;
+import { allPostsQuery } from "../../../sanity/queries";
 
 export const metadata = {
   title: "Blog | Aurora",
@@ -19,7 +11,7 @@ export const metadata = {
 
 export default async function BlogPage() {
   const posts = await sanityFetch<any[]>({
-    query: postsQuery,
+    query: allPostsQuery,
     tags: ["posts"],
   });
 

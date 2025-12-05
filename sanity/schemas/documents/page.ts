@@ -90,23 +90,47 @@ export const page = defineType({
         { type: "formNewsletter" },
         { type: "formWithImage" },
         { type: "formMultiStep" },
+        // Engagement
+        { type: "announcementBar" },
+        { type: "countdown" },
+        { type: "stickyCta" },
+        { type: "modal" },
+        // Trust
+        { type: "awards" },
+        { type: "pressMentions" },
+        { type: "caseStudyCards" },
+        { type: "integrationGrid" },
+        // Content
+        { type: "richTextBlock" },
+        { type: "quote" },
+        { type: "statsCounter" },
+        { type: "comparisonTable" },
+        // Media
+        { type: "videoEmbed" },
+        { type: "beforeAfter" },
+        { type: "codeBlock" },
+        { type: "embedBlock" },
+        // Interactive
+        { type: "tabs" },
+        { type: "accordion" },
+        { type: "steps" },
+        { type: "timeline" },
+        // Utility
+        { type: "spacer" },
+        { type: "anchorPoint" },
+        { type: "banner" },
+        { type: "downloadCards" },
+        { type: "multiColumn" },
       ],
       components: {
         input: ModulePickerInput,
       },
     }),
-    // SEO fields in seo group
+    // SEO object with title, description, ogImage, noIndex
     defineField({
-      name: "seoTitle",
-      title: "SEO Title",
-      type: "string",
-      group: "seo",
-    }),
-    defineField({
-      name: "seoDescription",
-      title: "SEO Description",
-      type: "text",
-      rows: 3,
+      name: "seo",
+      title: "SEO",
+      type: "seo",
       group: "seo",
     }),
   ],

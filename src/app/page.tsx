@@ -5,21 +5,20 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
 export async function generateMetadata() {
-  const data = await sanityFetch<{ homepage: any }>({
+  const page = await sanityFetch<any>({
     query: homepageQuery,
     tags: ["pages", "site-settings"],
   });
-  const page = data?.homepage;
 
   return {
-    title: page?.seoTitle || page?.title || "Aurora - Modern SaaS Platform",
-    description: page?.seoDescription || "The next-generation platform for building exceptional digital experiences",
+    title: page?.seo?.title || page?.title || "Aurora - Modern SaaS Platform",
+    description: page?.seo?.description || "The next-generation platform for building exceptional digital experiences",
   };
 }
 
 export default async function Home() {
-  const [homepageData, settings] = await Promise.all([
-    sanityFetch<{ homepage: any }>({
+  const [page, settings] = await Promise.all([
+    sanityFetch<any>({
       query: homepageQuery,
       tags: ["pages", "site-settings"],
     }),
@@ -28,8 +27,6 @@ export default async function Home() {
       tags: ["site-settings"],
     }),
   ]);
-
-  const page = homepageData?.homepage;
 
   // If no homepage is configured, show a setup message
   if (!page) {

@@ -75,3 +75,52 @@ export {
   formMultiStep,
   formDynamic,
 } from "./form";
+
+// Trust modules
+export {
+  awards,
+  pressMentions,
+  caseStudyCards,
+  integrationGrid,
+} from "./trust";
+
+// Content modules
+export {
+  richTextBlock,
+  quote,
+  statsCounter,
+  comparisonTable,
+} from "./content";
+
+// Media modules
+export {
+  videoEmbed,
+  beforeAfter,
+  codeBlock,
+  embedBlock,
+} from "./media";
+
+// Interactive modules
+export {
+  tabs,
+  accordion,
+  steps,
+  timeline,
+} from "./interactive";
+
+// Engagement modules
+export {
+  announcementBar,
+  countdown,
+  stickyCta,
+  modal,
+} from "./engagement";
+
+// Utility modules
+export {
+  spacer,
+  anchorPoint,
+  banner,
+  downloadCards,
+  multiColumn,
+} from "./utility";

@@ -12,6 +12,12 @@ import { FAQAccordion, FAQTwoColumn, FAQWithCategories, FAQSimple } from "./modu
 import { GalleryGrid, GalleryMasonry, GalleryCarousel } from "./modules/Gallery";
 import { BlogFeaturedPost, BlogGrid, BlogList, BlogCarousel, BlogMinimal } from "./modules/BlogFeature";
 import { FormContact, FormNewsletter, FormWithImage, FormMultiStep, FormDynamic } from "./modules/Form";
+import { RichTextBlock, Quote, StatsCounter, ComparisonTable } from "./modules/Content";
+import { VideoEmbed, BeforeAfter, CodeBlock, EmbedBlock } from "./modules/Media";
+import { Tabs, Accordion, Steps, Timeline } from "./modules/Interactive";
+import { AnnouncementBar, Countdown, StickyCta, Modal } from "./modules/Engagement";
+import { Awards, PressMentions, CaseStudyCards, IntegrationGrid } from "./modules/Trust";
+import { Spacer, AnchorPoint, Banner, DownloadCards, MultiColumn } from "./modules/Utility";
 
 // Map of module type names to components
 const moduleComponents: Record<string, React.ComponentType<any>> = {
@@ -72,6 +78,37 @@ const moduleComponents: Record<string, React.ComponentType<any>> = {
   formWithImage: FormWithImage,
   formMultiStep: FormMultiStep,
   formDynamic: FormDynamic,
+  // Content
+  richTextBlock: RichTextBlock,
+  quote: Quote,
+  statsCounter: StatsCounter,
+  comparisonTable: ComparisonTable,
+  // Media
+  videoEmbed: VideoEmbed,
+  beforeAfter: BeforeAfter,
+  codeBlock: CodeBlock,
+  embedBlock: EmbedBlock,
+  // Interactive
+  tabs: Tabs,
+  accordion: Accordion,
+  steps: Steps,
+  timeline: Timeline,
+  // Engagement
+  announcementBar: AnnouncementBar,
+  countdown: Countdown,
+  stickyCta: StickyCta,
+  modal: Modal,
+  // Trust
+  awards: Awards,
+  pressMentions: PressMentions,
+  caseStudyCards: CaseStudyCards,
+  integrationGrid: IntegrationGrid,
+  // Utility
+  spacer: Spacer,
+  anchorPoint: AnchorPoint,
+  banner: Banner,
+  downloadCards: DownloadCards,
+  multiColumn: MultiColumn,
 };
 
 interface Module {

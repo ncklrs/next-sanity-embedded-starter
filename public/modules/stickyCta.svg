@@ -1,0 +1,39 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-stickyCta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f0f14;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#332328;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow-stickyCta">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#grad-stickyCta)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid-stickyCta" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f43f5e" stroke-opacity="0.08" stroke-width="1"/>
+  </pattern>
+  <rect width="640" height="360" fill="url(#grid-stickyCta)"/>
+
+  <!-- Wireframe representation -->
+  
+      <rect x="120" y="80" width="400" height="140" rx="8" fill="#f43f5e" fill-opacity="0.05" stroke="#f43f5e" stroke-opacity="0.1" stroke-dasharray="8 4"/>
+      <text x="320" y="160" font-family="system-ui" font-size="12" fill="#fda4af" fill-opacity="0.3" text-anchor="middle">Page Content Area</text>
+      <rect x="440" y="260" width="140" height="50" rx="25" fill="#f43f5e"/>
+      <text x="510" y="292" font-family="system-ui" font-size="14" fill="#fda4af" text-anchor="middle">Get Started →</text>
+    
+
+  <!-- Category badge -->
+  <rect x="20" y="20" width="124" height="28" rx="4" fill="#f43f5e" fill-opacity="0.2"/>
+  <text x="32" y="39" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#fda4af">Engagement</text>
+
+  <!-- Module title -->
+  <text x="320" y="340" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#fda4af" text-anchor="middle" fill-opacity="0.7">Sticky CTA</text>
+</svg>
