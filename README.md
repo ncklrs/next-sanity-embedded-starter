@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js + Sanity Embedded Studio Starter
+
+A [Next.js](https://nextjs.org) project with embedded [Sanity Studio](https://www.sanity.io/docs/studio/embedding-sanity-studio), TypeScript, and Tailwind CSS.
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
+```
+
+2. Set up environment variables:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local` with your Sanity project credentials from [sanity.io/manage](https://sanity.io/manage).
+
+3. Run the development server:
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the site and [http://localhost:3000/studio](http://localhost:3000/studio) for Sanity Studio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── sanity/
+│   ├── lib/
+│   │   └── client.ts           # Sanity client for data fetching
+│   └── schemas/
+│       ├── documents/          # Document type schemas
+│       │   ├── page.ts
+│       │   ├── post.ts
+│       │   └── siteSettings.ts
+│       └── index.ts            # Schema exports
+├── src/app/
+│   └── studio/[[...tool]]/     # Embedded Sanity Studio route
+├── sanity.config.ts            # Sanity configuration
+└── sanity.cli.ts               # Sanity CLI configuration
+```
+
+## Document Types
+
+- **Page**: Basic pages with title, slug, content, and SEO fields
+- **Post**: Blog posts with title, slug, excerpt, featured image, content, and publish date
+- **Site Settings**: Singleton for global site configuration (title, logo, social links, etc.)
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Sanity Documentation](https://www.sanity.io/docs)
+- [next-sanity](https://github.com/sanity-io/next-sanity)
