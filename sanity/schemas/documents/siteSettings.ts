@@ -85,6 +85,76 @@ export const siteSettings = defineType({
       type: "string",
       description: "Copyright or other footer text",
     }),
+    defineField({
+      name: "homepage",
+      title: "Homepage",
+      type: "reference",
+      to: [{ type: "page" }],
+      description: "Select the page to display as the homepage",
+    }),
+    defineField({
+      name: "mainNavigation",
+      title: "Main Navigation",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "label",
+              title: "Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            },
+            {
+              name: "linkType",
+              title: "Link Type",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Internal Page", value: "internal" },
+                  { title: "External URL", value: "external" },
+                  { title: "Anchor Link", value: "anchor" },
+                ],
+              },
+              initialValue: "internal",
+            },
+            {
+              name: "internalLink",
+              title: "Internal Page",
+              type: "reference",
+              to: [{ type: "page" }],
+              hidden: ({ parent }) => parent?.linkType !== "internal",
+            },
+            {
+              name: "externalUrl",
+              title: "External URL",
+              type: "url",
+              hidden: ({ parent }) => parent?.linkType !== "external",
+            },
+            {
+              name: "anchor",
+              title: "Anchor",
+              type: "string",
+              description: "e.g., #features, #pricing",
+              hidden: ({ parent }) => parent?.linkType !== "anchor",
+            },
+          ],
+          preview: {
+            select: {
+              title: "label",
+              linkType: "linkType",
+            },
+            prepare({ title, linkType }) {
+              return {
+                title,
+                subtitle: linkType,
+              };
+            },
+          },
+        },
+      ],
+    }),
   ],
   preview: {
     prepare() {
