@@ -16,7 +16,11 @@ const buttonFields = `{
 }`;
 
 const imageFields = `{
-  asset,
+  asset->{
+    _id,
+    url,
+    metadata{ dimensions }
+  },
   alt,
   hotspot,
   crop
@@ -58,7 +62,7 @@ const heroCenteredProjection = `{
   subheading,
   buttons[]${buttonFields},
   trustedByText,
-  trustedByLogos[]{ asset, alt, companyName },
+  trustedByLogos[]{ asset->{ _id, url }, alt, companyName },
   ${spacingRef},
   ${backgroundColorRef}
 }`;
@@ -625,11 +629,14 @@ const formContactProjection = `{
   heading,
   headingHighlight,
   subheading,
-  ${formFieldsProjection},
-  submitText,
-  successMessage,
-  spacing,
-  backgroundColor
+  form->{
+    _id,
+    name,
+    ${formFieldsProjection},
+    settings
+  },
+  ${spacingRef},
+  ${backgroundColorRef}
 }`;
 
 const formNewsletterProjection = `{
@@ -637,11 +644,14 @@ const formNewsletterProjection = `{
   _key,
   heading,
   subheading,
-  inputPlaceholder,
-  buttonText,
-  privacyText,
-  spacing,
-  backgroundColor
+  note,
+  form->{
+    _id,
+    name,
+    settings
+  },
+  ${spacingRef},
+  ${backgroundColorRef}
 }`;
 
 const formWithImageProjection = `{
@@ -652,11 +662,15 @@ const formWithImageProjection = `{
   headingHighlight,
   subheading,
   image${imageFields},
-  ${formFieldsProjection},
-  submitText,
-  successMessage,
-  spacing,
-  backgroundColor
+  imagePosition,
+  form->{
+    _id,
+    name,
+    ${formFieldsProjection},
+    settings
+  },
+  ${spacingRef},
+  ${backgroundColorRef}
 }`;
 
 const formMultiStepProjection = `{
@@ -668,12 +682,14 @@ const formMultiStepProjection = `{
   subheading,
   steps[]{
     title,
+    description,
     ${formFieldsProjection}
   },
   submitText,
   successMessage,
-  spacing,
-  backgroundColor
+  showProgressBar,
+  ${spacingRef},
+  ${backgroundColorRef}
 }`;
 
 const formDynamicProjection = `{
@@ -683,6 +699,8 @@ const formDynamicProjection = `{
   heading,
   headingHighlight,
   subheading,
+  layout,
+  maxWidth,
   form->{
     _id,
     name,
@@ -690,8 +708,8 @@ const formDynamicProjection = `{
     ${formFieldsProjection},
     settings
   },
-  spacing,
-  backgroundColor
+  ${spacingRef},
+  ${backgroundColorRef}
 }`;
 
 // Trust module projections
@@ -769,6 +787,7 @@ const integrationGridProjection = `{
 const richTextBlockProjection = `{
   _type,
   _key,
+  title,
   content[],
   alignment,
   maxWidth,
@@ -997,57 +1016,67 @@ const modalProjection = `{
 const spacerProjection = `{
   _type,
   _key,
-  height,
-  mobileHeight
+  size,
+  showDivider,
+  dividerStyle,
+  backgroundColor
 }`;
 
 const anchorPointProjection = `{
   _type,
   _key,
-  anchorId,
+  id,
   label
 }`;
 
 const bannerProjection = `{
   _type,
   _key,
-  text,
-  linkText,
-  linkUrl,
-  variant,
-  dismissible
+  title,
+  message,
+  type,
+  icon,
+  link {
+    text,
+    url
+  },
+  dismissible,
+  variant
 }`;
 
 const downloadCardsProjection = `{
   _type,
   _key,
-  badge,
-  heading,
-  headingHighlight,
-  subheading,
+  title,
+  subtitle,
   downloads[]{
     title,
     description,
+    image${imageFields},
+    file{ asset->{ _id, url } },
+    fileUrl,
     fileType,
     fileSize,
-    fileUrl,
-    thumbnail${imageFields}
+    gated
   },
+  variant,
   columns,
-  spacing,
   backgroundColor
 }`;
 
 const multiColumnProjection = `{
   _type,
   _key,
-  columns[]{
-    content[],
-    width
+  columns,
+  columnGap,
+  verticalAlignment,
+  columnContent[]{
+    _key,
+    width,
+    modules[]{ _type, _key, ... }
   },
-  gap,
-  spacing,
-  backgroundColor
+  backgroundColor,
+  reverseOnMobile
 }`;
 
 /**

@@ -1,7 +1,6 @@
 "use client";
 
 import Badge from "../../ui/Badge";
-import type { FeaturesIconCardsProps } from "./types";
 import {
   getSpacingClass,
   getBackgroundClass,
@@ -9,15 +8,35 @@ import {
   splitTextWithGradient,
 } from "./utils";
 
+interface FeatureItem {
+  icon?: string;
+  title: string;
+  description: string;
+  link?: { text: string; url?: string; href?: string };
+}
+
+interface FeaturesIconCardsProps {
+  badge?: string;
+  heading: string;
+  headingHighlight?: string;
+  subheading?: string;
+  features?: FeatureItem[];
+  spacing?: string;
+  backgroundColor?: string;
+}
+
 export default function FeaturesIconCards({
-  section,
-  features,
+  badge,
+  heading,
+  headingHighlight,
+  subheading,
+  features = [],
   spacing = "lg",
   backgroundColor = "default",
 }: FeaturesIconCardsProps) {
   const { beforeGradient, gradientPart, afterGradient } = splitTextWithGradient(
-    section.heading,
-    section.headingGradient
+    heading,
+    headingHighlight
   );
 
   return (
@@ -25,9 +44,9 @@ export default function FeaturesIconCards({
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          {section.badge && (
+          {badge && (
             <Badge variant="gradient" className="mb-4">
-              {section.badge}
+              {badge}
             </Badge>
           )}
           <h2 className="heading-lg mb-4">
@@ -35,7 +54,7 @@ export default function FeaturesIconCards({
             {gradientPart && <span className="text-gradient">{gradientPart}</span>}
             {afterGradient}
           </h2>
-          {section.subheading && <p className="body-lg">{section.subheading}</p>}
+          {subheading && <p className="body-lg">{subheading}</p>}
         </div>
 
         {/* Icon Cards Grid */}
@@ -43,7 +62,7 @@ export default function FeaturesIconCards({
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative glass-card p-8 hover:scale-[1.02] hover:shadow-2xl transition-all duration-300"
+              className="group relative glass-card p-8 hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 overflow-hidden"
               style={{
                 animationDelay: `${index * 100}ms`,
               }}
@@ -75,7 +94,7 @@ export default function FeaturesIconCards({
               {/* Optional Link with Arrow */}
               {feature.link && (
                 <a
-                  href={feature.link.href}
+                  href={feature.link.url || feature.link.href}
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] transition-colors group/link"
                 >
                   <span>{feature.link.text}</span>

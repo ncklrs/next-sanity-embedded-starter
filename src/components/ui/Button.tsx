@@ -34,7 +34,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: "btn-primary",
       secondary: "btn-secondary",
       ghost: "btn-ghost",
-      outline: "border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] hover:border-[var(--border-hover)]",
+      outline: "btn-outline",
     };
     const sizeStyles: Record<ButtonSize, string> = {
       sm: "btn-sm",

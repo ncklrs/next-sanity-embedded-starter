@@ -25,8 +25,15 @@ interface FAQAccordionProps extends BaseFAQProps {
 
 interface FAQTwoColumnProps extends BaseFAQProps {}
 
+// Sanity category format with nested items
+interface SanityFAQCategory {
+  _key?: string;
+  name: string;
+  items?: FAQItem[];
+}
+
 interface FAQWithCategoriesProps extends BaseFAQProps {
-  categories: string[];
+  categories: string[] | SanityFAQCategory[];
   defaultCategory?: string;
 }
 
@@ -39,7 +46,7 @@ interface FAQSimpleProps extends BaseFAQProps {
 
 // FAQAccordion Component
 export function FAQAccordion({
-  items,
+  items: rawItems,
   heading,
   subheading,
   badge,
@@ -48,6 +55,7 @@ export function FAQAccordion({
   backgroundColor,
   className = "",
 }: FAQAccordionProps) {
+  const items = rawItems ?? [];
   const [openIndices, setOpenIndices] = useState<number[]>([]);
 
   const toggleItem = (index: number) => {
@@ -66,22 +74,22 @@ export function FAQAccordion({
 
   return (
     <section
-      className={`py-16 px-4 sm:px-6 lg:px-8 ${className}`}
+      className={`section ${className}`}
       style={{ backgroundColor }}
     >
-      <div className="max-w-3xl mx-auto">
+      <div className="container max-w-3xl mx-auto">
         {(badge || heading || subheading) && (
-          <div className="text-center mb-12">
+          <div className="section-header text-center mb-12">
             {badge && (
-              <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-full">
+              <span className="badge badge-gradient mb-4">
                 {badge}
               </span>
             )}
             {heading && (
-              <h2 className="text-3xl font-bold text-white mb-2">{heading}</h2>
+              <h2 className="display-lg mb-4">{heading}</h2>
             )}
             {subheading && (
-              <p className="text-gray-400 text-lg">{subheading}</p>
+              <p className="body-lg">{subheading}</p>
             )}
           </div>
         )}
@@ -90,19 +98,19 @@ export function FAQAccordion({
           {items.map((item, index) => (
             <div
               key={index}
-              className="bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:border-white/20"
+              className="accordion-item"
             >
               <button
                 onClick={() => toggleItem(index)}
-                className="w-full px-6 py-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-white/5"
+                className="accordion-trigger"
                 aria-expanded={isOpen(index)}
               >
-                <span className="text-lg font-semibold text-white pr-4">
+                <span className="pr-4">
                   {item.question}
                 </span>
                 {iconType === "chevron" ? (
                   <svg
-                    className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                    className={`accordion-icon text-[var(--foreground-subtle)] ${
                       isOpen(index) ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -117,23 +125,19 @@ export function FAQAccordion({
                     />
                   </svg>
                 ) : (
-                  <span className="text-2xl text-gray-400 flex-shrink-0 font-light">
+                  <span className="text-2xl text-[var(--foreground-subtle)] flex-shrink-0 font-light">
                     {isOpen(index) ? "−" : "+"}
                   </span>
                 )}
               </button>
               <div
-                className={`transition-all duration-300 ease-in-out ${
-                  isOpen(index)
-                    ? "max-h-[500px] opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
+                className={`accordion-content ${isOpen(index) ? "open" : ""}`}
                 style={{
-                  overflow: "hidden",
+                  maxHeight: isOpen(index) ? "500px" : "0",
                 }}
               >
-                <div className="px-6 pb-4 pt-2">
-                  <p className="text-gray-300 leading-relaxed">{item.answer}</p>
+                <div className="accordion-body">
+                  {item.answer}
                 </div>
               </div>
             </div>
@@ -146,13 +150,14 @@ export function FAQAccordion({
 
 // FAQTwoColumn Component
 export function FAQTwoColumn({
-  items,
+  items: rawItems,
   heading,
   subheading,
   badge,
   backgroundColor,
   className = "",
 }: FAQTwoColumnProps) {
+  const items = rawItems ?? [];
   const [openIndices, setOpenIndices] = useState<number[]>([]);
 
   const toggleItem = (index: number) => {
@@ -174,18 +179,18 @@ export function FAQTwoColumn({
         return (
           <div
             key={index}
-            className="bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:border-white/20"
+            className="accordion-item"
           >
             <button
               onClick={() => toggleItem(index)}
-              className="w-full px-6 py-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-white/5"
+              className="accordion-trigger"
               aria-expanded={isOpen(index)}
             >
-              <span className="text-lg font-semibold text-white pr-4">
+              <span className="pr-4">
                 {item.question}
               </span>
               <svg
-                className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                className={`accordion-icon text-[var(--foreground-subtle)] ${
                   isOpen(index) ? "rotate-180" : ""
                 }`}
                 fill="none"
@@ -201,17 +206,13 @@ export function FAQTwoColumn({
               </svg>
             </button>
             <div
-              className={`transition-all duration-300 ease-in-out ${
-                isOpen(index)
-                  ? "max-h-[500px] opacity-100"
-                  : "max-h-0 opacity-0"
-              }`}
+              className={`accordion-content ${isOpen(index) ? "open" : ""}`}
               style={{
-                overflow: "hidden",
+                maxHeight: isOpen(index) ? "500px" : "0",
               }}
             >
-              <div className="px-6 pb-4 pt-2">
-                <p className="text-gray-300 leading-relaxed">{item.answer}</p>
+              <div className="accordion-body">
+                {item.answer}
               </div>
             </div>
           </div>
@@ -222,22 +223,22 @@ export function FAQTwoColumn({
 
   return (
     <section
-      className={`py-16 px-4 sm:px-6 lg:px-8 ${className}`}
+      className={`section ${className}`}
       style={{ backgroundColor }}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="container">
         {(badge || heading || subheading) && (
-          <div className="text-center mb-12">
+          <div className="section-header text-center mb-12">
             {badge && (
-              <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-full">
+              <span className="badge badge-gradient mb-4">
                 {badge}
               </span>
             )}
             {heading && (
-              <h2 className="text-3xl font-bold text-white mb-2">{heading}</h2>
+              <h2 className="display-lg mb-4">{heading}</h2>
             )}
             {subheading && (
-              <p className="text-gray-400 text-lg">{subheading}</p>
+              <p className="body-lg">{subheading}</p>
             )}
           </div>
         )}
@@ -253,24 +254,50 @@ export function FAQTwoColumn({
 
 // FAQWithCategories Component
 export function FAQWithCategories({
-  items,
+  items: rawItems,
   heading,
   subheading,
   badge,
-  categories,
+  categories: rawCategories,
   defaultCategory,
   backgroundColor,
   className = "",
 }: FAQWithCategoriesProps) {
+  // Handle both Sanity format (categories with nested items) and component format (flat items + string categories)
+  const isSanityFormat =
+    rawCategories &&
+    rawCategories.length > 0 &&
+    typeof rawCategories[0] === "object" &&
+    "name" in rawCategories[0];
+
+  // Extract category names and flatten items from Sanity format
+  let categoryNames: string[] = [];
+  let allItems: FAQItem[] = [];
+
+  if (isSanityFormat) {
+    const sanityCategories = rawCategories as SanityFAQCategory[];
+    categoryNames = sanityCategories.map((cat) => cat.name);
+    // Flatten items from all categories, adding category field to each
+    allItems = sanityCategories.flatMap((cat) =>
+      (cat.items ?? []).map((item) => ({
+        ...item,
+        category: cat.name,
+      }))
+    );
+  } else {
+    categoryNames = (rawCategories as string[]) ?? [];
+    allItems = rawItems ?? [];
+  }
+
   const [selectedCategory, setSelectedCategory] = useState(
-    defaultCategory || categories[0] || "All"
+    defaultCategory || categoryNames[0] || "All"
   );
   const [openIndices, setOpenIndices] = useState<number[]>([]);
 
   const filteredItems =
     selectedCategory === "All"
-      ? items
-      : items.filter((item) => item.category === selectedCategory);
+      ? allItems
+      : allItems.filter((item) => item.category === selectedCategory);
 
   const toggleItem = (index: number) => {
     setOpenIndices((prev) =>
@@ -288,36 +315,34 @@ export function FAQWithCategories({
 
   return (
     <section
-      className={`py-16 px-4 sm:px-6 lg:px-8 ${className}`}
+      className={`section ${className}`}
       style={{ backgroundColor }}
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="container max-w-4xl mx-auto">
         {(badge || heading || subheading) && (
-          <div className="text-center mb-12">
+          <div className="section-header text-center mb-12">
             {badge && (
-              <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-full">
+              <span className="badge badge-gradient mb-4">
                 {badge}
               </span>
             )}
             {heading && (
-              <h2 className="text-3xl font-bold text-white mb-2">{heading}</h2>
+              <h2 className="display-lg mb-4">{heading}</h2>
             )}
             {subheading && (
-              <p className="text-gray-400 text-lg">{subheading}</p>
+              <p className="body-lg">{subheading}</p>
             )}
           </div>
         )}
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((category) => (
+        <div className="category-tabs">
+          {categoryNames.map((category) => (
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
-              className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-300 ${
-                selectedCategory === category
-                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/30"
-                  : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20"
+              className={`category-tab ${
+                selectedCategory === category ? "active" : ""
               }`}
             >
               {category}
@@ -331,18 +356,18 @@ export function FAQWithCategories({
             filteredItems.map((item, index) => (
               <div
                 key={index}
-                className="bg-white/5 border border-white/10 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:border-white/20 animate-fadeIn"
+                className="accordion-item animate-fade-in"
               >
                 <button
                   onClick={() => toggleItem(index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-white/5"
+                  className="accordion-trigger"
                   aria-expanded={isOpen(index)}
                 >
-                  <span className="text-lg font-semibold text-white pr-4">
+                  <span className="pr-4">
                     {item.question}
                   </span>
                   <svg
-                    className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                    className={`accordion-icon text-[var(--foreground-subtle)] ${
                       isOpen(index) ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -358,26 +383,20 @@ export function FAQWithCategories({
                   </svg>
                 </button>
                 <div
-                  className={`transition-all duration-300 ease-in-out ${
-                    isOpen(index)
-                      ? "max-h-[500px] opacity-100"
-                      : "max-h-0 opacity-0"
-                  }`}
+                  className={`accordion-content ${isOpen(index) ? "open" : ""}`}
                   style={{
-                    overflow: "hidden",
+                    maxHeight: isOpen(index) ? "500px" : "0",
                   }}
                 >
-                  <div className="px-6 pb-4 pt-2">
-                    <p className="text-gray-300 leading-relaxed">
-                      {item.answer}
-                    </p>
+                  <div className="accordion-body">
+                    {item.answer}
                   </div>
                 </div>
               </div>
             ))
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-400 text-lg">
+              <p className="body-lg">
                 No questions found in this category.
               </p>
             </div>
@@ -390,7 +409,7 @@ export function FAQWithCategories({
 
 // FAQSimple Component
 export function FAQSimple({
-  items,
+  items: rawItems,
   heading,
   showCTA = false,
   ctaHeading = "Still have questions?",
@@ -399,6 +418,7 @@ export function FAQSimple({
   backgroundColor,
   className = "",
 }: FAQSimpleProps) {
+  const items = rawItems ?? [];
   const [openIndices, setOpenIndices] = useState<number[]>([]);
 
   const toggleItem = (index: number) => {
@@ -411,29 +431,29 @@ export function FAQSimple({
 
   return (
     <section
-      className={`py-16 px-4 sm:px-6 lg:px-8 ${className}`}
+      className={`section ${className}`}
       style={{ backgroundColor }}
     >
-      <div className="max-w-3xl mx-auto">
+      <div className="container max-w-3xl mx-auto">
         {heading && (
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">
+          <h2 className="display-lg mb-8 text-center">
             {heading}
           </h2>
         )}
 
         <div className="space-y-6">
           {items.map((item, index) => (
-            <div key={index} className="border-b border-white/10 pb-6 last:border-0">
+            <div key={index} className="border-b border-[var(--border)] pb-6 last:border-0">
               <button
                 onClick={() => toggleItem(index)}
                 className="w-full flex items-start justify-between text-left group"
                 aria-expanded={isOpen(index)}
               >
-                <span className="text-lg font-semibold text-white pr-4 group-hover:text-blue-400 transition-colors duration-200">
+                <span className="text-lg font-semibold text-[var(--foreground)] pr-4 group-hover:text-[var(--accent-violet)] transition-colors duration-200">
                   {item.question}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-gray-400 flex-shrink-0 mt-1 transition-transform duration-300 ${
+                  className={`w-5 h-5 text-[var(--foreground-subtle)] flex-shrink-0 mt-1 transition-transform duration-300 ${
                     isOpen(index) ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -458,23 +478,23 @@ export function FAQSimple({
                   overflow: "hidden",
                 }}
               >
-                <p className="text-gray-300 leading-relaxed">{item.answer}</p>
+                <p className="text-[var(--foreground-muted)] leading-relaxed">{item.answer}</p>
               </div>
             </div>
           ))}
         </div>
 
         {showCTA && (
-          <div className="mt-16 text-center bg-white/5 border border-white/10 rounded-lg p-8 backdrop-blur-sm">
-            <h3 className="text-2xl font-bold text-white mb-4">
+          <div className="mt-16 text-center glass-card p-8">
+            <h3 className="heading-lg mb-4">
               {ctaHeading}
             </h3>
-            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+            <p className="body-lg mb-6 max-w-md mx-auto">
               Can't find the answer you're looking for? Our team is here to help.
             </p>
             <a
               href={ctaButtonHref}
-              className="inline-block px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors duration-300 shadow-lg shadow-blue-500/30"
+              className="btn btn-primary"
             >
               {ctaButtonText}
             </a>

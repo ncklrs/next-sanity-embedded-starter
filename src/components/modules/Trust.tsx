@@ -6,6 +6,25 @@ import { urlFor } from "@/lib/sanity";
 import { ArrowRightIcon } from "@/components/icons";
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getBackgroundStyle(backgroundColor?: string): React.CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // TYPE DEFINITIONS
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -196,7 +215,7 @@ export function Awards({
   };
 
   return (
-    <section className={`section ${className}`} style={backgroundColor ? { backgroundColor } : undefined}>
+    <section className={`section ${className}`} style={getBackgroundStyle(backgroundColor)}>
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 
@@ -246,7 +265,7 @@ export function PressMentions({
   const duplicatedMentions = variant === "carousel" ? [...mentions, ...mentions] : mentions;
 
   return (
-    <section className={`section ${className}`} style={backgroundColor ? { backgroundColor } : undefined}>
+    <section className={`section ${className}`} style={getBackgroundStyle(backgroundColor)}>
       <div className="container">
         {title && <SectionHeader title={title} />}
 
@@ -475,7 +494,7 @@ export function CaseStudyCards({
   };
 
   return (
-    <section className={`section ${className}`} style={backgroundColor ? { backgroundColor } : undefined}>
+    <section className={`section ${className}`} style={getBackgroundStyle(backgroundColor)}>
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 
@@ -627,7 +646,7 @@ export function IntegrationGrid({
   };
 
   return (
-    <section className={`section ${className}`} style={backgroundColor ? { backgroundColor } : undefined}>
+    <section className={`section ${className}`} style={getBackgroundStyle(backgroundColor)}>
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 

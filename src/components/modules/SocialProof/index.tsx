@@ -3,6 +3,25 @@
 import { forwardRef, useEffect, useRef, useState, type HTMLAttributes } from "react";
 import Image from "next/image";
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getBackgroundStyle(backgroundColor?: string): React.CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
 // TypeScript Interfaces
 export interface Logo {
   name: string;
@@ -145,7 +164,7 @@ export const SocialProofLogos = forwardRef<HTMLElement, SocialProofLogosProps>(
       <section
         ref={ref}
         className={`section ${spacingMap[spacing]} ${className}`}
-        style={backgroundColor ? { backgroundColor } : undefined}
+        style={getBackgroundStyle(backgroundColor)}
         {...props}
       >
         <div className="container">
@@ -256,7 +275,7 @@ export const SocialProofStats = forwardRef<HTMLElement, SocialProofStatsProps>(
         <section
           ref={ref}
           className={`section ${spacingMap[spacing]} ${className}`}
-          style={backgroundColor ? { backgroundColor } : undefined}
+          style={getBackgroundStyle(backgroundColor)}
           {...props}
         >
           <div className="container" ref={inViewRef}>
@@ -291,7 +310,7 @@ export const SocialProofStats = forwardRef<HTMLElement, SocialProofStatsProps>(
         <section
           ref={ref}
           className={`section ${spacingMap[spacing]} ${className}`}
-          style={backgroundColor ? { backgroundColor } : undefined}
+          style={getBackgroundStyle(backgroundColor)}
           {...props}
         >
           <div className="container" ref={inViewRef}>
@@ -327,7 +346,7 @@ export const SocialProofStats = forwardRef<HTMLElement, SocialProofStatsProps>(
       <section
         ref={ref}
         className={`section ${spacingMap[spacing]} ${className}`}
-        style={backgroundColor ? { backgroundColor } : undefined}
+        style={getBackgroundStyle(backgroundColor)}
         {...props}
       >
         <div className="container" ref={inViewRef}>

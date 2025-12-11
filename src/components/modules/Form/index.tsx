@@ -4,6 +4,25 @@ import { useState, type FormEvent, type ChangeEvent, type CSSProperties } from "
 import Button from "@/components/ui/Button";
 
 // ============================================================================
+// Shared Utilities
+// ============================================================================
+
+function getBackgroundStyle(backgroundColor?: string): CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// ============================================================================
 // Types & Interfaces
 // ============================================================================
 
@@ -263,10 +282,12 @@ export const FormContact = ({
   className = "",
   heading = "Get in Touch",
   description = "Fill out the form below and we'll get back to you as soon as possible.",
-  fields = DEFAULT_CONTACT_FIELDS,
+  fields,
   submitText = "Send Message",
   onSubmit,
 }: FormContactProps) => {
+  // Handle null/undefined fields from Sanity
+  const safeFields = fields ?? DEFAULT_CONTACT_FIELDS;
   const [formState, setFormState] = useState<FormState>({
     data: {},
     errors: {},
@@ -285,7 +306,7 @@ export const FormContact = ({
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    fields.forEach((field) => {
+    safeFields.forEach((field) => {
       const value = formState.data[field.name] || "";
 
       if (field.required && !value.trim()) {
@@ -329,7 +350,7 @@ export const FormContact = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -341,7 +362,7 @@ export const FormContact = ({
         ) : (
           <form onSubmit={handleSubmit} className="glass-card p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {fields.map((field) => (
+              {safeFields.map((field) => (
                 <div
                   key={field.name}
                   className={field.type === "textarea" ? "md:col-span-2" : ""}
@@ -419,7 +440,7 @@ export const FormNewsletter = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -479,10 +500,12 @@ export const FormWithImage = ({
   description = "Tell us about your project and we'll get back to you within 24 hours.",
   image = "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800",
   imagePosition = "right",
-  fields = DEFAULT_CONTACT_FIELDS,
+  fields,
   submitText = "Send Message",
   onSubmit,
 }: FormWithImageProps) => {
+  // Handle null/undefined fields from Sanity
+  const safeFields = fields ?? DEFAULT_CONTACT_FIELDS;
   const [formState, setFormState] = useState<FormState>({
     data: {},
     errors: {},
@@ -501,7 +524,7 @@ export const FormWithImage = ({
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    fields.forEach((field) => {
+    safeFields.forEach((field) => {
       const value = formState.data[field.name] || "";
 
       if (field.required && !value.trim()) {
@@ -532,7 +555,7 @@ export const FormWithImage = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   const formContent = (
     <div className="p-8 md:p-12">
@@ -543,7 +566,7 @@ export const FormWithImage = ({
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
-            {fields.map((field) => (
+            {safeFields.map((field) => (
               <FormFieldRenderer
                 key={field.name}
                 field={field}
@@ -611,10 +634,11 @@ export const FormWithImage = ({
 export const FormMultiStep = ({
   backgroundColor,
   className = "",
-  steps,
+  steps: rawSteps,
   submitText = "Submit",
   onSubmit,
 }: FormMultiStepProps) => {
+  const steps = rawSteps ?? [];
   const [currentStep, setCurrentStep] = useState(0);
   const [formState, setFormState] = useState<FormState>({
     data: {},
@@ -632,7 +656,8 @@ export const FormMultiStep = ({
   };
 
   const validateCurrentStep = (): boolean => {
-    const currentFields = steps[currentStep].fields;
+    if (!steps[currentStep]) return true;
+    const currentFields = steps[currentStep].fields ?? [];
     const errors: Record<string, string> = {};
 
     currentFields.forEach((field) => {
@@ -676,9 +701,20 @@ export const FormMultiStep = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
+
+  // Early return if no steps available or current step has no fields
+  if (steps.length === 0 || !currentStepData || !currentStepData.fields || currentStepData.fields.length === 0) {
+    return (
+      <section className={`section ${className}`} style={style}>
+        <div className="container max-w-3xl">
+          <p className="text-center text-[var(--foreground-muted)]">Form not configured</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`section ${className}`} style={style}>

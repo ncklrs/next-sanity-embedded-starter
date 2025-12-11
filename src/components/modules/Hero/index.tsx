@@ -6,6 +6,36 @@ import Badge from "@/components/ui/Badge";
 import { ArrowRightIcon, CheckIcon, PlayIcon } from "@/components/icons";
 import Image from "next/image";
 
+/**
+ * Renders a heading with optional gradient highlight text.
+ * Handles two patterns:
+ * 1. gradientText is a substring of heading → splits and highlights that portion
+ * 2. gradientText is separate text → concatenates heading + gradientText with highlight
+ */
+function renderHeadingWithHighlight(heading: string, gradientText?: string): ReactNode {
+  if (!gradientText) return heading;
+
+  // Pattern 1: gradientText is within heading - split and highlight
+  if (heading.includes(gradientText)) {
+    const parts = heading.split(gradientText);
+    return (
+      <>
+        {parts[0]}
+        <span className="text-gradient">{gradientText}</span>
+        {parts[1]}
+      </>
+    );
+  }
+
+  // Pattern 2: gradientText is separate - concatenate with highlight
+  return (
+    <>
+      {heading}{heading && gradientText ? " " : ""}
+      <span className="text-gradient">{gradientText}</span>
+    </>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // SHARED TYPES
 // ═══════════════════════════════════════════════════════════════════════════
@@ -29,30 +59,56 @@ interface Company {
 // HERO DEFAULT
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Sanity button structure
+interface SanityButton {
+  text?: string;
+  link?: string;
+  variant?: "primary" | "secondary" | "outline";
+}
+
 export interface HeroDefaultProps {
   badge?: {
     text: string;
     variant?: "default" | "gradient" | "success" | "new";
   };
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   headingGradientText?: string;
-  subheading: string;
+  subheading?: string;
+  // Support both naming conventions
   primaryCTA?: CTAButton;
   secondaryCTA?: CTAButton;
+  primaryButton?: SanityButton;
+  secondaryButton?: SanityButton;
   backgroundStyle?: "default" | "gradient-orbs" | "grid" | "particles";
   alignment?: "center" | "left";
 }
 
 export function HeroDefault({
   badge,
-  heading,
+  heading = "",
+  headingHighlight,
   headingGradientText,
-  subheading,
+  subheading = "",
   primaryCTA,
   secondaryCTA,
+  primaryButton,
+  secondaryButton,
   backgroundStyle = "gradient-orbs",
   alignment = "center",
 }: HeroDefaultProps) {
+  // Map Sanity fields to component fields
+  const gradientText = headingGradientText || headingHighlight;
+  const primary = primaryCTA || (primaryButton?.text ? {
+    label: primaryButton.text,
+    href: primaryButton.link,
+    variant: primaryButton.variant as CTAButton["variant"],
+  } : undefined);
+  const secondary = secondaryCTA || (secondaryButton?.text ? {
+    label: secondaryButton.text,
+    href: secondaryButton.link,
+    variant: secondaryButton.variant as CTAButton["variant"],
+  } : undefined);
   const isCenter = alignment === "center";
 
   return (
@@ -96,15 +152,7 @@ export function HeroDefault({
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
             style={{ opacity: 0 }}
           >
-            {headingGradientText ? (
-              <>
-                {heading.replace(headingGradientText, "").split(headingGradientText)[0]}
-                <span className="text-gradient">{headingGradientText}</span>
-                {heading.split(headingGradientText)[1]}
-              </>
-            ) : (
-              heading
-            )}
+            {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
@@ -120,24 +168,24 @@ export function HeroDefault({
             }`}
             style={{ opacity: 0 }}
           >
-            {primaryCTA && (
+            {primary && (
               <Button
-                variant={primaryCTA.variant || "primary"}
+                variant={primary.variant || "primary"}
                 size="lg"
-                onClick={primaryCTA.onClick}
-                rightIcon={primaryCTA.icon || <ArrowRightIcon className="w-4 h-4" />}
+                onClick={primary.onClick}
+                rightIcon={primary.icon || <ArrowRightIcon className="w-4 h-4" />}
               >
-                {primaryCTA.label}
+                {primary.label}
               </Button>
             )}
-            {secondaryCTA && (
+            {secondary && (
               <Button
-                variant={secondaryCTA.variant || "secondary"}
+                variant={secondary.variant || "secondary"}
                 size="lg"
-                onClick={secondaryCTA.onClick}
-                rightIcon={secondaryCTA.icon}
+                onClick={secondary.onClick}
+                rightIcon={secondary.icon}
               >
-                {secondaryCTA.label}
+                {secondary.label}
               </Button>
             )}
           </div>
@@ -156,23 +204,48 @@ export interface HeroCenteredProps {
     text: string;
     variant?: "default" | "gradient" | "success" | "new";
   };
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   headingGradientText?: string;
-  subheading: string;
-  buttons?: CTAButton[];
+  subheading?: string;
+  buttons?: (CTAButton | SanityButton)[];
   companies?: Company[];
   companiesHeading?: string;
+  trustedByText?: string;
+  trustedByLogos?: Array<{ asset?: any; alt?: string; companyName?: string }>;
 }
 
 export function HeroCentered({
   badge,
-  heading,
+  heading = "",
+  headingHighlight,
   headingGradientText,
-  subheading,
-  buttons = [],
-  companies = [],
+  subheading = "",
+  buttons,
+  companies,
   companiesHeading = "Trusted by leading companies",
+  trustedByText,
+  trustedByLogos,
 }: HeroCenteredProps) {
+  // Handle null values from Sanity
+  const safeButtons = buttons ?? [];
+  const safeCompanies = companies ?? [];
+  const safeLogos = trustedByLogos ?? [];
+
+  // Map Sanity fields
+  const gradientText = headingGradientText || headingHighlight;
+  const displayCompaniesHeading = trustedByText || companiesHeading;
+
+  // Map buttons to consistent format
+  const mappedButtons: CTAButton[] = safeButtons.map((btn) => {
+    if ('label' in btn) return btn as CTAButton;
+    const sanityBtn = btn as SanityButton;
+    return {
+      label: sanityBtn.text || "",
+      href: sanityBtn.link,
+      variant: sanityBtn.variant as CTAButton["variant"],
+    };
+  }).filter(btn => btn.label);
   return (
     <section className="hero">
       {/* Background */}
@@ -197,15 +270,7 @@ export function HeroCentered({
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
             style={{ opacity: 0 }}
           >
-            {headingGradientText ? (
-              <>
-                {heading.replace(headingGradientText, "").split(headingGradientText)[0]}
-                <span className="text-gradient">{headingGradientText}</span>
-                {heading.split(headingGradientText)[1]}
-              </>
-            ) : (
-              heading
-            )}
+            {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
@@ -215,40 +280,52 @@ export function HeroCentered({
             {subheading}
           </p>
 
-          <div
-            className="flex flex-wrap gap-4 justify-center mb-16 animate-fade-in-up animate-delay-300"
-            style={{ opacity: 0 }}
-          >
-            {buttons.map((button, index) => (
-              <Button
-                key={index}
-                variant={button.variant || (index === 0 ? "primary" : "secondary")}
-                size="lg"
-                onClick={button.onClick}
-                rightIcon={button.icon || (index === 0 ? <ArrowRightIcon className="w-4 h-4" /> : undefined)}
-              >
-                {button.label}
-              </Button>
-            ))}
-          </div>
+          {mappedButtons.length > 0 && (
+            <div
+              className="flex flex-wrap gap-4 justify-center mb-16 animate-fade-in-up animate-delay-300"
+              style={{ opacity: 0 }}
+            >
+              {mappedButtons.map((button, index) => (
+                <Button
+                  key={index}
+                  variant={button.variant || (index === 0 ? "primary" : "secondary")}
+                  size="lg"
+                  onClick={button.onClick}
+                  rightIcon={button.icon || (index === 0 ? <ArrowRightIcon className="w-4 h-4" /> : undefined)}
+                >
+                  {button.label}
+                </Button>
+              ))}
+            </div>
+          )}
 
           {/* Logo Cloud */}
-          {companies.length > 0 && (
+          {(safeCompanies.length > 0 || safeLogos.length > 0) && (
             <div
               className="animate-fade-in-up animate-delay-400"
               style={{ opacity: 0 }}
             >
               <p className="body-sm mb-8 uppercase tracking-wider">
-                {companiesHeading}
+                {displayCompaniesHeading}
               </p>
               <div className="logo-cloud">
-                {companies.map((company, index) => (
+                {safeCompanies.map((company, index) => (
                   <Image
                     key={index}
                     src={company.logo}
                     alt={company.name}
                     width={company.width || 120}
                     height={company.height || 40}
+                    className="opacity-50 grayscale hover:opacity-70 hover:grayscale-0 transition-all duration-300"
+                  />
+                ))}
+                {safeLogos.filter(logo => logo.asset?.url).map((logo, index) => (
+                  <Image
+                    key={`sanity-${index}`}
+                    src={logo.asset.url}
+                    alt={logo.alt || logo.companyName || "Company logo"}
+                    width={120}
+                    height={40}
                     className="opacity-50 grayscale hover:opacity-70 hover:grayscale-0 transition-all duration-300"
                   />
                 ))}
@@ -270,18 +347,23 @@ export interface HeroSplitProps {
     text: string;
     variant?: "default" | "gradient" | "success" | "new";
   };
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   headingGradientText?: string;
-  subheading: string;
+  subheading?: string;
   features?: Array<{
-    icon?: ReactNode;
+    icon?: ReactNode | string;
     text: string;
   }>;
+  buttons?: (CTAButton | SanityButton)[];
   primaryCTA?: CTAButton;
   secondaryCTA?: CTAButton;
-  image: {
-    src: string;
-    alt: string;
+  primaryButton?: SanityButton;
+  secondaryButton?: SanityButton;
+  image?: {
+    src?: string;
+    alt?: string;
+    asset?: any;
     width?: number;
     height?: number;
   };
@@ -290,15 +372,49 @@ export interface HeroSplitProps {
 
 export function HeroSplit({
   badge,
-  heading,
+  heading = "",
+  headingHighlight,
   headingGradientText,
-  subheading,
+  subheading = "",
   features = [],
+  buttons = [],
   primaryCTA,
   secondaryCTA,
+  primaryButton,
+  secondaryButton,
   image,
   imagePosition = "right",
 }: HeroSplitProps) {
+  // Map Sanity fields
+  const gradientText = headingGradientText || headingHighlight;
+
+  // Map buttons - support both array and individual buttons
+  let primary = primaryCTA || (primaryButton?.text ? {
+    label: primaryButton.text,
+    href: primaryButton.link,
+    variant: primaryButton.variant as CTAButton["variant"],
+  } : undefined);
+  let secondary = secondaryCTA || (secondaryButton?.text ? {
+    label: secondaryButton.text,
+    href: secondaryButton.link,
+    variant: secondaryButton.variant as CTAButton["variant"],
+  } : undefined);
+
+  // If buttons array is provided, use first two as primary/secondary
+  if (buttons.length > 0 && !primary) {
+    const mappedButtons = buttons.map((btn) => {
+      if ('label' in btn) return btn as CTAButton;
+      const sanityBtn = btn as SanityButton;
+      return {
+        label: sanityBtn.text || "",
+        href: sanityBtn.link,
+        variant: sanityBtn.variant as CTAButton["variant"],
+      };
+    }).filter(btn => btn.label);
+    primary = mappedButtons[0];
+    secondary = mappedButtons[1];
+  }
+
   const imageOnLeft = imagePosition === "left";
 
   return (
@@ -325,15 +441,7 @@ export function HeroSplit({
               className="display-lg mt-6 mb-6 animate-fade-in-up animate-delay-100"
               style={{ opacity: 0 }}
             >
-              {headingGradientText ? (
-                <>
-                  {heading.replace(headingGradientText, "").split(headingGradientText)[0]}
-                  <span className="text-gradient">{headingGradientText}</span>
-                  {heading.split(headingGradientText)[1]}
-                </>
-              ) : (
-                heading
-              )}
+              {renderHeadingWithHighlight(heading, gradientText)}
             </h1>
 
             <p
@@ -365,50 +473,52 @@ export function HeroSplit({
               className="flex flex-wrap gap-4 animate-fade-in-up animate-delay-400"
               style={{ opacity: 0 }}
             >
-              {primaryCTA && (
+              {primary && (
                 <Button
-                  variant={primaryCTA.variant || "primary"}
+                  variant={primary.variant || "primary"}
                   size="lg"
-                  onClick={primaryCTA.onClick}
-                  rightIcon={primaryCTA.icon || <ArrowRightIcon className="w-4 h-4" />}
+                  onClick={primary.onClick}
+                  rightIcon={primary.icon || <ArrowRightIcon className="w-4 h-4" />}
                 >
-                  {primaryCTA.label}
+                  {primary.label}
                 </Button>
               )}
-              {secondaryCTA && (
+              {secondary && (
                 <Button
-                  variant={secondaryCTA.variant || "secondary"}
+                  variant={secondary.variant || "secondary"}
                   size="lg"
-                  onClick={secondaryCTA.onClick}
-                  rightIcon={secondaryCTA.icon}
+                  onClick={secondary.onClick}
+                  rightIcon={secondary.icon}
                 >
-                  {secondaryCTA.label}
+                  {secondary.label}
                 </Button>
               )}
             </div>
           </div>
 
           {/* Image Side */}
-          <div
-            className={`relative animate-fade-in-up animate-delay-200 ${imageOnLeft ? "lg:order-1" : ""}`}
-            style={{ opacity: 0 }}
-          >
-            <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] glow-cyan">
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={image.width || 800}
-                height={image.height || 600}
-                className="w-full h-auto"
-                priority
+          {image && (image.src || image.asset) && (
+            <div
+              className={`relative animate-fade-in-up animate-delay-200 ${imageOnLeft ? "lg:order-1" : ""}`}
+              style={{ opacity: 0 }}
+            >
+              <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] glow-cyan">
+                <Image
+                  src={image.src || (image.asset?.url) || ""}
+                  alt={image.alt || ""}
+                  width={image.width || 800}
+                  height={image.height || 600}
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
+              {/* Decorative gradient orb behind image */}
+              <div
+                className="absolute -z-10 w-[120%] h-[120%] -top-[10%] -left-[10%] rounded-full blur-[120px] opacity-20"
+                style={{ background: "var(--gradient-primary)" }}
               />
             </div>
-            {/* Decorative gradient orb behind image */}
-            <div
-              className="absolute -z-10 w-[120%] h-[120%] -top-[10%] -left-[10%] rounded-full blur-[120px] opacity-20"
-              style={{ background: "var(--gradient-primary)" }}
-            />
-          </div>
+          )}
         </div>
       </div>
     </section>
@@ -424,49 +534,91 @@ export interface HeroVideoProps {
     text: string;
     variant?: "default" | "gradient" | "success" | "new";
   };
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   headingGradientText?: string;
-  subheading: string;
+  subheading?: string;
+  // Support both naming conventions
   primaryCTA?: CTAButton;
   secondaryCTA?: CTAButton;
-  video: {
+  buttons?: (CTAButton | SanityButton)[];
+  // Component format
+  video?: {
     src: string;
     poster?: string;
     autoplay?: boolean;
     loop?: boolean;
     muted?: boolean;
   };
+  // Sanity format
+  videoUrl?: string;
+  videoPoster?: { asset?: any; alt?: string };
+  overlay?: boolean;
   overlayOpacity?: number;
 }
 
 export function HeroVideo({
   badge,
-  heading,
+  heading = "",
+  headingHighlight,
   headingGradientText,
-  subheading,
+  subheading = "",
   primaryCTA,
   secondaryCTA,
+  buttons = [],
   video,
+  videoUrl,
+  videoPoster,
+  overlay = true,
   overlayOpacity = 0.6,
 }: HeroVideoProps) {
+  // Map Sanity fields
+  const gradientText = headingGradientText || headingHighlight;
+
+  // Map video fields
+  const videoSrc = video?.src || videoUrl || "";
+  const videoPosterUrl = video?.poster || videoPoster?.asset?.url || "";
+  const showOverlay = overlay !== false;
+
+  // Map buttons - support both array and individual buttons
+  let primary = primaryCTA;
+  let secondary = secondaryCTA;
+
+  if (buttons.length > 0 && !primary) {
+    const mappedButtons = buttons.map((btn) => {
+      if ('label' in btn) return btn as CTAButton;
+      const sanityBtn = btn as SanityButton;
+      return {
+        label: sanityBtn.text || "",
+        href: sanityBtn.link,
+        variant: sanityBtn.variant as CTAButton["variant"],
+      };
+    }).filter(btn => btn.label);
+    primary = mappedButtons[0];
+    secondary = mappedButtons[1];
+  }
   return (
     <section className="hero">
       {/* Video Background */}
       <div className="hero-background">
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          src={video.src}
-          poster={video.poster}
-          autoPlay={video.autoplay !== false}
-          loop={video.loop !== false}
-          muted={video.muted !== false}
-          playsInline
-        />
+        {videoSrc && (
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={videoSrc}
+            poster={videoPosterUrl || undefined}
+            autoPlay={video?.autoplay !== false}
+            loop={video?.loop !== false}
+            muted={video?.muted !== false}
+            playsInline
+          />
+        )}
         {/* Dark Overlay */}
-        <div
-          className="absolute inset-0 bg-black"
-          style={{ opacity: overlayOpacity }}
-        />
+        {showOverlay && (
+          <div
+            className="absolute inset-0 bg-black"
+            style={{ opacity: overlayOpacity }}
+          />
+        )}
         <div className="noise-overlay" />
       </div>
 
@@ -485,15 +637,7 @@ export function HeroVideo({
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
             style={{ opacity: 0 }}
           >
-            {headingGradientText ? (
-              <>
-                {heading.replace(headingGradientText, "").split(headingGradientText)[0]}
-                <span className="text-gradient">{headingGradientText}</span>
-                {heading.split(headingGradientText)[1]}
-              </>
-            ) : (
-              heading
-            )}
+            {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
@@ -507,24 +651,24 @@ export function HeroVideo({
             className="flex flex-wrap gap-4 justify-center animate-fade-in-up animate-delay-300"
             style={{ opacity: 0 }}
           >
-            {primaryCTA && (
+            {primary && (
               <Button
-                variant={primaryCTA.variant || "primary"}
+                variant={primary.variant || "primary"}
                 size="lg"
-                onClick={primaryCTA.onClick}
-                rightIcon={primaryCTA.icon || <ArrowRightIcon className="w-4 h-4" />}
+                onClick={primary.onClick}
+                rightIcon={primary.icon || <ArrowRightIcon className="w-4 h-4" />}
               >
-                {primaryCTA.label}
+                {primary.label}
               </Button>
             )}
-            {secondaryCTA && (
+            {secondary && (
               <Button
-                variant={secondaryCTA.variant || "secondary"}
+                variant={secondary.variant || "secondary"}
                 size="lg"
-                onClick={secondaryCTA.onClick}
-                leftIcon={secondaryCTA.icon || <PlayIcon className="w-4 h-4" />}
+                onClick={secondary.onClick}
+                leftIcon={secondary.icon || <PlayIcon className="w-4 h-4" />}
               >
-                {secondaryCTA.label}
+                {secondary.label}
               </Button>
             )}
           </div>
@@ -541,26 +685,48 @@ export function HeroVideo({
 export interface HeroMinimalProps {
   announcement?: {
     text: string;
-    link?: {
+    // Support both formats
+    link?: string | {
       label: string;
       href: string;
     };
   };
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   headingGradientText?: string;
-  subheading: string;
+  subheading?: string;
+  // Support both naming conventions
   cta?: CTAButton;
+  singleButton?: SanityButton;
   showBackground?: boolean;
 }
 
 export function HeroMinimal({
   announcement,
-  heading,
+  heading = "",
+  headingHighlight,
   headingGradientText,
-  subheading,
+  subheading = "",
   cta,
+  singleButton,
   showBackground = true,
 }: HeroMinimalProps) {
+  // Map Sanity fields
+  const gradientText = headingGradientText || headingHighlight;
+
+  // Map CTA button
+  const ctaButton = cta || (singleButton?.text ? {
+    label: singleButton.text,
+    href: singleButton.link,
+    variant: singleButton.variant as CTAButton["variant"],
+  } : undefined);
+
+  // Map announcement link (Sanity uses string, component expects object)
+  const announcementLink = announcement?.link
+    ? (typeof announcement.link === 'string'
+        ? { label: "Learn more", href: announcement.link }
+        : announcement.link)
+    : undefined;
   return (
     <section className="hero">
       {/* Minimal Background */}
@@ -583,14 +749,14 @@ export function HeroMinimal({
                 <span className="text-sm text-[var(--foreground-muted)]">
                   {announcement.text}
                 </span>
-                {announcement.link && (
+                {announcementLink && (
                   <>
                     <span className="w-px h-4 bg-[var(--border)]" />
                     <a
-                      href={announcement.link.href}
+                      href={announcementLink.href}
                       className="text-sm font-medium text-[var(--accent-cyan)] hover:text-[var(--accent-violet)] transition-colors inline-flex items-center gap-1"
                     >
-                      {announcement.link.label}
+                      {announcementLink.label}
                       <ArrowRightIcon className="w-3 h-3" />
                     </a>
                   </>
@@ -603,15 +769,7 @@ export function HeroMinimal({
             className="display-xl mb-6 animate-fade-in-up animate-delay-100"
             style={{ opacity: 0 }}
           >
-            {headingGradientText ? (
-              <>
-                {heading.replace(headingGradientText, "").split(headingGradientText)[0]}
-                <span className="text-gradient">{headingGradientText}</span>
-                {heading.split(headingGradientText)[1]}
-              </>
-            ) : (
-              heading
-            )}
+            {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
@@ -621,18 +779,18 @@ export function HeroMinimal({
             {subheading}
           </p>
 
-          {cta && (
+          {ctaButton && (
             <div
               className="animate-fade-in-up animate-delay-300 flex justify-center"
               style={{ opacity: 0 }}
             >
               <Button
-                variant={cta.variant || "primary"}
+                variant={ctaButton.variant || "primary"}
                 size="lg"
-                onClick={cta.onClick}
-                rightIcon={cta.icon || <ArrowRightIcon className="w-4 h-4" />}
+                onClick={ctaButton.onClick}
+                rightIcon={ctaButton.icon || <ArrowRightIcon className="w-4 h-4" />}
               >
-                {cta.label}
+                {ctaButton.label}
               </Button>
             </div>
           )}

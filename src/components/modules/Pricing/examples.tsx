@@ -215,7 +215,7 @@ export function PricingComparisonExample() {
       heading="Compare all features"
       subheading="See exactly what's included in each plan and find the perfect fit for your team."
       plans={samplePlans}
-      comparisonFeatures={comparisonFeatures}
+      features={comparisonFeatures}
       onPlanSelect={handlePlanSelect}
     />
   );

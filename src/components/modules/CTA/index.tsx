@@ -106,7 +106,7 @@ export function CTADefault({
                         : button.variant === "ghost"
                         ? "btn-ghost"
                         : button.variant === "outline"
-                        ? "border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] hover:border-[var(--border-hover)]"
+                        ? "btn-outline"
                         : "btn-primary"
                     } ${
                       button.size === "lg"
@@ -297,7 +297,7 @@ export function CTASplit({
                     : button.variant === "ghost"
                     ? "btn-ghost"
                     : button.variant === "outline"
-                    ? "border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] hover:border-[var(--border-hover)]"
+                    ? "btn-outline"
                     : "btn-primary"
                 } ${
                   button.size === "lg"
@@ -373,11 +373,18 @@ export function CTASplit({
 // ============================================================================
 
 export interface CTABannerProps {
-  heading: string;
-  button: BaseButtonConfig;
+  // Component props
+  heading?: string;
+  button?: BaseButtonConfig;
   background?: "gradient" | "solid" | "image";
   backgroundImage?: string;
   overlay?: boolean;
+  // Sanity field names
+  text?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  dismissible?: boolean;
+  backgroundColor?: string;
 }
 
 export function CTABanner({
@@ -386,7 +393,18 @@ export function CTABanner({
   background = "gradient",
   backgroundImage,
   overlay = true,
+  // Sanity fields
+  text,
+  buttonText,
+  buttonLink,
+  backgroundColor,
 }: CTABannerProps) {
+  // Use Sanity fields as fallbacks
+  const displayHeading = heading || text || "";
+  const displayButton = button || {
+    label: buttonText || "Learn More",
+    href: buttonLink,
+  };
   const getBackgroundStyle = () => {
     if (background === "image" && backgroundImage) {
       return {
@@ -428,42 +446,44 @@ export function CTABanner({
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-8 md:py-12">
           <h2 className="heading-lg text-center md:text-left text-white flex-1">
-            {heading}
+            {displayHeading}
           </h2>
 
-          <div className="flex-shrink-0">
-            {button.href ? (
-              <a
-                href={button.href}
-                className={`btn ${
-                  button.variant === "secondary"
-                    ? "btn-secondary"
-                    : button.variant === "ghost"
-                    ? "btn-ghost"
-                    : button.variant === "outline"
-                    ? "border-2 border-white bg-transparent text-white hover:bg-white hover:text-[var(--accent-violet)]"
-                    : "bg-white text-[var(--accent-violet)] hover:shadow-lg"
-                } ${
-                  button.size === "lg"
-                    ? "btn-lg"
-                    : button.size === "sm"
-                    ? "btn-sm"
-                    : ""
-                }`}
-              >
-                {button.label}
-              </a>
-            ) : (
-              <Button
-                variant={button.variant || "primary"}
-                size={button.size || "md"}
-                onClick={button.onClick}
-                className="bg-white text-[var(--accent-violet)] hover:shadow-lg"
-              >
-                {button.label}
-              </Button>
-            )}
-          </div>
+          {displayButton.label && (
+            <div className="flex-shrink-0">
+              {displayButton.href ? (
+                <a
+                  href={displayButton.href}
+                  className={`btn ${
+                    displayButton.variant === "secondary"
+                      ? "btn-secondary"
+                      : displayButton.variant === "ghost"
+                      ? "btn-ghost"
+                      : displayButton.variant === "outline"
+                      ? "border-2 border-white bg-transparent text-white hover:bg-white hover:text-[var(--accent-violet)]"
+                      : "bg-white text-[var(--accent-violet)] hover:shadow-lg"
+                  } ${
+                    displayButton.size === "lg"
+                      ? "btn-lg"
+                      : displayButton.size === "sm"
+                      ? "btn-sm"
+                      : ""
+                  }`}
+                >
+                  {displayButton.label}
+                </a>
+              ) : (
+                <Button
+                  variant={displayButton.variant || "primary"}
+                  size={displayButton.size || "md"}
+                  onClick={displayButton.onClick}
+                  className="bg-white text-[var(--accent-violet)] hover:shadow-lg"
+                >
+                  {displayButton.label}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -554,7 +574,7 @@ export function CTAStats({
                           : button.variant === "ghost"
                           ? "btn-ghost"
                           : button.variant === "outline"
-                          ? "border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] hover:border-[var(--border-hover)]"
+                          ? "btn-outline"
                           : "btn-primary"
                       } ${
                         button.size === "lg"

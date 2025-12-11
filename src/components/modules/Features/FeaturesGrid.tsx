@@ -1,7 +1,6 @@
 "use client";
 
 import Badge from "../../ui/Badge";
-import type { FeaturesGridProps } from "./types";
 import {
   getSpacingClass,
   getBackgroundClass,
@@ -10,16 +9,35 @@ import {
   splitTextWithGradient,
 } from "./utils";
 
+interface FeaturesGridProps {
+  badge?: string;
+  heading: string;
+  headingHighlight?: string;
+  subheading?: string;
+  features: Array<{
+    icon?: string;
+    title: string;
+    description: string;
+    link?: { text: string; href: string };
+  }>;
+  columns?: number;
+  spacing?: string;
+  backgroundColor?: string;
+}
+
 export default function FeaturesGrid({
-  section,
+  badge,
+  heading,
+  headingHighlight,
+  subheading,
   features,
   columns = 3,
   spacing = "lg",
   backgroundColor = "default",
 }: FeaturesGridProps) {
   const { beforeGradient, gradientPart, afterGradient } = splitTextWithGradient(
-    section.heading,
-    section.headingGradient
+    heading,
+    headingHighlight
   );
 
   return (
@@ -27,9 +45,9 @@ export default function FeaturesGrid({
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          {section.badge && (
+          {badge && (
             <Badge variant="gradient" className="mb-4">
-              {section.badge}
+              {badge}
             </Badge>
           )}
           <h2 className="heading-lg mb-4">
@@ -37,7 +55,7 @@ export default function FeaturesGrid({
             {gradientPart && <span className="text-gradient">{gradientPart}</span>}
             {afterGradient}
           </h2>
-          {section.subheading && <p className="body-lg">{section.subheading}</p>}
+          {subheading && <p className="body-lg">{subheading}</p>}
         </div>
 
         {/* Features Grid */}

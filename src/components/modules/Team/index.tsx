@@ -3,6 +3,25 @@
 import { forwardRef, type HTMLAttributes } from "react";
 import Image from "next/image";
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getBackgroundStyle(backgroundColor?: string): React.CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
 // TypeScript Interfaces
 export interface SocialLink {
   platform: "twitter" | "linkedin" | "github" | "email" | "website";
@@ -183,7 +202,7 @@ export const TeamGrid = forwardRef<HTMLElement, TeamGridProps>(
       <section
         ref={ref}
         className={`section ${spacingMap[spacing]} ${className}`}
-        style={backgroundColor ? { backgroundColor } : undefined}
+        style={getBackgroundStyle(backgroundColor)}
         {...props}
       >
         <div className="container">
@@ -260,7 +279,7 @@ export const TeamCards = forwardRef<HTMLElement, TeamCardsProps>(
       <section
         ref={ref}
         className={`section ${spacingMap[spacing]} ${className}`}
-        style={backgroundColor ? { backgroundColor } : undefined}
+        style={getBackgroundStyle(backgroundColor)}
         {...props}
       >
         <div className="container">
@@ -333,7 +352,7 @@ export const TeamCompact = forwardRef<HTMLElement, TeamCompactProps>(
       <section
         ref={ref}
         className={`section ${spacingMap[spacing]} ${className}`}
-        style={backgroundColor ? { backgroundColor } : undefined}
+        style={getBackgroundStyle(backgroundColor)}
         {...props}
       >
         <div className="container">

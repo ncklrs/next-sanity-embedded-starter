@@ -72,14 +72,30 @@ export const logoCloudSimple = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -176,14 +192,30 @@ export const logoCloudMarquee = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -254,14 +286,30 @@ export const logoCloudGrid = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {

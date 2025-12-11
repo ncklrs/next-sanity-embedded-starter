@@ -6,6 +6,37 @@ import Badge from "@/components/ui/Badge";
 import { CheckIcon } from "@/components/icons";
 
 // ═════════════════════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ═════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Map Sanity background color values to theme-appropriate CSS variables.
+ * This ensures colors work correctly in dark themes.
+ */
+function getBackgroundStyle(backgroundColor?: string): React.CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+
+  const colorMap: Record<string, string> = {
+    // Map Sanity values to CSS variables
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  if (mappedColor) {
+    return { backgroundColor: mappedColor };
+  }
+
+  // If it's already a CSS variable or valid color, use as-is
+  return { backgroundColor };
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // SHARED TYPES & INTERFACES
 // ═════════════════════════════════════════════════════════════════════════════
 
@@ -64,7 +95,7 @@ export function PricingCards({
   return (
     <section
       className={`section ${spacingMap[spacing]} ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container mx-auto">
         {/* Section Header */}
@@ -203,26 +234,127 @@ interface ComparisonFeature {
   };
 }
 
+// Sanity plan structure (different from component's Plan interface)
+interface SanityPricingPlan {
+  name: string;
+  price: string | number;
+  priceUnit?: string;
+  featureValues?: (boolean | string | number)[];
+  buttonText?: string;
+  buttonLink?: string;
+  highlighted?: boolean;
+}
+
 interface PricingComparisonProps extends BaseProps {
   badge?: string;
-  heading: string;
+  heading?: string;
+  headingHighlight?: string;
   subheading?: string;
-  plans: Plan[];
-  comparisonFeatures: ComparisonFeature[];
+  plans?: Plan[] | SanityPricingPlan[];
+  features?: ComparisonFeature[] | string[];
   onPlanSelect?: (planName: string) => void;
+}
+
+// Sanity feature structure (if features are objects with name/values)
+interface SanityFeature {
+  _key?: string;
+  name: string;
+  values?: (boolean | string | number)[];
+}
+
+// Transform Sanity data to component format
+function transformSanityData(
+  features: ComparisonFeature[] | string[] | SanityFeature[] | undefined,
+  plans: Plan[] | SanityPricingPlan[] | undefined
+): { transformedFeatures: ComparisonFeature[]; transformedPlans: Plan[] } {
+  if (!features || !plans || features.length === 0 || plans.length === 0) {
+    return { transformedFeatures: [], transformedPlans: [] };
+  }
+
+  // Check if features is already in component format (has 'plans' property)
+  const isComponentFormat = typeof features[0] === 'object' && 'plans' in (features[0] as ComparisonFeature);
+
+  if (isComponentFormat) {
+    return {
+      transformedFeatures: features as ComparisonFeature[],
+      transformedPlans: plans as Plan[]
+    };
+  }
+
+  const sanityPlans = plans as SanityPricingPlan[];
+  let transformedFeatures: ComparisonFeature[];
+
+  // Check if features are Sanity objects with 'name' property (but not 'plans')
+  const isSanityFeatureFormat = typeof features[0] === 'object' && 'name' in (features[0] as SanityFeature);
+
+  if (isSanityFeatureFormat) {
+    // Transform from Sanity feature objects {_key, name, values}
+    const sanityFeatures = features as SanityFeature[];
+    transformedFeatures = sanityFeatures
+      .filter((feature) => feature && feature.name) // Filter out undefined or invalid features
+      .map((feature, featureIndex) => {
+        const planValues: { [planName: string]: boolean | string | number } = {};
+        sanityPlans.forEach((plan, planIndex) => {
+          if (!plan || !plan.name) return; // Skip invalid plans
+          // Use feature.values if available, otherwise fall back to plan.featureValues
+          const value = feature.values?.[planIndex] ?? plan.featureValues?.[featureIndex] ?? false;
+          planValues[plan.name] = value;
+        });
+        return { name: feature.name, plans: planValues };
+      });
+  } else {
+    // Transform from string array format
+    const featureNames = (features as string[]).filter((name) => typeof name === 'string' && name);
+    transformedFeatures = featureNames.map((name, featureIndex) => {
+      const planValues: { [planName: string]: boolean | string | number } = {};
+      sanityPlans.forEach((plan) => {
+        if (!plan || !plan.name) return; // Skip invalid plans
+        planValues[plan.name] = plan.featureValues?.[featureIndex] ?? false;
+      });
+      return { name, plans: planValues };
+    });
+  }
+
+  const transformedPlans: Plan[] = sanityPlans
+    .filter((plan) => plan && plan.name) // Filter out invalid plans
+    .map((plan) => ({
+      name: plan.name,
+      price: plan.price,
+      period: plan.priceUnit,
+      description: '',
+      features: [],
+      ctaText: plan.buttonText,
+      isPopular: plan.highlighted,
+    }));
+
+  return { transformedFeatures, transformedPlans };
 }
 
 export function PricingComparison({
   badge = "Compare Plans",
-  heading,
+  heading = "",
   subheading,
-  plans,
-  comparisonFeatures,
+  plans: rawPlans = [],
+  features: rawFeatures = [],
   spacing = "xl",
   backgroundColor,
   className = "",
   onPlanSelect,
 }: PricingComparisonProps) {
+  // Transform data if needed
+  const { transformedFeatures: features, transformedPlans: plans } = transformSanityData(rawFeatures, rawPlans);
+
+  // Early return if no valid data
+  if (plans.length === 0) {
+    return (
+      <section className="section py-16 px-6">
+        <div className="container mx-auto text-center">
+          <p className="body-lg text-[var(--foreground-muted)]">No pricing plans configured</p>
+        </div>
+      </section>
+    );
+  }
+
   const spacingMap = {
     sm: "py-12 px-4",
     md: "py-16 px-6",
@@ -233,7 +365,7 @@ export function PricingComparison({
   return (
     <section
       className={`section ${spacingMap[spacing]} ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container mx-auto">
         {/* Section Header */}
@@ -282,7 +414,7 @@ export function PricingComparison({
           </div>
 
           {/* Feature Rows */}
-          {comparisonFeatures.map((feature, index) => (
+          {features.map((feature, index) => (
             <div key={index}>
               {feature.category && (
                 <div className="px-8 py-4 bg-[var(--background-secondary)] border-t border-[var(--border)]">
@@ -354,7 +486,7 @@ export function PricingComparison({
 
               {/* Features */}
               <div className="p-6">
-                {comparisonFeatures.map((feature, featureIndex) => (
+                {features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="mb-4 last:mb-0">
                     {feature.category && featureIndex === 0 && (
                       <h4 className="text-xs font-semibold text-[var(--foreground-muted)] uppercase tracking-wider mb-3">
@@ -439,7 +571,7 @@ export function PricingSimple({
   return (
     <section
       className={`section ${spacingMap[spacing]} ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container mx-auto max-w-2xl">
         {/* Section Header */}

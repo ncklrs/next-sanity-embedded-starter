@@ -17,8 +17,8 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       gradient: "badge badge-gradient",
       success: "badge badge-success",
       new: "badge badge-new",
-      warning: "badge bg-[rgba(245,158,11,0.15)] border-[rgba(245,158,11,0.2)] text-[var(--accent-amber)]",
-      error: "badge bg-[rgba(239,68,68,0.15)] border-[rgba(239,68,68,0.2)] text-[var(--error)]",
+      warning: "badge badge-warning",
+      error: "badge badge-error",
     };
 
     const dotColors: Record<BadgeVariant, string> = {

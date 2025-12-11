@@ -131,7 +131,7 @@ export function AnchorPoint({ id, label }: AnchorPointProps) {
 // ============================================================================
 
 export function Banner({
-  message,
+  message = "",
   title,
   type = "info",
   icon,
@@ -141,23 +141,26 @@ export function Banner({
 }: BannerProps) {
   const [isVisible, setIsVisible] = useState(true);
 
+  // Create a stable key for localStorage based on message content
+  const storageKey = message ? `banner-dismissed-${message.substring(0, 20)}` : null;
+
   useEffect(() => {
-    if (dismissible) {
-      const dismissed = localStorage.getItem(`banner-dismissed-${message.substring(0, 20)}`);
+    if (dismissible && storageKey) {
+      const dismissed = localStorage.getItem(storageKey);
       if (dismissed) {
         setIsVisible(false);
       }
     }
-  }, [dismissible, message]);
+  }, [dismissible, storageKey]);
 
   const handleDismiss = () => {
     setIsVisible(false);
-    if (dismissible) {
-      localStorage.setItem(`banner-dismissed-${message.substring(0, 20)}`, "true");
+    if (dismissible && storageKey) {
+      localStorage.setItem(storageKey, "true");
     }
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || !message) return null;
 
   const getTypeColors = () => {
     switch (type) {
@@ -333,7 +336,21 @@ export function DownloadCards({
 
   const renderDownloadCard = (download: Download, index: number) => {
     const isGated = download.gated && !gatedDownloads[index];
-    const imageUrl = download.image ? urlFor(download.image).width(400).height(300).url() : null;
+    // Handle different image formats: direct URL, src property, or Sanity reference
+    let imageUrl: string | null = null;
+    if (download.image) {
+      if (typeof download.image === 'string') {
+        imageUrl = download.image;
+      } else if (download.image.src) {
+        imageUrl = download.image.src;
+      } else if (download.image.asset || download.image._ref) {
+        try {
+          imageUrl = urlFor(download.image).width(400).height(300).url();
+        } catch {
+          imageUrl = null;
+        }
+      }
+    }
 
     return (
       <div

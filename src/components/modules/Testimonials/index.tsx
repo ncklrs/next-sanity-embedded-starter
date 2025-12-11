@@ -4,11 +4,31 @@ import { useState, useEffect, useCallback, useRef, type ReactNode } from "react"
 import { StarIcon, ChevronLeftIcon, ChevronRightIcon, QuoteIcon } from "@/components/icons";
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getBackgroundStyle(backgroundColor?: string): React.CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // TYPE DEFINITIONS
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Testimonial {
-  id: string;
+  id?: string;
+  _key?: string;
   content: string;
   rating: number;
   author: {
@@ -125,9 +145,9 @@ const Avatar = ({
   return (
     <div
       className={`${sizeClasses[size]} testimonial-avatar flex items-center justify-center font-bold`}
-      aria-label={alt}
+      aria-label={alt || "User"}
     >
-      {initials || alt.charAt(0).toUpperCase()}
+      {initials || (alt ? alt.charAt(0).toUpperCase() : "?")}
     </div>
   );
 };
@@ -257,21 +277,23 @@ const CarouselControls = ({
 export const TestimonialsGrid = ({
   title,
   subtitle,
-  testimonials,
+  testimonials: rawTestimonials,
   backgroundColor,
   className = "",
 }: TestimonialsGridProps) => {
+  const testimonials = rawTestimonials ?? [];
+
   return (
     <section
       className={`section ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+          {testimonials.map((testimonial, index) => (
+            <TestimonialCard key={testimonial._key || index} testimonial={testimonial} />
           ))}
         </div>
       </div>
@@ -286,22 +308,25 @@ export const TestimonialsGrid = ({
 export const TestimonialsCarousel = ({
   title,
   subtitle,
-  testimonials,
+  testimonials: rawTestimonials,
   autoplay = false,
   autoplaySpeed = 5000,
   backgroundColor,
   className = "",
 }: TestimonialsCarouselProps) => {
+  const testimonials = rawTestimonials ?? [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
   const goToNext = useCallback(() => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   }, [testimonials.length]);
 
   const goToPrevious = useCallback(() => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   }, [testimonials.length]);
 
@@ -360,7 +385,7 @@ export const TestimonialsCarousel = ({
   return (
     <section
       className={`section ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -374,9 +399,9 @@ export const TestimonialsCarousel = ({
           onTouchEnd={handleTouchEnd}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {visibleTestimonials.map((testimonial) => (
+            {visibleTestimonials.map((testimonial, index) => (
               <div
-                key={testimonial.id}
+                key={testimonial._key || index}
                 className="transition-all duration-500 ease-in-out"
                 style={{
                   animation: "fade-in-up 0.6s ease-out forwards",
@@ -409,30 +434,36 @@ export const TestimonialsFeatured = ({
   title,
   subtitle,
   featured,
-  supporting,
+  supporting: rawSupporting,
   backgroundColor,
   className = "",
 }: TestimonialsFeaturedProps) => {
+  const supporting = rawSupporting ?? [];
+
   return (
     <section
       className={`section ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 
         <div className="space-y-8">
           {/* Featured Testimonial */}
-          <div className="max-w-4xl mx-auto">
-            <TestimonialCard testimonial={featured} size="featured" className="shadow-2xl" />
-          </div>
+          {featured && (
+            <div className="max-w-4xl mx-auto">
+              <TestimonialCard testimonial={featured} size="featured" className="shadow-2xl" />
+            </div>
+          )}
 
           {/* Supporting Testimonials */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {supporting.map((testimonial) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-            ))}
-          </div>
+          {supporting.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {supporting.map((testimonial, index) => (
+                <TestimonialCard key={testimonial._key || index} testimonial={testimonial} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -446,12 +477,13 @@ export const TestimonialsFeatured = ({
 export const TestimonialsCarouselLarge = ({
   title,
   subtitle,
-  testimonials,
+  testimonials: rawTestimonials,
   autoplay = false,
   autoplaySpeed = 6000,
   backgroundColor,
   className = "",
 }: TestimonialsCarouselLargeProps) => {
+  const testimonials = rawTestimonials ?? [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -459,14 +491,14 @@ export const TestimonialsCarouselLarge = ({
   const touchEndX = useRef(0);
 
   const goToNext = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || testimonials.length === 0) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
     setTimeout(() => setIsTransitioning(false), 500);
   }, [testimonials.length, isTransitioning]);
 
   const goToPrevious = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || testimonials.length === 0) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
     setTimeout(() => setIsTransitioning(false), 500);
@@ -525,10 +557,24 @@ export const TestimonialsCarouselLarge = ({
 
   const currentTestimonial = testimonials[currentIndex];
 
+  if (!currentTestimonial) {
+    return (
+      <section
+        className={`section relative ${className}`}
+        style={getBackgroundStyle(backgroundColor)}
+      >
+        <div className="container">
+          <SectionHeader title={title} subtitle={subtitle} />
+          <p className="text-center text-[var(--foreground-muted)]">No testimonials available</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className={`section relative ${className}`}
-      style={backgroundColor ? { backgroundColor } : undefined}
+      style={getBackgroundStyle(backgroundColor)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -561,7 +607,7 @@ export const TestimonialsCarouselLarge = ({
 
           {/* Testimonial Card */}
           <div
-            key={currentTestimonial.id}
+            key={currentTestimonial.id || currentTestimonial._key || currentIndex}
             className={`transition-opacity duration-500 ${
               isTransitioning ? "opacity-0" : "opacity-100"
             }`}

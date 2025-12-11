@@ -203,8 +203,9 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--foreground-subtle);
 }
 
-/* Gradient text */
-.gradient-text {
+/* Gradient text - primary style used throughout */
+.gradient-text,
+.text-gradient {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -301,6 +302,17 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--foreground);
 }
 
+.btn-outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+  background: var(--surface);
+  border-color: var(--border-hover);
+}
+
 .btn-lg {
   padding: 1rem 2rem;
   font-size: 1rem;
@@ -382,6 +394,18 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(6, 182, 212, 0.15);
   border-color: rgba(6, 182, 212, 0.2);
   color: var(--accent-cyan);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: var(--accent-amber);
+}
+
+.badge-error {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: var(--error);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -500,13 +524,17 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-/* Gradient orbs */
+/* Gradient orbs - GPU accelerated for smooth performance */
 .hero-orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(100px);
   opacity: 0.4;
   animation: float 20s ease-in-out infinite;
+  /* GPU acceleration for smoother animation */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .hero-orb-1 {
@@ -538,16 +566,16 @@ h1, h2, h3, h4, h5, h6 {
 
 @keyframes float {
   0%, 100% {
-    transform: translate(0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   25% {
-    transform: translate(30px, -30px) scale(1.05);
+    transform: translate3d(30px, -30px, 0) scale(1.05);
   }
   50% {
-    transform: translate(-20px, 20px) scale(0.95);
+    transform: translate3d(-20px, 20px, 0) scale(0.95);
   }
   75% {
-    transform: translate(-30px, -20px) scale(1.02);
+    transform: translate3d(-30px, -20px, 0) scale(1.02);
   }
 }
 
@@ -881,6 +909,24 @@ h1, h2, h3, h4, h5, h6 {
 .animate-delay-300 { animation-delay: 0.3s; }
 .animate-delay-400 { animation-delay: 0.4s; }
 .animate-delay-500 { animation-delay: 0.5s; }
+.animate-delay-600 { animation-delay: 0.6s; }
+.animate-delay-700 { animation-delay: 0.7s; }
+.animate-delay-800 { animation-delay: 0.8s; }
+
+/* Staggered animation for grid children - useful for cards */
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.45s; }
+.stagger-children > *:nth-child(9) { animation-delay: 0.5s; }
 
 /* Initial state for animated elements */
 [class*="animate-fade"],
@@ -891,13 +937,6 @@ h1, h2, h3, h4, h5, h6 {
 /* ─────────────────────────────────────────────────────────────────────────────
    UTILITY CLASSES
    ───────────────────────────────────────────────────────────────────────────── */
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .bg-gradient {
   background: var(--gradient-primary);
 }
@@ -1466,6 +1505,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .form-input-error:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.form-input-success {
+  border-color: var(--success) !important;
+}
+
+.form-input-success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
 }
 
 textarea.input {

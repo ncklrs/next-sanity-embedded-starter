@@ -40,14 +40,30 @@ export const formContact = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -101,14 +117,30 @@ export const formNewsletter = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -194,14 +226,30 @@ export const formWithImage = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
@@ -225,16 +273,8 @@ export const formMultiStep = defineType({
   name: 'formMultiStep',
   title: 'Multi-Step Form',
   type: 'object',
-  description: 'Multi-step form that references a reusable Form document',
+  description: 'Multi-step form with multiple steps and fields',
   fields: [
-    defineField({
-      name: 'form',
-      title: 'Form',
-      type: 'reference',
-      to: [{ type: 'form' }],
-      description: 'Select a form configuration to use',
-      validation: (Rule) => Rule.required(),
-    }),
     defineField({
       name: 'badge',
       title: 'Badge',
@@ -242,15 +282,72 @@ export const formMultiStep = defineType({
     }),
     defineField({
       name: 'heading',
-      title: 'Heading Override',
+      title: 'Heading',
       type: 'string',
-      description: 'Leave empty to use the form name',
     }),
     defineField({
       name: 'subheading',
       title: 'Subheading',
       type: 'text',
       rows: 3,
+    }),
+    defineField({
+      name: 'steps',
+      title: 'Form Steps',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'title',
+              title: 'Step Title',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'description',
+              title: 'Step Description',
+              type: 'text',
+              rows: 2,
+            },
+            {
+              name: 'fields',
+              title: 'Fields',
+              type: 'array',
+              of: [{ type: 'formField' }],
+              validation: (Rule) => Rule.required().min(1),
+            },
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              fieldCount: 'fields',
+            },
+            prepare({ title, fieldCount }) {
+              const count = Array.isArray(fieldCount) ? fieldCount.length : 0;
+              return {
+                title: title || 'Untitled Step',
+                subtitle: `${count} field${count !== 1 ? 's' : ''}`,
+              };
+            },
+          },
+        },
+      ],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'submitText',
+      title: 'Submit Button Text',
+      type: 'string',
+      initialValue: 'Submit',
+    }),
+    defineField({
+      name: 'successMessage',
+      title: 'Success Message',
+      type: 'text',
+      rows: 2,
+      initialValue: 'Thank you! Your submission has been received.',
     }),
     defineField({
       name: 'showProgressBar',
@@ -261,26 +358,43 @@ export const formMultiStep = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {
     select: {
       heading: 'heading',
-      formName: 'form.name',
       badge: 'badge',
+      steps: 'steps',
     },
-    prepare({ heading, formName, badge }) {
+    prepare({ heading, badge, steps }) {
+      const stepCount = Array.isArray(steps) ? steps.length : 0;
       return {
-        title: heading || formName || 'Multi-Step Form',
-        subtitle: badge || `Form: ${formName || 'Not selected'}`,
+        title: heading || 'Multi-Step Form',
+        subtitle: badge || `${stepCount} step${stepCount !== 1 ? 's' : ''}`,
         media: () => '📋',
       };
     },
@@ -357,14 +471,30 @@ export const formDynamic = defineType({
     defineField({
       name: 'spacing',
       title: 'Spacing',
-      type: 'reference',
-      to: [{ type: 'spacing' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Small', value: 'small' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Large', value: 'large' },
+        ],
+      },
+      initialValue: 'medium',
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
-      type: 'reference',
-      to: [{ type: 'backgroundColor' }],
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'White', value: 'white' },
+          { title: 'Gray', value: 'gray' },
+          { title: 'Muted', value: 'muted' },
+          { title: 'Accent', value: 'accent' },
+        ],
+      },
+      initialValue: 'default',
     }),
   ],
   preview: {

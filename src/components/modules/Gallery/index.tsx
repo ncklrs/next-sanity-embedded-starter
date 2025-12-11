@@ -4,6 +4,25 @@ import { useState, useCallback, useEffect, useRef, type CSSProperties } from "re
 import Button from "@/components/ui/Button";
 
 // ============================================================================
+// Shared Utilities
+// ============================================================================
+
+function getBackgroundStyle(backgroundColor?: string): CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// ============================================================================
 // Types & Interfaces
 // ============================================================================
 
@@ -202,7 +221,7 @@ export const GalleryGrid = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -298,7 +317,7 @@ export const GalleryMasonry = ({
     }
   };
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -404,7 +423,7 @@ export const GalleryCarousel = ({
   }, [isPlaying, goToNext, autoPlayInterval]);
 
   const currentImage = images[currentIndex];
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
   return (
     <section className={`section ${className}`} style={style}>

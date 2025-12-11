@@ -4,14 +4,47 @@ import { useState, useEffect, useRef, type CSSProperties } from "react";
 import Button from "@/components/ui/Button";
 
 // ============================================================================
+// Shared Utilities
+// ============================================================================
+
+function getBackgroundStyle(backgroundColor?: string): CSSProperties | undefined {
+  if (!backgroundColor) return undefined;
+  const colorMap: Record<string, string> = {
+    white: "var(--background)",
+    default: "var(--background)",
+    gray: "var(--background-secondary)",
+    secondary: "var(--background-secondary)",
+    primary: "var(--background-tertiary)",
+    tertiary: "var(--background-tertiary)",
+    transparent: "transparent",
+  };
+  const mappedColor = colorMap[backgroundColor.toLowerCase()];
+  return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// ============================================================================
 // Types & Interfaces
 // ============================================================================
 
+// Support both direct URL and Sanity image format
+interface SanityImage {
+  asset?: {
+    _id?: string;
+    url?: string;
+    metadata?: { dimensions?: { width?: number; height?: number } };
+  };
+  alt?: string;
+  hotspot?: any;
+  crop?: any;
+}
+
 export interface BlogPost {
+  _id?: string;
   title: string;
-  slug: string;
+  slug: string | { current: string };
   excerpt: string;
-  featuredImage?: string;
+  // Support both direct URL (string) and Sanity image object
+  featuredImage?: string | SanityImage;
   publishedAt: string;
   author?: {
     name: string;
@@ -19,6 +52,18 @@ export interface BlogPost {
   };
   category?: string;
   readingTime?: number;
+}
+
+// Helper to get image URL from either format
+function getImageUrl(image?: string | SanityImage): string | undefined {
+  if (!image) return undefined;
+  if (typeof image === "string") return image;
+  return image.asset?.url;
+}
+
+// Helper to get slug string from either format
+function getSlugString(slug: string | { current: string }): string {
+  return typeof slug === "string" ? slug : slug.current;
 }
 
 interface BaseBlogProps {
@@ -103,7 +148,24 @@ export const BlogFeaturedPost = ({
   className = "",
   onReadMore,
 }: BlogFeaturedPostProps) => {
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
+
+  // Handle null post
+  if (!post) {
+    return (
+      <section className={`section ${className}`} style={style}>
+        <div className="container">
+          <div className="glass-card p-12 text-center max-w-6xl mx-auto">
+            <p className="body-lg text-[var(--foreground-muted)]">No featured post available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Get image URL and slug using helpers
+  const imageUrl = getImageUrl(post.featuredImage);
+  const postSlug = getSlugString(post.slug);
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -112,9 +174,9 @@ export const BlogFeaturedPost = ({
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image */}
             <div className="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-[var(--surface)]">
-              {post.featuredImage ? (
+              {imageUrl ? (
                 <img
-                  src={post.featuredImage}
+                  src={imageUrl}
                   alt={post.title}
                   className="w-full h-full object-cover"
                 />
@@ -172,7 +234,7 @@ export const BlogFeaturedPost = ({
 
               <Button
                 variant="primary"
-                onClick={() => onReadMore?.(post.slug)}
+                onClick={() => onReadMore?.(postSlug)}
               >
                 Read Full Article
               </Button>
@@ -198,7 +260,8 @@ export const BlogGrid = ({
   description,
   onReadMore,
 }: BlogGridProps) => {
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
+  const safePosts = posts ?? [];
 
   const gridColumns = {
     2: "grid-cols-1 md:grid-cols-2",
@@ -211,16 +274,19 @@ export const BlogGrid = ({
         {showHeader && <SectionHeader heading={heading} description={description} />}
 
         <div className={`grid ${gridColumns[columns]} gap-8`}>
-          {posts.map((post) => (
-            <article
-              key={post.slug}
-              className="glass-card overflow-hidden flex flex-col h-full"
-            >
+          {safePosts.map((post) => {
+            const imageUrl = getImageUrl(post.featuredImage);
+            const slugStr = getSlugString(post.slug);
+            return (
+              <article
+                key={slugStr}
+                className="glass-card overflow-hidden flex flex-col h-full"
+              >
               {/* Image */}
               <div className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)]">
-                {post.featuredImage ? (
+                {imageUrl ? (
                   <img
-                    src={post.featuredImage}
+                    src={imageUrl}
                     alt={post.title}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   />
@@ -256,7 +322,7 @@ export const BlogGrid = ({
                 <p className="body-sm mb-4 line-clamp-3 flex-grow">{post.excerpt}</p>
 
                 <button
-                  onClick={() => onReadMore?.(post.slug)}
+                  onClick={() => onReadMore?.(slugStr)}
                   className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
                 >
                   <span>Read More</span>
@@ -266,7 +332,8 @@ export const BlogGrid = ({
                 </button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -286,7 +353,8 @@ export const BlogList = ({
   description,
   onReadMore,
 }: BlogListProps) => {
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
+  const safePosts = posts ?? [];
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -294,17 +362,20 @@ export const BlogList = ({
         {showHeader && <SectionHeader heading={heading} description={description} />}
 
         <div className="space-y-6">
-          {posts.map((post) => (
+          {safePosts.map((post) => {
+            const imageUrl = getImageUrl(post.featuredImage);
+            const slugStr = getSlugString(post.slug);
+            return (
             <article
-              key={post.slug}
+              key={slugStr}
               className="glass-card overflow-hidden"
             >
               <div className="grid md:grid-cols-[300px_1fr] gap-6">
                 {/* Image */}
                 <div className="relative aspect-[16/9] md:aspect-[4/3] overflow-hidden bg-[var(--surface)]">
-                  {post.featuredImage ? (
+                  {imageUrl ? (
                     <img
-                      src={post.featuredImage}
+                      src={imageUrl}
                       alt={post.title}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                     />
@@ -341,7 +412,7 @@ export const BlogList = ({
 
                   <div className="flex items-center justify-between">
                     <button
-                      onClick={() => onReadMore?.(post.slug)}
+                      onClick={() => onReadMore?.(slugStr)}
                       className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
                     >
                       <span>Read More</span>
@@ -372,7 +443,8 @@ export const BlogList = ({
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -437,7 +509,8 @@ export const BlogCarousel = ({
     };
   }, [isPlaying, autoPlayInterval]);
 
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
+  const safePosts = posts ?? [];
   const canScrollLeft = scrollPosition > 0;
   const canScrollRight = scrollRef.current
     ? scrollRef.current.scrollLeft < scrollRef.current.scrollWidth - scrollRef.current.clientWidth - 10
@@ -498,16 +571,19 @@ export const BlogCarousel = ({
           className="flex gap-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {posts.map((post) => (
+          {safePosts.map((post) => {
+            const imageUrl = getImageUrl(post.featuredImage);
+            const slugStr = getSlugString(post.slug);
+            return (
             <article
-              key={post.slug}
+              key={slugStr}
               className="glass-card overflow-hidden flex-shrink-0 w-[350px] snap-start"
             >
               {/* Image */}
               <div className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)]">
-                {post.featuredImage ? (
+                {imageUrl ? (
                   <img
-                    src={post.featuredImage}
+                    src={imageUrl}
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
@@ -543,7 +619,7 @@ export const BlogCarousel = ({
                 <p className="body-sm mb-4 line-clamp-3">{post.excerpt}</p>
 
                 <button
-                  onClick={() => onReadMore?.(post.slug)}
+                  onClick={() => onReadMore?.(slugStr)}
                   className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
                 >
                   <span>Read More</span>
@@ -553,7 +629,8 @@ export const BlogCarousel = ({
                 </button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -573,7 +650,8 @@ export const BlogMinimal = ({
   onViewAll,
   onPostClick,
 }: BlogMinimalProps) => {
-  const style: CSSProperties = backgroundColor ? { backgroundColor } : {};
+  const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
+  const safePosts = posts ?? [];
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -594,11 +672,14 @@ export const BlogMinimal = ({
         </div>
 
         <div className="space-y-6">
-          {posts.map((post, index) => (
+          {safePosts.map((post, index) => {
+            const imageUrl = getImageUrl(post.featuredImage);
+            const slugStr = getSlugString(post.slug);
+            return (
             <article
-              key={post.slug}
+              key={slugStr}
               className={`flex items-start gap-6 pb-6 ${
-                index !== posts.length - 1 ? "border-b border-[var(--border)]" : ""
+                index !== safePosts.length - 1 ? "border-b border-[var(--border)]" : ""
               }`}
             >
               <div className="flex-grow">
@@ -619,7 +700,7 @@ export const BlogMinimal = ({
                 </div>
 
                 <button
-                  onClick={() => onPostClick?.(post.slug)}
+                  onClick={() => onPostClick?.(slugStr)}
                   className="text-left group"
                 >
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2 group-hover:text-[var(--accent-violet)] transition-colors">
@@ -629,20 +710,21 @@ export const BlogMinimal = ({
                 </button>
               </div>
 
-              {post.featuredImage && (
+              {imageUrl && (
                 <button
-                  onClick={() => onPostClick?.(post.slug)}
+                  onClick={() => onPostClick?.(slugStr)}
                   className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-[var(--surface)] hover:opacity-80 transition-opacity"
                 >
                   <img
-                    src={post.featuredImage}
+                    src={imageUrl}
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
                 </button>
               )}
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

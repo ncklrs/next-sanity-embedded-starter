@@ -26,7 +26,8 @@ interface SanityImage {
 }
 
 interface TabItem {
-  label: string;
+  label?: string;
+  title?: string; // Sanity field name
   icon?: string;
   content?: PortableTextBlock[];
   image?: SanityImage;
@@ -89,7 +90,14 @@ export interface StepsProps {
 export interface TimelineProps {
   title?: string;
   subtitle?: string;
-  events: TimelineEvent[];
+  events?: TimelineEvent[];
+  // Sanity field names
+  badge?: string;
+  heading?: string;
+  headingHighlight?: string;
+  subheading?: string;
+  items?: TimelineEvent[];
+  spacing?: string;
   variant?: "default" | "alternating" | "compact";
   orientation?: "vertical" | "horizontal";
   backgroundColor?: string;
@@ -275,7 +283,7 @@ export function Tabs({
               >
                 <div className="flex items-center gap-2">
                   {tab.icon && renderIcon(tab.icon)}
-                  <span>{tab.label}</span>
+                  <span>{tab.label || tab.title}</span>
                 </div>
               </button>
             ))}
@@ -295,7 +303,7 @@ export function Tabs({
                 <div className="relative aspect-video mb-6 rounded-xl overflow-hidden border border-white/10">
                   <Image
                     src={urlFor(currentTab.image).width(1200).height(675).url()}
-                    alt={currentTab.image.alt || currentTab.label}
+                    alt={currentTab.image.alt || currentTab.label || currentTab.title || ''}
                     fill
                     className="object-cover"
                   />
@@ -591,11 +599,20 @@ export function Timeline({
   title,
   subtitle,
   events,
+  // Sanity fields
+  heading,
+  subheading,
+  items,
   variant = "default",
   orientation = "vertical",
   backgroundColor,
   className = "",
 }: TimelineProps) {
+  // Use Sanity fields as fallbacks
+  const displayTitle = title || heading;
+  const displaySubtitle = subtitle || subheading;
+  const displayEvents = events || items || [];
+
   const isVertical = orientation === "vertical";
   const isAlternating = variant === "alternating" && isVertical;
   const isCompact = variant === "compact";
@@ -606,7 +623,7 @@ export function Timeline({
       style={getBackgroundStyle(backgroundColor)}
     >
       <div className="container">
-        <SectionHeader title={title} subtitle={subtitle} />
+        <SectionHeader title={displayTitle} subtitle={displaySubtitle} />
 
         <div
           className={`${
@@ -620,7 +637,7 @@ export function Timeline({
               {/* Vertical timeline line */}
               <div className="absolute left-[15px] md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--accent-cyan)] via-[var(--accent-violet)] to-[var(--accent-rose)]" />
 
-              {events.map((event, index) => {
+              {displayEvents.map((event, index) => {
                 const isLeft = isAlternating && index % 2 === 0;
                 const isRight = isAlternating && index % 2 === 1;
 
@@ -715,7 +732,7 @@ export function Timeline({
               {/* Horizontal timeline line */}
               <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-[var(--accent-cyan)] via-[var(--accent-violet)] to-[var(--accent-rose)]" />
 
-              {events.map((event, index) => (
+              {displayEvents.map((event, index) => (
                 <div key={index} className="relative w-72 flex-shrink-0">
                   {/* Timeline dot */}
                   <div className="absolute top-[20px] left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white border-4 border-[var(--accent-violet)] z-10" />

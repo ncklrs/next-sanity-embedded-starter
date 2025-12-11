@@ -1,5 +1,6 @@
 "use client";
 
+import { urlFor } from "@/lib/sanity";
 import { HeroDefault, HeroCentered, HeroSplit, HeroVideo, HeroMinimal } from "./modules/Hero";
 import { FeaturesGrid, FeaturesAlternating, FeaturesIconCards } from "./modules/Features";
 import { PricingCards, PricingComparison, PricingSimple } from "./modules/Pricing";
@@ -18,6 +19,377 @@ import { Tabs, Accordion, Steps, Timeline } from "./modules/Interactive";
 import { AnnouncementBar, Countdown, StickyCta, Modal } from "./modules/Engagement";
 import { Awards, PressMentions, CaseStudyCards, IntegrationGrid } from "./modules/Trust";
 import { Spacer, AnchorPoint, Banner, DownloadCards, MultiColumn } from "./modules/Utility";
+
+/**
+ * Convert a Sanity image object to URL-based format.
+ * Handles both:
+ * - Unexpanded references: { asset: { _ref: "image-..." } }
+ * - Expanded assets: { asset: { _id: "...", url: "https://..." } }
+ */
+function sanityImageToUrl(image: any): { src: string; alt: string; width: number; height: number } | undefined {
+  if (!image?.asset) return undefined;
+
+  // Handle expanded asset with direct URL
+  if (image.asset.url) {
+    return {
+      src: image.asset.url,
+      alt: image.alt || "",
+      width: image.asset.metadata?.dimensions?.width || 1200,
+      height: image.asset.metadata?.dimensions?.height || 800,
+    };
+  }
+
+  // Handle unexpanded reference
+  if (image.asset._ref) {
+    return {
+      src: urlFor(image).width(1200).url(),
+      alt: image.alt || "",
+      width: 1200,
+      height: 800,
+    };
+  }
+
+  return undefined;
+}
+
+/**
+ * Keys that should NOT be recursively transformed (contain non-image data)
+ */
+const SKIP_TRANSFORM_KEYS = new Set([
+  'values', 'featureValues', 'content', 'rows', 'columns',
+  'options', 'fields', 'steps', 'categories', '_type', '_key', '_ref',
+  'tabs', 'items', 'events' // Interactive module arrays
+]);
+
+/**
+ * Check if an object is a Sanity image.
+ * Handles both unexpanded refs and expanded assets.
+ */
+function isSanityImage(data: any): boolean {
+  if (!data || typeof data !== 'object' || !data.asset) return false;
+  // Unexpanded: has _ref
+  if (data.asset._ref) return true;
+  // Expanded: has url
+  if (data.asset.url) return true;
+  return false;
+}
+
+/**
+ * Transform Sanity image references to URL-based image objects.
+ * Handles both unexpanded refs and expanded assets with URLs.
+ */
+function transformSanityImages(data: any, key?: string): any {
+  if (!data) return data;
+
+  // Skip transformation for certain keys that contain non-image data
+  if (key && SKIP_TRANSFORM_KEYS.has(key)) {
+    return data;
+  }
+
+  // Check if this is a Sanity image object
+  if (isSanityImage(data)) {
+    // Handle expanded asset with direct URL
+    if (data.asset.url) {
+      return {
+        src: data.asset.url,
+        alt: data.alt || "",
+        width: data.asset.metadata?.dimensions?.width || 1200,
+        height: data.asset.metadata?.dimensions?.height || 800,
+      };
+    }
+    // Handle unexpanded reference
+    return {
+      src: urlFor(data).width(1200).url(),
+      alt: data.alt || "",
+      width: 1200,
+      height: 800,
+    };
+  }
+
+  // If it's an array, transform each item (but check if items are images first)
+  if (Array.isArray(data)) {
+    return data.map((item) => transformSanityImages(item));
+  }
+
+  // If it's an object, transform each property selectively
+  if (typeof data === "object") {
+    const transformed: Record<string, any> = {};
+    for (const objKey of Object.keys(data)) {
+      transformed[objKey] = transformSanityImages(data[objKey], objKey);
+    }
+    return transformed;
+  }
+
+  return data;
+}
+
+/**
+ * Module-specific transformers that map Sanity field names to component props.
+ * Each transformer receives the raw Sanity data and returns component-ready props.
+ */
+const moduleTransformers: Record<string, (data: any) => any> = {
+  heroVideo: (data) => {
+    // Handle both expanded (asset.url) and unexpanded (asset._ref) poster images
+    let posterUrl: string | undefined;
+    if (data.videoPoster?.asset?.url) {
+      posterUrl = data.videoPoster.asset.url;
+    } else if (data.videoPoster?.asset?._ref) {
+      posterUrl = urlFor(data.videoPoster).width(1920).url();
+    }
+    return {
+      ...data,
+      headingGradientText: data.headingHighlight,
+      video: {
+        src: data.videoUrl || "",
+        poster: posterUrl,
+        autoplay: true,
+        loop: true,
+        muted: true,
+      },
+      overlayOpacity: data.overlay ?? 0.6,
+    };
+  },
+  heroSplit: (data) => ({
+    ...data,
+    headingGradientText: data.headingHighlight,
+    primaryCTA: data.buttons?.[0] ? {
+      label: data.buttons[0].text,
+      href: data.buttons[0].link,
+      variant: data.buttons[0].variant || "primary",
+    } : undefined,
+    secondaryCTA: data.buttons?.[1] ? {
+      label: data.buttons[1].text,
+      href: data.buttons[1].link,
+      variant: data.buttons[1].variant || "secondary",
+    } : undefined,
+    image: sanityImageToUrl(data.image) || { src: "", alt: "" },
+  }),
+  heroCentered: (data) => ({
+    ...data,
+    headingGradientText: data.headingHighlight,
+    primaryCTA: data.buttons?.[0] ? {
+      label: data.buttons[0].text,
+      href: data.buttons[0].link,
+      variant: data.buttons[0].variant || "primary",
+    } : undefined,
+    secondaryCTA: data.buttons?.[1] ? {
+      label: data.buttons[1].text,
+      href: data.buttons[1].link,
+      variant: data.buttons[1].variant || "secondary",
+    } : undefined,
+    trustedBy: data.trustedByText ? {
+      text: data.trustedByText,
+      companies: (data.trustedByLogos || []).map((logo: any) => {
+        // Handle both expanded (asset.url) and unexpanded (asset._ref) images
+        let src = "";
+        if (logo.asset?.url) {
+          src = logo.asset.url;
+        } else if (logo.asset?._ref) {
+          src = urlFor(logo).width(120).url();
+        }
+        return {
+          src,
+          alt: logo.alt || logo.companyName || "",
+          width: 120,
+          height: 40,
+        };
+      }),
+    } : undefined,
+  }),
+  heroDefault: (data) => ({
+    ...data,
+    headingGradientText: data.headingHighlight,
+    primaryCTA: data.primaryButton ? {
+      label: data.primaryButton.text,
+      href: data.primaryButton.link,
+      variant: data.primaryButton.variant || "primary",
+    } : undefined,
+    secondaryCTA: data.secondaryButton ? {
+      label: data.secondaryButton.text,
+      href: data.secondaryButton.link,
+      variant: data.secondaryButton.variant || "secondary",
+    } : undefined,
+  }),
+  heroMinimal: (data) => ({
+    ...data,
+    headingGradientText: data.headingHighlight,
+    primaryCTA: data.singleButton ? {
+      label: data.singleButton.text,
+      href: data.singleButton.link,
+      variant: data.singleButton.variant || "primary",
+    } : undefined,
+  }),
+  comparisonTable: (data) => ({
+    ...data,
+    title: data.title || data.heading,
+    subtitle: data.subtitle || data.subheading,
+    columns: (data.columns || []).map((col: any) => ({
+      ...col,
+      title: col.title || col.header || col.name,
+    })),
+    rows: (data.rows || []).map((row: any) => ({
+      feature: row.feature || row.name,
+      tooltip: row.tooltip,
+      // Parse string "true"/"false" to boolean, keep other values as-is
+      values: (row.values || []).map((v: any) => {
+        if (typeof v === 'string') {
+          if (v.toLowerCase() === 'true') return true;
+          if (v.toLowerCase() === 'false') return false;
+        }
+        return v;
+      }),
+    })),
+  }),
+  // Transform banner link field names
+  banner: (data) => ({
+    ...data,
+    link: data.link ? {
+      label: data.link.text,
+      href: data.link.url,
+    } : undefined,
+  }),
+  // Transform pricingCards plans
+  pricingCards: (data) => ({
+    ...data,
+    heading: data.heading,
+    subheading: data.subheading,
+    plans: (data.plans || []).map((plan: any) => ({
+      name: plan.name,
+      price: plan.price,
+      period: plan.period || plan.priceUnit,
+      description: plan.description || '',
+      features: (plan.features || []).map((f: any) =>
+        typeof f === 'string' ? { text: f, available: true } : f
+      ),
+      ctaText: plan.buttonText,
+      ctaVariant: plan.buttonVariant,
+      isPopular: plan.popular || plan.highlighted,
+    })),
+  }),
+  // Transform pricingSimple - wrap plan data in plan object
+  pricingSimple: (data) => ({
+    ...data,
+    heading: data.heading,
+    subheading: data.subheading,
+    plan: {
+      name: data.heading || 'Plan', // Use heading as plan name fallback
+      price: data.price,
+      period: data.priceUnit,
+      description: data.subheading || '',
+      features: (data.features || []).map((f: any) =>
+        typeof f === 'string' ? { text: f, available: true } : f
+      ),
+      ctaText: data.buttonText,
+    },
+    note: data.note,
+  }),
+  // Transform pricingComparison
+  pricingComparison: (data) => {
+    const plans = (data.plans || []).map((plan: any) => ({
+      name: plan.name,
+      price: plan.price,
+      period: plan.priceUnit,
+      description: plan.description || '',
+      features: [],
+      ctaText: plan.button?.text || plan.buttonText,
+      isPopular: plan.highlighted,
+    }));
+
+    // Transform features array to ComparisonFeature format
+    // Sanity stores values as feature.values[planIndex]
+    const features = (data.features || []).map((feature: any) => {
+      const planValues: Record<string, boolean | string | number> = {};
+      plans.forEach((plan: any, planIndex: number) => {
+        // Get value from feature.values array (Sanity format)
+        // or fall back to plan.featureValues (alternate format)
+        const featureValue = feature.values?.[planIndex]
+          ?? (data.plans || [])[planIndex]?.featureValues?.[(data.features || []).indexOf(feature)]
+          ?? false;
+
+        // Parse string booleans
+        if (featureValue === 'true') planValues[plan.name] = true;
+        else if (featureValue === 'false') planValues[plan.name] = false;
+        else planValues[plan.name] = featureValue;
+      });
+      return {
+        name: typeof feature === 'string' ? feature : feature.name,
+        plans: planValues,
+      };
+    });
+
+    return {
+      ...data,
+      heading: data.heading,
+      subheading: data.subheading,
+      plans,
+      features,
+    };
+  },
+  // Transform tabs - map title to label
+  tabs: (data) => ({
+    ...data,
+    title: data.heading,
+    subtitle: data.subheading,
+    tabs: (data.tabs || []).map((tab: any) => ({
+      ...tab,
+      label: tab.label || tab.title,
+    })),
+  }),
+  // Transform accordion - map heading fields
+  accordion: (data) => ({
+    ...data,
+    title: data.heading,
+    subtitle: data.subheading,
+    items: data.items || [],
+  }),
+  // Transform steps - map heading fields
+  steps: (data) => ({
+    ...data,
+    title: data.heading,
+    subtitle: data.subheading,
+    steps: data.steps || [],
+  }),
+  // Transform timeline - map heading fields and items to events
+  timeline: (data) => ({
+    ...data,
+    title: data.heading,
+    subtitle: data.subheading,
+    events: data.items || data.events || [],
+  }),
+  // Transform formContact - flatten form reference
+  formContact: (data) => ({
+    ...data,
+    heading: data.heading || data.form?.name,
+    fields: data.form?.fields || [],
+    submitText: data.form?.settings?.submitButtonText || 'Send Message',
+    successMessage: data.form?.settings?.successMessage,
+  }),
+  // Transform formNewsletter - flatten form reference
+  formNewsletter: (data) => ({
+    ...data,
+    heading: data.heading || data.form?.name,
+    placeholder: data.form?.fields?.[0]?.placeholder || 'Enter your email',
+    buttonText: data.form?.settings?.submitButtonText || 'Subscribe',
+    privacyText: data.note,
+  }),
+  // Transform formWithImage - flatten form reference
+  formWithImage: (data) => ({
+    ...data,
+    heading: data.heading || data.form?.name,
+    fields: data.form?.fields || [],
+    submitText: data.form?.settings?.submitButtonText || 'Send Message',
+    successMessage: data.form?.settings?.successMessage,
+  }),
+};
+
+/**
+ * Apply module-specific transformation, then generic image transformation
+ */
+function transformModuleData(module: any): any {
+  const transformer = moduleTransformers[module._type];
+  const transformed = transformer ? transformer(module) : module;
+  return transformSanityImages(transformed);
+}
 
 // Map of module type names to components
 const moduleComponents: Record<string, React.ComponentType<any>> = {
@@ -136,7 +508,9 @@ export function ModuleRenderer({ modules }: ModuleRendererProps) {
           return null;
         }
 
-        return <Component key={module._key} {...module} />;
+        // Transform Sanity data to component-ready format
+        const transformedModule = transformModuleData(module);
+        return <Component key={module._key} {...transformedModule} />;
       })}
     </>
   );

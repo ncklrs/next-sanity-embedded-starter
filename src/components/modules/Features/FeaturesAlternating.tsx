@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Badge from "../../ui/Badge";
-import type { FeaturesAlternatingProps } from "./types";
+import { urlFor } from "@/lib/sanity";
 import {
   getSpacingClass,
   getBackgroundClass,
@@ -10,25 +10,55 @@ import {
   splitTextWithGradient,
 } from "./utils";
 
+interface AlternatingFeature {
+  heading: string;
+  description: string;
+  bullets?: string[];
+  image?: { src?: string; alt?: string; asset?: any };
+  features?: string[];
+}
+
+function getImageUrl(image?: { src?: string; asset?: any }): string {
+  if (!image) return "";
+  if (image.src) return image.src;
+  if (image.asset) return urlFor(image).width(800).url();
+  return "";
+}
+
+interface FeaturesAlternatingProps {
+  badge?: string;
+  heading: string;
+  headingHighlight?: string;
+  subheading?: string;
+  items?: AlternatingFeature[];
+  spacing?: string;
+  backgroundColor?: string;
+}
+
 export default function FeaturesAlternating({
-  section,
-  features,
+  badge,
+  heading,
+  headingHighlight,
+  subheading,
+  items,
   spacing = "lg",
   backgroundColor = "default",
 }: FeaturesAlternatingProps) {
   const { beforeGradient, gradientPart, afterGradient } = splitTextWithGradient(
-    section.heading,
-    section.headingGradient
+    heading,
+    headingHighlight
   );
+
+  const features = items || [];
 
   return (
     <section className={`section ${getSpacingClass(spacing)} ${getBackgroundClass(backgroundColor)}`}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          {section.badge && (
+          {badge && (
             <Badge variant="gradient" className="mb-4">
-              {section.badge}
+              {badge}
             </Badge>
           )}
           <h2 className="heading-lg mb-4">
@@ -36,7 +66,7 @@ export default function FeaturesAlternating({
             {gradientPart && <span className="text-gradient">{gradientPart}</span>}
             {afterGradient}
           </h2>
-          {section.subheading && <p className="body-lg">{section.subheading}</p>}
+          {subheading && <p className="body-lg">{subheading}</p>}
         </div>
 
         {/* Alternating Features */}
@@ -54,7 +84,7 @@ function FeatureRow({
   feature,
   index,
 }: {
-  feature: FeaturesAlternatingProps["features"][0];
+  feature: AlternatingFeature;
   index: number;
 }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -100,10 +130,10 @@ function FeatureRow({
         <h3 className="heading-md mb-4 text-[var(--foreground)]">{feature.heading}</h3>
         <p className="body-lg mb-6">{feature.description}</p>
 
-        {/* Bullet List */}
-        {feature.bullets && feature.bullets.length > 0 && (
+        {/* Bullet List - supports both 'bullets' and 'features' field names from Sanity */}
+        {((feature.bullets && feature.bullets.length > 0) || (feature.features && feature.features.length > 0)) && (
           <ul className="space-y-3">
-            {feature.bullets.map((bullet, bulletIndex) => (
+            {(feature.bullets || feature.features || []).map((bullet, bulletIndex) => (
               <li key={bulletIndex} className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-[var(--gradient-primary-soft)] flex items-center justify-center">
                   {renderIcon("check", {
@@ -123,12 +153,14 @@ function FeatureRow({
       {/* Image Side */}
       <div className={`relative ${isReversed ? "lg:order-1" : ""}`}>
         <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-xl">
-          <img
-            src={feature.image.src}
-            alt={feature.image.alt}
-            className="w-full h-auto"
-            loading="lazy"
-          />
+          {feature.image && (
+            <img
+              src={getImageUrl(feature.image)}
+              alt={feature.image.alt || ""}
+              className="w-full h-auto"
+              loading="lazy"
+            />
+          )}
           {/* Glow Effect */}
           <div
             className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"

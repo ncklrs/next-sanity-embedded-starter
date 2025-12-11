@@ -514,11 +514,15 @@ interface ComparisonTableProps extends BaseProps {
 export function ComparisonTable({
   title,
   subtitle,
-  columns,
-  rows,
+  columns: rawColumns,
+  rows: rawRows,
   backgroundColor = "default",
   className = "",
 }: ComparisonTableProps) {
+  // Defensive defaults for null/undefined arrays from Sanity
+  const columns = rawColumns ?? [];
+  const rows = rawRows ?? [];
+
   const bgMap = {
     default: "var(--background)",
     secondary: "var(--background-secondary)",
@@ -595,11 +599,11 @@ export function ComparisonTable({
                         </span>
                       )}
                     </td>
-                    {row.values.map((value, colIndex) => (
+                    {(row.values || []).map((value, colIndex) => (
                       <td
                         key={colIndex}
                         className={`p-6 text-center ${
-                          columns[colIndex].highlighted
+                          columns[colIndex]?.highlighted
                             ? "bg-[var(--gradient-primary-soft)]"
                             : ""
                         }`}
@@ -667,7 +671,7 @@ export function ComparisonTable({
                     <span className="text-sm text-[var(--foreground)]">
                       {row.feature}
                     </span>
-                    <span>{renderCellValue(row.values[colIndex])}</span>
+                    <span>{renderCellValue((row.values || [])[colIndex])}</span>
                   </div>
                 ))}
               </div>
