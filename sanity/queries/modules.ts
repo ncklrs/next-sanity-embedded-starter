@@ -325,8 +325,8 @@ const ctaDefaultProjection = `{
   heading,
   headingHighlight,
   subheading,
-  primaryButton${buttonFields},
-  secondaryButton${buttonFields},
+  buttons[]${buttonFields},
+  note,
   spacing,
   backgroundColor
 }`;
@@ -338,9 +338,9 @@ const ctaNewsletterProjection = `{
   heading,
   headingHighlight,
   subheading,
-  inputPlaceholder,
+  placeholder,
   buttonText,
-  privacyText,
+  note,
   spacing,
   backgroundColor
 }`;
@@ -361,10 +361,12 @@ const ctaSplitProjection = `{
 const ctaBannerProjection = `{
   _type,
   _key,
-  text,
+  heading,
   buttonText,
   buttonLink,
-  dismissible,
+  backgroundStyle,
+  backgroundImage${imageFields},
+  spacing,
   backgroundColor
 }`;
 
@@ -376,7 +378,7 @@ const ctaStatsProjection = `{
   headingHighlight,
   subheading,
   stats[]{ value, label },
-  primaryButton${buttonFields},
+  buttons[]${buttonFields},
   spacing,
   backgroundColor
 }`;
@@ -635,8 +637,8 @@ const formContactProjection = `{
     ${formFieldsProjection},
     settings
   },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const formNewsletterProjection = `{
@@ -648,10 +650,11 @@ const formNewsletterProjection = `{
   form->{
     _id,
     name,
+    ${formFieldsProjection},
     settings
   },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const formWithImageProjection = `{
@@ -669,8 +672,8 @@ const formWithImageProjection = `{
     ${formFieldsProjection},
     settings
   },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const formMultiStepProjection = `{
@@ -688,8 +691,8 @@ const formMultiStepProjection = `{
   submitText,
   successMessage,
   showProgressBar,
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const formDynamicProjection = `{
@@ -708,8 +711,8 @@ const formDynamicProjection = `{
     ${formFieldsProjection},
     settings
   },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 // Trust module projections

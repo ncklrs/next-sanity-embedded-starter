@@ -382,6 +382,53 @@ const moduleTransformers: Record<string, (data: any) => any> = {
     submitText: data.form?.settings?.submitButtonText || 'Send Message',
     successMessage: data.form?.settings?.successMessage,
   }),
+  // Transform cta.default - map buttons array fields
+  "cta.default": (data) => ({
+    ...data,
+    headingGradient: data.headingHighlight,
+    buttons: (data.buttons || []).map((btn: any) => ({
+      label: btn.text,
+      href: btn.link,
+      variant: btn.variant || "primary",
+    })),
+  }),
+  // Transform cta.newsletter - map field names to component props
+  "cta.newsletter": (data) => ({
+    ...data,
+    headingGradient: data.headingHighlight,
+    inputPlaceholder: data.placeholder || "Enter your email",
+    buttonLabel: data.buttonText || "Subscribe",
+    privacyNote: data.note,
+  }),
+  // Transform cta.split - map buttons array fields
+  "cta.split": (data) => ({
+    ...data,
+    headingGradient: data.headingHighlight,
+    buttons: (data.buttons || []).map((btn: any) => ({
+      label: btn.text,
+      href: btn.link,
+      variant: btn.variant || "primary",
+    })),
+    image: sanityImageToUrl(data.image) || { src: "", alt: "" },
+  }),
+  // Transform cta.banner - map field names
+  "cta.banner": (data) => ({
+    ...data,
+    text: data.heading, // Component uses both heading and text
+    background: data.backgroundStyle || "gradient",
+    backgroundImage: data.backgroundImage?.asset?.url,
+  }),
+  // Transform cta.stats - map buttons array fields
+  "cta.stats": (data) => ({
+    ...data,
+    headingGradient: data.headingHighlight,
+    buttons: (data.buttons || []).map((btn: any) => ({
+      label: btn.text,
+      href: btn.link,
+      variant: btn.variant || "primary",
+    })),
+    stats: data.stats || [],
+  }),
 };
 
 /**
