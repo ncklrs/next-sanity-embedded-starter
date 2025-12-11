@@ -1,24 +1,22 @@
-import { sanityFetch, client } from "../../../sanity/lib/client";
 import { notFound } from "next/navigation";
-import { pageBySlugQuery, allPageSlugsQuery } from "../../../sanity/queries/pages";
-import { siteSettingsQuery } from "@/lib/sanity";
+import {
+  getPageBySlug,
+  getPageWithSettings,
+  getAllPageSlugs,
+} from "../../../sanity/queries";
 import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
 // Pre-generate all page routes at build time
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(allPageSlugsQuery);
+  const slugs = await getAllPageSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const page = await sanityFetch<any>({
-    query: pageBySlugQuery,
-    params: { slug },
-    tags: ["pages", `slug:${slug}`],
-  });
+  const page = await getPageBySlug(slug);
 
   if (!page) return {};
 
@@ -30,18 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  const [page, settings] = await Promise.all([
-    sanityFetch<any>({
-      query: pageBySlugQuery,
-      params: { slug },
-      tags: ["pages", `slug:${slug}`],
-    }),
-    sanityFetch<any>({
-      query: siteSettingsQuery,
-      tags: ["site-settings"],
-    }),
-  ]);
+  const { page, settings } = await getPageWithSettings(slug);
 
   if (!page) {
     notFound();

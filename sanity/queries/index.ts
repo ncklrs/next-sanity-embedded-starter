@@ -64,3 +64,27 @@ export {
 
 // Module projections (for custom queries)
 export { moduleProjection, moduleProjections, sharedFields } from "./modules";
+
+// Query fetcher functions (use these in pages instead of sanityFetch directly)
+export {
+  // Types
+  type SeoData,
+  type PageData,
+  type PostData,
+  type PostListItem,
+  type SiteSettings,
+  // Page fetchers
+  getHomepage,
+  getPageBySlug,
+  getPageMetadata,
+  getAllPageSlugs,
+  // Settings fetchers
+  getSiteSettings,
+  // Post fetchers
+  getAllPosts,
+  getPostBySlug,
+  getAllPostSlugs,
+  // Combined fetchers
+  getHomepageWithSettings,
+  getPageWithSettings,
+} from "./fetchers";

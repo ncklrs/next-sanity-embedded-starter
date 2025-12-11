@@ -136,7 +136,6 @@ export function HeroDefault({
       <div className="container">
         <div
           className={`max-w-5xl ${isCenter ? "mx-auto text-center" : ""}`}
-          style={{ opacity: 0 }}
         >
           {badge && (
             <div
@@ -150,14 +149,13 @@ export function HeroDefault({
 
           <h1
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
-            style={{ opacity: 0 }}
           >
             {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
             className="body-lg max-w-3xl mb-10 animate-fade-in-up animate-delay-200"
-            style={{ opacity: 0, marginLeft: isCenter ? "auto" : "0", marginRight: isCenter ? "auto" : "0" }}
+            style={{ marginLeft: isCenter ? "auto" : "0", marginRight: isCenter ? "auto" : "0" }}
           >
             {subheading}
           </p>
@@ -166,7 +164,6 @@ export function HeroDefault({
             className={`flex flex-wrap gap-4 animate-fade-in-up animate-delay-300 ${
               isCenter ? "justify-center" : ""
             }`}
-            style={{ opacity: 0 }}
           >
             {primary && (
               <Button
@@ -259,7 +256,7 @@ export function HeroCentered({
       <div className="container">
         <div className="max-w-4xl mx-auto text-center">
           {badge && (
-            <div className="animate-fade-in flex justify-center" style={{ opacity: 0 }}>
+            <div className="animate-fade-in flex justify-center">
               <Badge variant={badge.variant || "gradient"}>
                 {badge.text}
               </Badge>
@@ -268,14 +265,12 @@ export function HeroCentered({
 
           <h1
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
-            style={{ opacity: 0 }}
           >
             {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
             className="body-lg max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-200"
-            style={{ opacity: 0 }}
           >
             {subheading}
           </p>
@@ -283,7 +278,6 @@ export function HeroCentered({
           {mappedButtons.length > 0 && (
             <div
               className="flex flex-wrap gap-4 justify-center mb-16 animate-fade-in-up animate-delay-300"
-              style={{ opacity: 0 }}
             >
               {mappedButtons.map((button, index) => (
                 <Button
@@ -303,7 +297,6 @@ export function HeroCentered({
           {(safeCompanies.length > 0 || safeLogos.length > 0) && (
             <div
               className="animate-fade-in-up animate-delay-400"
-              style={{ opacity: 0 }}
             >
               <p className="body-sm mb-8 uppercase tracking-wider">
                 {displayCompaniesHeading}
@@ -428,7 +421,7 @@ export function HeroSplit({
       <div className="container">
         <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ${imageOnLeft ? "lg:flex-row-reverse" : ""}`}>
           {/* Content Side */}
-          <div className={`${imageOnLeft ? "lg:order-2" : ""}`} style={{ opacity: 0 }}>
+          <div className={`${imageOnLeft ? "lg:order-2" : ""}`}>
             {badge && (
               <div className="animate-fade-in">
                 <Badge variant={badge.variant || "gradient"}>
@@ -439,14 +432,12 @@ export function HeroSplit({
 
             <h1
               className="display-lg mt-6 mb-6 animate-fade-in-up animate-delay-100"
-              style={{ opacity: 0 }}
             >
               {renderHeadingWithHighlight(heading, gradientText)}
             </h1>
 
             <p
               className="body-lg mb-8 animate-fade-in-up animate-delay-200"
-              style={{ opacity: 0 }}
             >
               {subheading}
             </p>
@@ -454,7 +445,6 @@ export function HeroSplit({
             {features.length > 0 && (
               <ul
                 className="space-y-4 mb-10 animate-fade-in-up animate-delay-300"
-                style={{ opacity: 0 }}
               >
                 {features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
@@ -471,7 +461,6 @@ export function HeroSplit({
 
             <div
               className="flex flex-wrap gap-4 animate-fade-in-up animate-delay-400"
-              style={{ opacity: 0 }}
             >
               {primary && (
                 <Button
@@ -500,7 +489,6 @@ export function HeroSplit({
           {image && (image.src || image.asset) && (
             <div
               className={`relative animate-fade-in-up animate-delay-200 ${imageOnLeft ? "lg:order-1" : ""}`}
-              style={{ opacity: 0 }}
             >
               <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] glow-cyan">
                 <Image
@@ -626,7 +614,7 @@ export function HeroVideo({
       <div className="container relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {badge && (
-            <div className="animate-fade-in flex justify-center" style={{ opacity: 0 }}>
+            <div className="animate-fade-in flex justify-center">
               <Badge variant={badge.variant || "gradient"}>
                 {badge.text}
               </Badge>
@@ -635,21 +623,18 @@ export function HeroVideo({
 
           <h1
             className="display-xl mt-6 mb-6 animate-fade-in-up animate-delay-100"
-            style={{ opacity: 0 }}
           >
             {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
             className="body-lg max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-200"
-            style={{ opacity: 0 }}
           >
             {subheading}
           </p>
 
           <div
             className="flex flex-wrap gap-4 justify-center animate-fade-in-up animate-delay-300"
-            style={{ opacity: 0 }}
           >
             {primary && (
               <Button
@@ -743,7 +728,6 @@ export function HeroMinimal({
           {announcement && (
             <div
               className="animate-fade-in flex justify-center mb-8"
-              style={{ opacity: 0 }}
             >
               <div className="glass-card px-6 py-3 inline-flex items-center gap-3">
                 <span className="text-sm text-[var(--foreground-muted)]">
@@ -767,14 +751,12 @@ export function HeroMinimal({
 
           <h1
             className="display-xl mb-6 animate-fade-in-up animate-delay-100"
-            style={{ opacity: 0 }}
           >
             {renderHeadingWithHighlight(heading, gradientText)}
           </h1>
 
           <p
             className="body-lg max-w-2xl mx-auto mb-10 animate-fade-in-up animate-delay-200"
-            style={{ opacity: 0 }}
           >
             {subheading}
           </p>
@@ -782,7 +764,6 @@ export function HeroMinimal({
           {ctaButton && (
             <div
               className="animate-fade-in-up animate-delay-300 flex justify-center"
-              style={{ opacity: 0 }}
             >
               <Button
                 variant={ctaButton.variant || "primary"}

@@ -1,14 +1,10 @@
-import { sanityFetch } from "../../sanity/lib/client";
-import { homepageQuery, siteSettingsQuery } from "@/lib/sanity";
+import { getHomepage, getHomepageWithSettings } from "../../sanity/queries";
 import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
 export async function generateMetadata() {
-  const page = await sanityFetch<any>({
-    query: homepageQuery,
-    tags: ["pages", "site-settings"],
-  });
+  const page = await getHomepage();
 
   return {
     title: page?.seo?.title || page?.title || "Aurora - Modern SaaS Platform",
@@ -17,16 +13,7 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const [page, settings] = await Promise.all([
-    sanityFetch<any>({
-      query: homepageQuery,
-      tags: ["pages", "site-settings"],
-    }),
-    sanityFetch<any>({
-      query: siteSettingsQuery,
-      tags: ["site-settings"],
-    }),
-  ]);
+  const { page, settings } = await getHomepageWithSettings();
 
   // If no homepage is configured, show a setup message
   if (!page) {

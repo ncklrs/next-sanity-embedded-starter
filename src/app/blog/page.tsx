@@ -1,8 +1,7 @@
-import { sanityFetch } from "../../../sanity/lib/client";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
-import { allPostsQuery } from "../../../sanity/queries";
+import { getAllPosts } from "../../../sanity/queries";
 
 export const metadata = {
   title: "Blog | Aurora",
@@ -10,10 +9,7 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await sanityFetch<any[]>({
-    query: allPostsQuery,
-    tags: ["posts"],
-  });
+  const posts = await getAllPosts();
 
   return (
     <main className="min-h-screen">
