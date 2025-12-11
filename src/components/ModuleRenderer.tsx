@@ -418,15 +418,15 @@ const moduleComponents: Record<string, React.ComponentType<any>> = {
   teamGrid: TeamGrid,
   teamCards: TeamCards,
   teamCompact: TeamCompact,
-  // CTA
-  ctaDefault: CTADefault,
-  ctaNewsletter: CTANewsletter,
-  ctaSplit: CTASplit,
-  ctaBanner: CTABanner,
-  ctaStats: CTAStats,
-  // Social Proof
-  socialProofLogos: SocialProofLogos,
-  socialProofStats: SocialProofStats,
+  // CTA (dot notation - actual Sanity schema names)
+  "cta.default": CTADefault,
+  "cta.newsletter": CTANewsletter,
+  "cta.split": CTASplit,
+  "cta.banner": CTABanner,
+  "cta.stats": CTAStats,
+  // Social Proof (dot notation - actual Sanity schema names)
+  "socialProof.logos": SocialProofLogos,
+  "socialProof.stats": SocialProofStats,
   // Logo Cloud
   logoCloudSimple: LogoCloudSimple,
   logoCloudMarquee: LogoCloudMarquee,
