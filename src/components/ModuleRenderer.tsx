@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { urlFor } from "@/lib/sanity";
+import { ModuleErrorBoundary } from "./ModuleErrorBoundary";
 import { HeroDefault, HeroCentered, HeroSplit, HeroVideo, HeroMinimal } from "./modules/Hero";
 import { FeaturesGrid, FeaturesAlternating, FeaturesIconCards } from "./modules/Features";
 import { PricingCards, PricingComparison, PricingSimple } from "./modules/Pricing";
@@ -494,23 +496,36 @@ interface ModuleRendererProps {
 }
 
 export function ModuleRenderer({ modules }: ModuleRendererProps) {
-  if (!modules || modules.length === 0) {
+  // Memoize transformed modules to prevent re-computation on every render
+  const transformedModules = useMemo(() => {
+    if (!modules || modules.length === 0) return [];
+    return modules.map((module) => ({
+      _key: module._key,
+      _type: module._type,
+      data: transformModuleData(module),
+    }));
+  }, [modules]);
+
+  if (transformedModules.length === 0) {
     return null;
   }
 
   return (
     <>
-      {modules.map((module) => {
-        const Component = moduleComponents[module._type];
+      {transformedModules.map(({ _key, _type, data }) => {
+        const Component = moduleComponents[_type];
 
         if (!Component) {
-          console.warn(`Unknown module type: ${module._type}`);
+          console.warn(`Unknown module type: ${_type}`);
           return null;
         }
 
-        // Transform Sanity data to component-ready format
-        const transformedModule = transformModuleData(module);
-        return <Component key={module._key} {...transformedModule} />;
+        // Wrap each module in error boundary for graceful degradation
+        return (
+          <ModuleErrorBoundary key={_key} moduleType={_type} moduleKey={_key}>
+            <Component {...data} />
+          </ModuleErrorBoundary>
+        );
       })}
     </>
   );

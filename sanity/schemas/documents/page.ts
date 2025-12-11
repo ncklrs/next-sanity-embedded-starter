@@ -90,6 +90,7 @@ export const page = defineType({
         { type: "formNewsletter" },
         { type: "formWithImage" },
         { type: "formMultiStep" },
+        { type: "formDynamic" },
         // Engagement
         { type: "announcementBar" },
         { type: "countdown" },

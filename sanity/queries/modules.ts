@@ -1073,7 +1073,34 @@ const multiColumnProjection = `{
   columnContent[]{
     _key,
     width,
-    modules[]{ _type, _key, ... }
+    modules[]{
+      _type,
+      _key,
+      // Content modules
+      _type == "richTextBlock" => ${richTextBlockProjection},
+      _type == "quote" => ${quoteProjection},
+      _type == "statsCounter" => ${statsCounterProjection},
+      // Media modules
+      _type == "videoEmbed" => ${videoEmbedProjection},
+      _type == "codeBlock" => ${codeBlockProjection},
+      _type == "beforeAfter" => ${beforeAfterProjection},
+      // Interactive
+      _type == "tabs" => ${tabsProjection},
+      _type == "accordion" => ${accordionProjection},
+      _type == "steps" => ${stepsProjection},
+      _type == "timeline" => ${timelineProjection},
+      // CTA
+      _type == "ctaDefault" => ${ctaDefaultProjection},
+      _type == "ctaNewsletter" => ${ctaNewsletterProjection},
+      // Trust
+      _type == "awards" => ${awardsProjection},
+      _type == "integrationGrid" => ${integrationGridProjection},
+      // Forms
+      _type == "formContact" => ${formContactProjection},
+      _type == "formNewsletter" => ${formNewsletterProjection},
+      // Utility
+      _type == "spacer" => ${spacerProjection}
+    }
   },
   backgroundColor,
   reverseOnMobile

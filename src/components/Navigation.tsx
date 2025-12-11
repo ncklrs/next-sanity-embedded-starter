@@ -1,11 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui";
 import { MenuIcon, XIcon, AuroraLogo } from "@/components/icons";
 import { urlFor } from "@/lib/sanity";
+
+// Extracted for consistency and reuse
+const BUTTON_VARIANT_CLASSES: Record<string, string> = {
+  primary: "btn btn-primary",
+  secondary: "btn btn-secondary",
+  ghost: "btn btn-ghost",
+  outline: "btn border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)]",
+};
+
+const BUTTON_SIZE_CLASSES: Record<string, string> = {
+  sm: "btn-sm",
+  md: "",
+  lg: "btn-lg",
+};
 
 interface NavLink {
   label: string;
@@ -54,11 +69,37 @@ export interface NavigationProps {
 export function Navigation({ settings }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [mobileMenuOpen]);
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen((prev) => !prev);
   }, []);
 
   const getNavHref = (item: NavLink) => {
@@ -79,6 +120,13 @@ export function Navigation({ settings }: NavigationProps) {
       return button.internalLink?.slug?.current ? `/${button.internalLink.slug.current}` : "/";
     }
     return button.externalUrl || "#";
+  };
+
+  // Check if a nav link is active
+  const isActiveLink = (item: NavLink): boolean => {
+    const href = getNavHref(item);
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
   };
 
   // Use new structure with fallback to legacy fields
@@ -110,8 +158,9 @@ export function Navigation({ settings }: NavigationProps) {
             <Link
               key={index}
               href={getNavHref(item)}
-              className="nav-link"
+              className={`nav-link ${isActiveLink(item) ? "nav-link-active" : ""}`}
               target={item.linkType === "external" ? "_blank" : undefined}
+              aria-current={isActiveLink(item) ? "page" : undefined}
             >
               {item.label}
             </Link>
@@ -121,30 +170,17 @@ export function Navigation({ settings }: NavigationProps) {
         {/* Desktop CTA Buttons */}
         {showCta && ctaButtons.length > 0 && (
           <div className="hidden md:flex items-center gap-3">
-            {ctaButtons.map((button, index) => {
-              const variantClasses: Record<string, string> = {
-                primary: "btn btn-primary",
-                secondary: "btn btn-secondary",
-                ghost: "btn btn-ghost",
-                outline: "btn border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)]",
-              };
-              const sizeClasses: Record<string, string> = {
-                sm: "btn-sm",
-                md: "",
-                lg: "btn-lg",
-              };
-              return (
-                <Link
-                  key={index}
-                  href={getCtaHref(button)}
-                  target={button.openInNewTab ? "_blank" : undefined}
-                  rel={button.openInNewTab ? "noopener noreferrer" : undefined}
-                  className={`${variantClasses[button.variant] || variantClasses.primary} ${sizeClasses[button.size] || ""}`}
-                >
-                  {button.label}
-                </Link>
-              );
-            })}
+            {ctaButtons.map((button, index) => (
+              <Link
+                key={index}
+                href={getCtaHref(button)}
+                target={button.openInNewTab ? "_blank" : undefined}
+                rel={button.openInNewTab ? "noopener noreferrer" : undefined}
+                className={`${BUTTON_VARIANT_CLASSES[button.variant] || BUTTON_VARIANT_CLASSES.primary} ${BUTTON_SIZE_CLASSES[button.size] || ""}`}
+              >
+                {button.label}
+              </Link>
+            ))}
           </div>
         )}
 
@@ -161,7 +197,9 @@ export function Navigation({ settings }: NavigationProps) {
         {/* Mobile Menu Button */}
         <button
           className="md:hidden p-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={toggleMobileMenu}
+          aria-expanded={mobileMenuOpen}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
         </button>
@@ -175,8 +213,9 @@ export function Navigation({ settings }: NavigationProps) {
               <Link
                 key={index}
                 href={getNavHref(item)}
-                className="nav-link block"
-                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link block ${isActiveLink(item) ? "nav-link-active" : ""}`}
+                onClick={closeMobileMenu}
+                aria-current={isActiveLink(item) ? "page" : undefined}
               >
                 {item.label}
               </Link>
@@ -184,26 +223,18 @@ export function Navigation({ settings }: NavigationProps) {
             {showCta && (
               <div className="pt-4 mt-2 border-t border-[var(--border)] flex flex-col gap-2">
                 {ctaButtons.length > 0 ? (
-                  ctaButtons.map((button, index) => {
-                    const variantClasses: Record<string, string> = {
-                      primary: "btn btn-primary",
-                      secondary: "btn btn-secondary",
-                      ghost: "btn btn-ghost",
-                      outline: "btn border border-[var(--border)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)]",
-                    };
-                    return (
-                      <Link
-                        key={index}
-                        href={getCtaHref(button)}
-                        target={button.openInNewTab ? "_blank" : undefined}
-                        rel={button.openInNewTab ? "noopener noreferrer" : undefined}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`${variantClasses[button.variant] || variantClasses.primary} w-full justify-center`}
-                      >
-                        {button.label}
-                      </Link>
-                    );
-                  })
+                  ctaButtons.map((button, index) => (
+                    <Link
+                      key={index}
+                      href={getCtaHref(button)}
+                      target={button.openInNewTab ? "_blank" : undefined}
+                      rel={button.openInNewTab ? "noopener noreferrer" : undefined}
+                      onClick={closeMobileMenu}
+                      className={`${BUTTON_VARIANT_CLASSES[button.variant] || BUTTON_VARIANT_CLASSES.primary} w-full justify-center`}
+                    >
+                      {button.label}
+                    </Link>
+                  ))
                 ) : (
                   <>
                     <Button variant="ghost" className="w-full justify-center">

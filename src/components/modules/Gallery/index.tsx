@@ -214,12 +214,24 @@ export const GalleryGrid = ({
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const openLightbox = (index: number) => {
+  const openLightbox = useCallback((index: number) => {
     if (enableLightbox) {
       setCurrentImageIndex(index);
       setLightboxOpen(true);
     }
-  };
+  }, [enableLightbox]);
+
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1));
+  }, [images.length]);
+
+  const handlePreviousImage = useCallback(() => {
+    setCurrentImageIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
 
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
@@ -266,9 +278,9 @@ export const GalleryGrid = ({
         <Lightbox
           images={images}
           currentIndex={currentImageIndex}
-          onClose={() => setLightboxOpen(false)}
-          onNext={() => setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1))}
-          onPrevious={() => setCurrentImageIndex((prev) => Math.max(prev - 1, 0))}
+          onClose={handleCloseLightbox}
+          onNext={handleNextImage}
+          onPrevious={handlePreviousImage}
         />
       )}
     </section>
@@ -310,12 +322,24 @@ export const GalleryMasonry = ({
     }
   };
 
-  const openLightbox = (index: number) => {
+  const openLightbox = useCallback((index: number) => {
     if (enableLightbox) {
       setCurrentImageIndex(index);
       setLightboxOpen(true);
     }
-  };
+  }, [enableLightbox]);
+
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
+
+  const handleNextImage = useCallback(() => {
+    setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1));
+  }, [images.length]);
+
+  const handlePreviousImage = useCallback(() => {
+    setCurrentImageIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
 
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
@@ -364,9 +388,9 @@ export const GalleryMasonry = ({
         <Lightbox
           images={images}
           currentIndex={currentImageIndex}
-          onClose={() => setLightboxOpen(false)}
-          onNext={() => setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1))}
-          onPrevious={() => setCurrentImageIndex((prev) => Math.max(prev - 1, 0))}
+          onClose={handleCloseLightbox}
+          onNext={handleNextImage}
+          onPrevious={handlePreviousImage}
         />
       )}
     </section>

@@ -363,14 +363,16 @@ export interface CodeBlockProps extends BaseMediaProps {
 export function CodeBlock({
   title,
   description,
-  code,
+  code = "",
   language = "javascript",
   filename,
   showLineNumbers = true,
-  highlightLines = [],
+  highlightLines,
   variant = "default",
   backgroundColor = "default",
 }: CodeBlockProps) {
+  // Ensure highlightLines is always an array
+  const safeHighlightLines = Array.isArray(highlightLines) ? highlightLines : [];
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -390,7 +392,7 @@ export function CodeBlock({
     }
   };
 
-  const lines = code.split("\n");
+  const lines = (code || "").split("\n");
 
   return (
     <section className={`section ${getBackgroundClass()}`}>
@@ -463,7 +465,7 @@ export function CodeBlock({
                   <div
                     key={index}
                     className={`${
-                      highlightLines.includes(index + 1)
+                      safeHighlightLines.includes(index + 1)
                         ? "bg-[var(--accent-violet)]/10 -mx-6 px-6"
                         : ""
                     }`}

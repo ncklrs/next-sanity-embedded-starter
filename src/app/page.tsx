@@ -2,6 +2,7 @@ import { getHomepage, getHomepageWithSettings } from "../../sanity/queries";
 import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import Link from "next/link";
 
 export async function generateMetadata() {
   const page = await getHomepage();
@@ -33,12 +34,10 @@ export default async function Home() {
               <li>2. Go to Site Settings</li>
               <li>3. Select your page as the Homepage</li>
             </ol>
-            <a
-              href="/studio"
-              className="btn btn-primary"
-            >
+            <Link href="/studio" className="btn btn-primary">
               Open Sanity Studio
-            </a>
+            </Link>
+           
           </div>
         </main>
         <Footer settings={settings} />

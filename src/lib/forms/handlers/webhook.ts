@@ -2,6 +2,7 @@
  * Generic Webhook Handler
  *
  * Sends form submissions to any HTTP endpoint.
+ * Features timeout protection and retry with exponential backoff.
  */
 
 import {
@@ -9,6 +10,11 @@ import {
   parseJsonTemplate,
   type TemplateContext,
 } from "../templateEngine";
+
+// Configuration
+const WEBHOOK_TIMEOUT_MS = 10000; // 10 seconds
+const MAX_RETRIES = 2;
+const INITIAL_RETRY_DELAY_MS = 1000;
 
 export interface GenericWebhookAction {
   _type: "genericWebhookAction";
@@ -20,6 +26,51 @@ export interface GenericWebhookAction {
   headers?: Array<{ key: string; value: string }>;
   payloadTemplate?: string;
   includeAllFields?: boolean;
+}
+
+/**
+ * Fetch with timeout support using AbortController
+ */
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * Sleep for exponential backoff
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Check if error is retryable (network errors, 5xx, 429)
+ */
+function isRetryableError(error: unknown, response?: Response): boolean {
+  // Network errors (AbortError from timeout, TypeError from network failure)
+  if (error instanceof Error) {
+    if (error.name === "AbortError") return true;
+    if (error.name === "TypeError") return true;
+  }
+  // Server errors and rate limiting
+  if (response) {
+    return response.status >= 500 || response.status === 429;
+  }
+  return false;
 }
 
 /**
@@ -55,10 +106,8 @@ export async function handleGenericWebhook(
   let body: Record<string, unknown>;
 
   if (action.payloadTemplate) {
-    // Use custom JSON template
     body = parseJsonTemplate(action.payloadTemplate, context);
   } else if (action.includeAllFields !== false) {
-    // Default: include all form fields
     body = {
       event: "form_submission",
       form: {
@@ -69,7 +118,6 @@ export async function handleGenericWebhook(
       timestamp: new Date().toISOString(),
     };
   } else {
-    // Minimal payload
     body = {
       formId: formConfig._id,
       formName: formConfig.name,
@@ -77,17 +125,64 @@ export async function handleGenericWebhook(
     };
   }
 
-  // Send the request
-  const response = await fetch(action.url, {
+  const requestOptions: RequestInit = {
     method: action.method || "POST",
     headers,
     body: JSON.stringify(body),
-  });
+  };
 
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "Unknown error");
-    throw new Error(
-      `Webhook failed: ${response.status} ${response.statusText} - ${errorText}`
-    );
+  // Attempt request with retries
+  let lastError: Error | null = null;
+  let lastResponse: Response | null = null;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      // Exponential backoff on retries
+      if (attempt > 0) {
+        const delay = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+        console.log(`[Webhook] Retry ${attempt}/${MAX_RETRIES} after ${delay}ms`);
+        await sleep(delay);
+      }
+
+      const response = await fetchWithTimeout(
+        action.url,
+        requestOptions,
+        WEBHOOK_TIMEOUT_MS
+      );
+
+      if (response.ok) {
+        return; // Success!
+      }
+
+      lastResponse = response;
+      lastError = new Error(
+        `Webhook failed: ${response.status} ${response.statusText}`
+      );
+
+      // Only retry on retryable status codes
+      if (!isRetryableError(null, response)) {
+        break;
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      // Handle timeout specifically
+      if (lastError.name === "AbortError") {
+        lastError = new Error(`Webhook timed out after ${WEBHOOK_TIMEOUT_MS}ms`);
+      }
+
+      // Only retry on retryable errors
+      if (!isRetryableError(error)) {
+        break;
+      }
+    }
   }
+
+  // All retries exhausted or non-retryable error
+  const errorText = lastResponse
+    ? await lastResponse.text().catch(() => "Unknown error")
+    : "";
+  throw new Error(
+    lastError?.message + (errorText ? ` - ${errorText}` : "")
+  );
 }

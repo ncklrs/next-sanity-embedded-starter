@@ -118,21 +118,12 @@ export function PricingCards({
                 plan.isPopular ? "md:scale-105 z-10" : ""
               }`}
             >
-              {/* Popular Badge */}
-              {plan.isPopular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                  <Badge variant="gradient" dot>
-                    {plan.badge || "Most Popular"}
-                  </Badge>
-                </div>
-              )}
-
               {/* Card */}
               <div
-                className={`relative h-full p-8 rounded-2xl backdrop-blur-lg transition-all duration-500
+                className={`relative h-full rounded-2xl backdrop-blur-lg transition-all duration-500 overflow-hidden
                   ${
                     plan.isPopular
-                      ? "bg-[var(--surface-elevated)] border-2 border-transparent bg-gradient-to-b from-[rgba(139,92,246,0.1)] to-transparent"
+                      ? "bg-[var(--surface-elevated)] border-2 border-transparent"
                       : "bg-[var(--surface)] border border-[var(--border)]"
                   }
                   hover:border-[var(--border-hover)] hover:shadow-2xl hover:transform hover:-translate-y-1`}
@@ -146,73 +137,86 @@ export function PricingCards({
                     : undefined
                 }
               >
-                {/* Plan Name */}
-                <h3 className="heading-md mb-2">{plan.name}</h3>
-
-                {/* Description */}
-                <p className="text-[var(--foreground-muted)] text-sm mb-6">
-                  {plan.description}
-                </p>
-
-                {/* Price */}
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span
-                      className={`text-6xl font-bold tracking-tight ${
-                        plan.isPopular ? "text-gradient" : ""
-                      }`}
-                    >
-                      {typeof plan.price === "number" ? `$${plan.price}` : plan.price}
+                {/* Popular Banner - Inside the card at the top */}
+                {plan.isPopular && (
+                  <div className="w-full py-2 px-4 text-center bg-gradient-to-r from-[#06b6d4] via-[#8b5cf6] to-[#ec4899]">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white flex items-center justify-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                      {plan.badge || "Most Popular"}
                     </span>
-                    {plan.period && (
-                      <span className="text-[var(--foreground-muted)] text-lg">
-                        /{plan.period}
-                      </span>
-                    )}
                   </div>
-                </div>
+                )}
 
-                {/* Features List */}
-                <ul className="space-y-4 mb-8 flex-grow">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-3">
-                      <div
-                        className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                          feature.available !== false
-                            ? "bg-[rgba(16,185,129,0.15)]"
-                            : "bg-[var(--surface-elevated)]"
-                        }`}
-                      >
-                        <CheckIcon
-                          className={`w-3 h-3 ${
-                            feature.available !== false
-                              ? "text-[var(--accent-emerald)]"
-                              : "text-[var(--foreground-subtle)] opacity-40"
-                          }`}
-                        />
-                      </div>
+                {/* Card Content */}
+                <div className="p-8">
+                  {/* Plan Name */}
+                  <h3 className="heading-md mb-2">{plan.name}</h3>
+
+                  {/* Description */}
+                  <p className="text-[var(--foreground-muted)] text-sm mb-6">
+                    {plan.description}
+                  </p>
+
+                  {/* Price */}
+                  <div className="mb-8">
+                    <div className="flex items-baseline gap-2">
                       <span
-                        className={`text-sm ${
-                          feature.available !== false
-                            ? "text-[var(--foreground)]"
-                            : "text-[var(--foreground-subtle)] opacity-60"
+                        className={`text-6xl font-bold tracking-tight ${
+                          plan.isPopular ? "text-gradient" : ""
                         }`}
                       >
-                        {feature.text}
+                        {typeof plan.price === "number" ? `$${plan.price}` : plan.price}
                       </span>
-                    </li>
-                  ))}
-                </ul>
+                      {plan.period && (
+                        <span className="text-[var(--foreground-muted)] text-lg">
+                          /{plan.period}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                {/* CTA Button */}
-                <Button
-                  variant={plan.ctaVariant || (plan.isPopular ? "primary" : "secondary")}
-                  size="lg"
-                  className="w-full"
-                  onClick={() => onPlanSelect?.(plan.name)}
-                >
-                  {plan.ctaText || "Get Started"}
-                </Button>
+                  {/* Features List */}
+                  <ul className="space-y-4 mb-8 flex-grow">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start gap-3">
+                        <div
+                          className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                            feature.available !== false
+                              ? "bg-[rgba(16,185,129,0.15)]"
+                              : "bg-[var(--surface-elevated)]"
+                          }`}
+                        >
+                          <CheckIcon
+                            className={`w-3 h-3 ${
+                              feature.available !== false
+                                ? "text-[var(--accent-emerald)]"
+                                : "text-[var(--foreground-subtle)] opacity-40"
+                            }`}
+                          />
+                        </div>
+                        <span
+                          className={`text-sm ${
+                            feature.available !== false
+                              ? "text-[var(--foreground)]"
+                              : "text-[var(--foreground-subtle)] opacity-60"
+                          }`}
+                        >
+                          {feature.text}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Button
+                    variant={plan.ctaVariant || (plan.isPopular ? "primary" : "secondary")}
+                    size="lg"
+                    className="w-full"
+                    onClick={() => onPlanSelect?.(plan.name)}
+                  >
+                    {plan.ctaText || "Get Started"}
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
