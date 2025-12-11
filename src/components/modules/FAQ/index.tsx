@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { cn, getContrastTheme } from "@/lib/utils";
 
 // Types
 export interface FAQItem {
@@ -71,10 +72,11 @@ export function FAQAccordion({
   };
 
   const isOpen = (index: number) => openIndices.includes(index);
+  const contrastTheme = getContrastTheme(backgroundColor);
 
   return (
     <section
-      className={`section ${className}`}
+      className={cn("section", contrastTheme, className)}
       style={{ backgroundColor }}
     >
       <div className="container max-w-3xl mx-auto">
@@ -110,9 +112,10 @@ export function FAQAccordion({
                 </span>
                 {iconType === "chevron" ? (
                   <svg
-                    className={`accordion-icon text-[var(--foreground-subtle)] ${
-                      isOpen(index) ? "rotate-180" : ""
-                    }`}
+                    className={cn(
+                      "accordion-icon text-foreground-subtle",
+                      isOpen(index) && "rotate-180"
+                    )}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -125,13 +128,13 @@ export function FAQAccordion({
                     />
                   </svg>
                 ) : (
-                  <span className="text-2xl text-[var(--foreground-subtle)] flex-shrink-0 font-light">
+                  <span className="text-2xl text-foreground-subtle shrink-0 font-light">
                     {isOpen(index) ? "−" : "+"}
                   </span>
                 )}
               </button>
               <div
-                className={`accordion-content ${isOpen(index) ? "open" : ""}`}
+                className={cn("accordion-content", isOpen(index) && "open")}
                 style={{
                   maxHeight: isOpen(index) ? "500px" : "0",
                 }}
@@ -172,6 +175,8 @@ export function FAQTwoColumn({
   const leftColumn = items.slice(0, midPoint);
   const rightColumn = items.slice(midPoint);
 
+  const contrastTheme = getContrastTheme(backgroundColor);
+
   const renderColumn = (columnItems: FAQItem[], startIndex: number) => (
     <div className="space-y-4">
       {columnItems.map((item, idx) => {
@@ -190,9 +195,10 @@ export function FAQTwoColumn({
                 {item.question}
               </span>
               <svg
-                className={`accordion-icon text-[var(--foreground-subtle)] ${
-                  isOpen(index) ? "rotate-180" : ""
-                }`}
+                className={cn(
+                  "accordion-icon text-foreground-subtle",
+                  isOpen(index) && "rotate-180"
+                )}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -206,7 +212,7 @@ export function FAQTwoColumn({
               </svg>
             </button>
             <div
-              className={`accordion-content ${isOpen(index) ? "open" : ""}`}
+              className={cn("accordion-content", isOpen(index) && "open")}
               style={{
                 maxHeight: isOpen(index) ? "500px" : "0",
               }}
@@ -223,7 +229,7 @@ export function FAQTwoColumn({
 
   return (
     <section
-      className={`section ${className}`}
+      className={cn("section", contrastTheme, className)}
       style={{ backgroundColor }}
     >
       <div className="container">
@@ -313,9 +319,11 @@ export function FAQWithCategories({
     setOpenIndices([]);
   };
 
+  const contrastTheme = getContrastTheme(backgroundColor);
+
   return (
     <section
-      className={`section ${className}`}
+      className={cn("section", contrastTheme, className)}
       style={{ backgroundColor }}
     >
       <div className="container max-w-4xl mx-auto">
@@ -341,9 +349,7 @@ export function FAQWithCategories({
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
-              className={`category-tab ${
-                selectedCategory === category ? "active" : ""
-              }`}
+              className={cn("category-tab", selectedCategory === category && "active")}
             >
               {category}
             </button>
@@ -367,9 +373,10 @@ export function FAQWithCategories({
                     {item.question}
                   </span>
                   <svg
-                    className={`accordion-icon text-[var(--foreground-subtle)] ${
-                      isOpen(index) ? "rotate-180" : ""
-                    }`}
+                    className={cn(
+                      "accordion-icon text-foreground-subtle",
+                      isOpen(index) && "rotate-180"
+                    )}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -383,7 +390,7 @@ export function FAQWithCategories({
                   </svg>
                 </button>
                 <div
-                  className={`accordion-content ${isOpen(index) ? "open" : ""}`}
+                  className={cn("accordion-content", isOpen(index) && "open")}
                   style={{
                     maxHeight: isOpen(index) ? "500px" : "0",
                   }}
@@ -428,10 +435,11 @@ export function FAQSimple({
   };
 
   const isOpen = (index: number) => openIndices.includes(index);
+  const contrastTheme = getContrastTheme(backgroundColor);
 
   return (
     <section
-      className={`section ${className}`}
+      className={cn("section", contrastTheme, className)}
       style={{ backgroundColor }}
     >
       <div className="container max-w-3xl mx-auto">
@@ -443,19 +451,20 @@ export function FAQSimple({
 
         <div className="space-y-6">
           {items.map((item, index) => (
-            <div key={index} className="border-b border-[var(--border)] pb-6 last:border-0">
+            <div key={index} className="border-b border-border pb-6 last:border-0">
               <button
                 onClick={() => toggleItem(index)}
                 className="w-full flex items-start justify-between text-left group"
                 aria-expanded={isOpen(index)}
               >
-                <span className="text-lg font-semibold text-[var(--foreground)] pr-4 group-hover:text-[var(--accent-violet)] transition-colors duration-200">
+                <span className="text-lg font-semibold text-foreground pr-4 group-hover:text-accent-violet transition-colors duration-200">
                   {item.question}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-[var(--foreground-subtle)] flex-shrink-0 mt-1 transition-transform duration-300 ${
-                    isOpen(index) ? "rotate-180" : ""
-                  }`}
+                  className={cn(
+                    "w-5 h-5 text-foreground-subtle shrink-0 mt-1 transition-transform duration-300",
+                    isOpen(index) && "rotate-180"
+                  )}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -469,16 +478,12 @@ export function FAQSimple({
                 </svg>
               </button>
               <div
-                className={`transition-all duration-300 ease-in-out ${
-                  isOpen(index)
-                    ? "max-h-[500px] opacity-100 mt-3"
-                    : "max-h-0 opacity-0"
-                }`}
-                style={{
-                  overflow: "hidden",
-                }}
+                className={cn(
+                  "transition-all duration-300 ease-in-out overflow-hidden",
+                  isOpen(index) ? "max-h-[500px] opacity-100 mt-3" : "max-h-0 opacity-0"
+                )}
               >
-                <p className="text-[var(--foreground-muted)] leading-relaxed">{item.answer}</p>
+                <p className="text-foreground-muted leading-relaxed">{item.answer}</p>
               </div>
             </div>
           ))}

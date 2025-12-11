@@ -1791,3 +1791,38 @@ textarea.input {
 .bg-secondary { background: var(--background-secondary); }
 .bg-tertiary { background: var(--background-tertiary); }
 .bg-surface { background: var(--surface); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONTRAST THEME OVERRIDES
+   Use these classes when a section has a custom background color that conflicts
+   with the page theme. Apply .theme-on-light for light backgrounds,
+   .theme-on-dark for dark backgrounds.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Light background overrides - use dark text */
+.theme-on-light {
+  --foreground: #0f172a;
+  --foreground-muted: #475569;
+  --foreground-subtle: #64748b;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-hover: rgba(0, 0, 0, 0.2);
+  --surface: rgba(0, 0, 0, 0.03);
+  --surface-elevated: rgba(0, 0, 0, 0.05);
+  --surface-hover: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+}
+
+/* Dark background overrides - use light text */
+.theme-on-dark {
+  --foreground: #f4f4f7;
+  --foreground-muted: #9ca3af;
+  --foreground-subtle: #6b7280;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-elevated: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(0, 0, 0, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
