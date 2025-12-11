@@ -146,26 +146,9 @@ export const countdown = defineType({
       initialValue: true,
     }),
     defineField({
-      name: 'cta',
+      name: 'button',
       title: 'Call to Action',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'text',
-          title: 'Button Text',
-          type: 'string',
-        }),
-        defineField({
-          name: 'url',
-          title: 'URL',
-          type: 'url',
-          validation: (Rule) =>
-            Rule.uri({
-              allowRelative: true,
-              scheme: ['http', 'https', 'mailto', 'tel'],
-            }),
-        }),
-      ],
+      type: 'simpleButton',
     }),
     defineField({
       name: 'variant',
@@ -437,26 +420,9 @@ export const modal = defineType({
       ],
     }),
     defineField({
-      name: 'cta',
+      name: 'button',
       title: 'Call to Action',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'text',
-          title: 'Button Text',
-          type: 'string',
-        }),
-        defineField({
-          name: 'url',
-          title: 'URL',
-          type: 'url',
-          validation: (Rule) =>
-            Rule.uri({
-              allowRelative: true,
-              scheme: ['http', 'https', 'mailto', 'tel'],
-            }),
-        }),
-      ],
+      type: 'simpleButton',
     }),
     defineField({
       name: 'trigger',

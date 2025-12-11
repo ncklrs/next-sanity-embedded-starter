@@ -49,64 +49,11 @@ export const heroDefault = defineType({
       rows: 3,
     }),
     defineField({
-      name: "primaryButton",
-      title: "Primary Button",
-      type: "object",
-      fields: [
-        defineField({
-          name: "text",
-          title: "Text",
-          type: "string",
-        }),
-        defineField({
-          name: "link",
-          title: "Link",
-          type: "string",
-        }),
-        defineField({
-          name: "variant",
-          title: "Variant",
-          type: "string",
-          options: {
-            list: [
-              { title: "Primary", value: "primary" },
-              { title: "Secondary", value: "secondary" },
-              { title: "Outline", value: "outline" },
-            ],
-          },
-          initialValue: "primary",
-        }),
-      ],
-    }),
-    defineField({
-      name: "secondaryButton",
-      title: "Secondary Button",
-      type: "object",
-      fields: [
-        defineField({
-          name: "text",
-          title: "Text",
-          type: "string",
-        }),
-        defineField({
-          name: "link",
-          title: "Link",
-          type: "string",
-        }),
-        defineField({
-          name: "variant",
-          title: "Variant",
-          type: "string",
-          options: {
-            list: [
-              { title: "Primary", value: "primary" },
-              { title: "Secondary", value: "secondary" },
-              { title: "Outline", value: "outline" },
-            ],
-          },
-          initialValue: "secondary",
-        }),
-      ],
+      name: "buttons",
+      title: "Buttons",
+      type: "array",
+      of: [{ type: "simpleButton" }],
+      validation: (Rule) => Rule.max(2),
     }),
     defineField({
       name: "backgroundStyle",
@@ -224,40 +171,8 @@ export const heroCentered = defineType({
       name: "buttons",
       title: "Buttons",
       type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "text",
-              title: "Text",
-              type: "string",
-            }),
-            defineField({
-              name: "link",
-              title: "Link",
-              type: "string",
-            }),
-            defineField({
-              name: "variant",
-              title: "Variant",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Primary", value: "primary" },
-                  { title: "Secondary", value: "secondary" },
-                  { title: "Outline", value: "outline" },
-                ],
-              },
-              initialValue: "primary",
-            }),
-          ],
-          preview: {
-            select: { title: "text" },
-            prepare: ({ title }) => ({ title: title || "Button" }),
-          },
-        },
-      ],
+      of: [{ type: "simpleButton" }],
+      validation: (Rule) => Rule.max(3),
     }),
     defineField({
       name: "trustedByText",
@@ -353,40 +268,8 @@ export const heroSplit = defineType({
       name: "buttons",
       title: "Buttons",
       type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "text",
-              title: "Text",
-              type: "string",
-            }),
-            defineField({
-              name: "link",
-              title: "Link",
-              type: "string",
-            }),
-            defineField({
-              name: "variant",
-              title: "Variant",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Primary", value: "primary" },
-                  { title: "Secondary", value: "secondary" },
-                  { title: "Outline", value: "outline" },
-                ],
-              },
-              initialValue: "primary",
-            }),
-          ],
-          preview: {
-            select: { title: "text" },
-            prepare: ({ title }) => ({ title: title || "Button" }),
-          },
-        },
-      ],
+      of: [{ type: "simpleButton" }],
+      validation: (Rule) => Rule.max(3),
     }),
     defineField({
       name: "image",
@@ -535,40 +418,8 @@ export const heroVideo = defineType({
       name: "buttons",
       title: "Buttons",
       type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "text",
-              title: "Text",
-              type: "string",
-            }),
-            defineField({
-              name: "link",
-              title: "Link",
-              type: "string",
-            }),
-            defineField({
-              name: "variant",
-              title: "Variant",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Primary", value: "primary" },
-                  { title: "Secondary", value: "secondary" },
-                  { title: "Outline", value: "outline" },
-                ],
-              },
-              initialValue: "primary",
-            }),
-          ],
-          preview: {
-            select: { title: "text" },
-            prepare: ({ title }) => ({ title: title || "Button" }),
-          },
-        },
-      ],
+      of: [{ type: "simpleButton" }],
+      validation: (Rule) => Rule.max(3),
     }),
     defineField({
       name: "overlay",
@@ -656,34 +507,11 @@ export const heroMinimal = defineType({
       ],
     }),
     defineField({
-      name: "singleButton",
-      title: "Button",
-      type: "object",
-      fields: [
-        defineField({
-          name: "text",
-          title: "Text",
-          type: "string",
-        }),
-        defineField({
-          name: "link",
-          title: "Link",
-          type: "string",
-        }),
-        defineField({
-          name: "variant",
-          title: "Variant",
-          type: "string",
-          options: {
-            list: [
-              { title: "Primary", value: "primary" },
-              { title: "Secondary", value: "secondary" },
-              { title: "Outline", value: "outline" },
-            ],
-          },
-          initialValue: "primary",
-        }),
-      ],
+      name: "buttons",
+      title: "Buttons",
+      type: "array",
+      of: [{ type: "simpleButton" }],
+      validation: (Rule) => Rule.max(1),
     }),
     defineField({
       name: 'spacing',

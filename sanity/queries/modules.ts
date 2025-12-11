@@ -45,12 +45,11 @@ const heroDefaultProjection = `{
   heading,
   headingHighlight,
   subheading,
-  primaryButton${buttonFields},
-  secondaryButton${buttonFields},
+  buttons[]${buttonFields},
   backgroundStyle,
   alignment,
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const heroCenteredProjection = `{
@@ -63,8 +62,8 @@ const heroCenteredProjection = `{
   buttons[]${buttonFields},
   trustedByText,
   trustedByLogos[]{ asset->{ _id, url }, alt, companyName },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const heroSplitProjection = `{
@@ -77,8 +76,8 @@ const heroSplitProjection = `{
   image${imageFields},
   imagePosition,
   features[]{ icon, text },
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const heroVideoProjection = `{
@@ -91,8 +90,8 @@ const heroVideoProjection = `{
   videoPoster${imageFields},
   buttons[]${buttonFields},
   overlay,
-  ${spacingRef},
-  ${backgroundColorRef}
+  spacing,
+  backgroundColor
 }`;
 
 const heroMinimalProjection = `{
@@ -102,9 +101,9 @@ const heroMinimalProjection = `{
   headingHighlight,
   subheading,
   announcement{ text, link },
-  singleButton${buttonFields},
-  ${spacingRef},
-  ${backgroundColorRef}
+  buttons[]${buttonFields},
+  spacing,
+  backgroundColor
 }`;
 
 // Features module projections
@@ -362,8 +361,7 @@ const ctaBannerProjection = `{
   _type,
   _key,
   heading,
-  buttonText,
-  buttonLink,
+  button${buttonFields},
   backgroundStyle,
   backgroundImage${imageFields},
   spacing,
@@ -983,14 +981,16 @@ const announcementBarProjection = `{
 const countdownProjection = `{
   _type,
   _key,
-  badge,
-  heading,
-  headingHighlight,
-  subheading,
+  title,
+  subtitle,
   targetDate,
   expiredMessage,
-  primaryButton${buttonFields},
-  spacing,
+  showDays,
+  showHours,
+  showMinutes,
+  showSeconds,
+  button${buttonFields},
+  variant,
   backgroundColor
 }`;
 
@@ -1008,11 +1008,16 @@ const stickyCtaProjection = `{
 const modalProjection = `{
   _type,
   _key,
-  triggerId,
+  id,
   title,
   content[],
-  primaryButton${buttonFields},
-  secondaryButton${buttonFields}
+  formModule,
+  image${imageFields},
+  button${buttonFields},
+  trigger,
+  triggerValue,
+  showOnce,
+  variant
 }`;
 
 // Utility module projections

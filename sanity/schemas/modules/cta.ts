@@ -27,48 +27,7 @@ export const ctaDefault = defineType({
       name: 'buttons',
       title: 'Buttons',
       type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'text',
-              title: 'Button Text',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'link',
-              title: 'Link',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.uri({
-                  allowRelative: true,
-                  scheme: ['http', 'https', 'mailto', 'tel'],
-                }),
-            }),
-            defineField({
-              name: 'variant',
-              title: 'Variant',
-              type: 'string',
-              options: {
-                list: [
-                  { title: 'Primary', value: 'primary' },
-                  { title: 'Secondary', value: 'secondary' },
-                  { title: 'Outline', value: 'outline' },
-                ],
-              },
-              initialValue: 'primary',
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'text',
-              subtitle: 'variant',
-            },
-          },
-        },
-      ],
+      of: [{ type: 'simpleButton' }],
       validation: (Rule) => Rule.max(3),
     }),
     defineField({
@@ -228,48 +187,7 @@ export const ctaSplit = defineType({
       name: 'buttons',
       title: 'Buttons',
       type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'text',
-              title: 'Button Text',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'link',
-              title: 'Link',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.uri({
-                  allowRelative: true,
-                  scheme: ['http', 'https', 'mailto', 'tel'],
-                }),
-            }),
-            defineField({
-              name: 'variant',
-              title: 'Variant',
-              type: 'string',
-              options: {
-                list: [
-                  { title: 'Primary', value: 'primary' },
-                  { title: 'Secondary', value: 'secondary' },
-                  { title: 'Outline', value: 'outline' },
-                ],
-              },
-              initialValue: 'primary',
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'text',
-              subtitle: 'variant',
-            },
-          },
-        },
-      ],
+      of: [{ type: 'simpleButton' }],
       validation: (Rule) => Rule.max(3),
     }),
     defineField({
@@ -357,20 +275,9 @@ export const ctaBanner = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'buttonText',
-      title: 'Button Text',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'buttonLink',
-      title: 'Button Link',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: true,
-          scheme: ['http', 'https', 'mailto', 'tel'],
-        }),
+      name: 'button',
+      title: 'Button',
+      type: 'simpleButton',
     }),
     defineField({
       name: 'backgroundStyle',
@@ -426,13 +333,13 @@ export const ctaBanner = defineType({
   preview: {
     select: {
       title: 'heading',
-      subtitle: 'buttonText',
+      buttonText: 'button.text',
       media: 'backgroundImage',
     },
-    prepare({ title, subtitle, media }) {
+    prepare({ title, buttonText, media }) {
       return {
         title: title || 'CTA - Banner',
-        subtitle: subtitle || 'No button text',
+        subtitle: buttonText || 'No button text',
         media,
       }
     },
@@ -498,48 +405,7 @@ export const ctaStats = defineType({
       name: 'buttons',
       title: 'Buttons',
       type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'text',
-              title: 'Button Text',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'link',
-              title: 'Link',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.uri({
-                  allowRelative: true,
-                  scheme: ['http', 'https', 'mailto', 'tel'],
-                }),
-            }),
-            defineField({
-              name: 'variant',
-              title: 'Variant',
-              type: 'string',
-              options: {
-                list: [
-                  { title: 'Primary', value: 'primary' },
-                  { title: 'Secondary', value: 'secondary' },
-                  { title: 'Outline', value: 'outline' },
-                ],
-              },
-              initialValue: 'primary',
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'text',
-              subtitle: 'variant',
-            },
-          },
-        },
-      ],
+      of: [{ type: 'simpleButton' }],
       validation: (Rule) => Rule.max(3),
     }),
     defineField({

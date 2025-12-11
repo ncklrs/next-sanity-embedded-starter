@@ -201,24 +201,24 @@ const moduleTransformers: Record<string, (data: any) => any> = {
   heroDefault: (data) => ({
     ...data,
     headingGradientText: data.headingHighlight,
-    primaryCTA: data.primaryButton ? {
-      label: data.primaryButton.text,
-      href: data.primaryButton.link,
-      variant: data.primaryButton.variant || "primary",
+    primaryCTA: data.buttons?.[0] ? {
+      label: data.buttons[0].text,
+      href: data.buttons[0].link,
+      variant: data.buttons[0].variant || "primary",
     } : undefined,
-    secondaryCTA: data.secondaryButton ? {
-      label: data.secondaryButton.text,
-      href: data.secondaryButton.link,
-      variant: data.secondaryButton.variant || "secondary",
+    secondaryCTA: data.buttons?.[1] ? {
+      label: data.buttons[1].text,
+      href: data.buttons[1].link,
+      variant: data.buttons[1].variant || "secondary",
     } : undefined,
   }),
   heroMinimal: (data) => ({
     ...data,
     headingGradientText: data.headingHighlight,
-    primaryCTA: data.singleButton ? {
-      label: data.singleButton.text,
-      href: data.singleButton.link,
-      variant: data.singleButton.variant || "primary",
+    primaryCTA: data.buttons?.[0] ? {
+      label: data.buttons[0].text,
+      href: data.buttons[0].link,
+      variant: data.buttons[0].variant || "primary",
     } : undefined,
   }),
   comparisonTable: (data) => ({
@@ -415,6 +415,11 @@ const moduleTransformers: Record<string, (data: any) => any> = {
   "cta.banner": (data) => ({
     ...data,
     text: data.heading, // Component uses both heading and text
+    button: data.button ? {
+      label: data.button.text,
+      href: data.button.link,
+      variant: data.button.variant || "primary",
+    } : undefined,
     background: data.backgroundStyle || "gradient",
     backgroundImage: data.backgroundImage?.asset?.url,
   }),
