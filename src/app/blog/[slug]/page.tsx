@@ -1,25 +1,20 @@
-import { sanityFetch, client } from "../../../../sanity/lib/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
 import { ArrowLeftIcon } from "@/components/icons";
-import { postBySlugQuery, allPostSlugsQuery } from "../../../../sanity/queries";
+import { getPostBySlug, getAllPostSlugs } from "../../../../sanity/queries";
 
 // Pre-generate all blog post pages at build time
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(allPostSlugsQuery);
+  const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await sanityFetch<any>({
-    query: postBySlugQuery,
-    params: { slug },
-    tags: ["posts", `slug:${slug}`],
-  });
+  const post = await getPostBySlug(slug);
 
   if (!post) return {};
 
@@ -31,11 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await sanityFetch<any>({
-    query: postBySlugQuery,
-    params: { slug },
-    tags: ["posts", `slug:${slug}`],
-  });
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
