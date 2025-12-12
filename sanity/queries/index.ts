@@ -101,4 +101,6 @@ export {
   getEngagementsForHomepage,
   getHomepageWithSettingsAndEngagement,
   getPageWithSettingsAndEngagement,
+  // Blog layout fetcher
+  getBlogLayoutData,
 } from "./fetchers";

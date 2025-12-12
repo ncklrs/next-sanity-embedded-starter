@@ -358,30 +358,95 @@ const moduleTransformers: Record<string, (data: any) => any> = {
     subtitle: data.subheading,
     events: data.items || data.events || [],
   }),
-  // Transform formContact - flatten form reference
-  formContact: (data) => ({
-    ...data,
-    heading: data.heading || data.form?.name,
-    fields: data.form?.fields || [],
-    submitText: data.form?.settings?.submitButtonText || 'Send Message',
-    successMessage: data.form?.settings?.successMessage,
-  }),
+  // Transform formContact - flatten form reference and convert field options
+  formContact: (data) => {
+    // Transform Sanity field format to component format
+    const transformField = (field: any) => ({
+      name: field.name,
+      label: field.label,
+      type: field.type,
+      placeholder: field.placeholder,
+      required: field.required,
+      rows: field.rows,
+      // Convert options from [{label, value}] to string[] for select fields
+      options: field.options?.map((opt: any) => opt.value || opt.label || opt) || undefined,
+      // Pass through width for layout (half/full)
+      width: field.width,
+    });
+
+    return {
+      ...data,
+      heading: data.heading || data.form?.name,
+      description: data.subheading,
+      fields: (data.form?.fields || []).map(transformField),
+      submitText: data.form?.settings?.submitButtonText || 'Send Message',
+      successMessage: data.form?.settings?.successMessage,
+    };
+  },
   // Transform formNewsletter - flatten form reference
   formNewsletter: (data) => ({
     ...data,
     heading: data.heading || data.form?.name,
+    description: data.subheading,
     placeholder: data.form?.fields?.[0]?.placeholder || 'Enter your email',
     buttonText: data.form?.settings?.submitButtonText || 'Subscribe',
     privacyText: data.note,
   }),
-  // Transform formWithImage - flatten form reference
-  formWithImage: (data) => ({
-    ...data,
-    heading: data.heading || data.form?.name,
-    fields: data.form?.fields || [],
-    submitText: data.form?.settings?.submitButtonText || 'Send Message',
-    successMessage: data.form?.settings?.successMessage,
-  }),
+  // Transform formWithImage - flatten form reference, convert field options, and resolve image URL
+  formWithImage: (data) => {
+    // Transform Sanity field format to component format
+    const transformField = (field: any) => ({
+      name: field.name,
+      label: field.label,
+      type: field.type,
+      placeholder: field.placeholder,
+      required: field.required,
+      rows: field.rows,
+      options: field.options?.map((opt: any) => opt.value || opt.label || opt) || undefined,
+      width: field.width,
+    });
+
+    // Resolve image URL from Sanity image object
+    let imageUrl: string | undefined;
+    if (data.image?.asset?.url) {
+      imageUrl = data.image.asset.url;
+    } else if (data.image?.asset?._ref) {
+      imageUrl = urlFor(data.image).width(800).url();
+    }
+
+    return {
+      ...data,
+      heading: data.heading || data.form?.name,
+      description: data.subheading,
+      image: imageUrl,
+      fields: (data.form?.fields || []).map(transformField),
+      submitText: data.form?.settings?.submitButtonText || 'Send Message',
+      successMessage: data.form?.settings?.successMessage,
+    };
+  },
+  // Transform formMultiStep - convert field options in each step
+  formMultiStep: (data) => {
+    // Transform Sanity field format to component format
+    const transformField = (field: any) => ({
+      name: field.name,
+      label: field.label,
+      type: field.type,
+      placeholder: field.placeholder,
+      required: field.required,
+      rows: field.rows,
+      options: field.options?.map((opt: any) => opt.value || opt.label || opt) || undefined,
+      width: field.width,
+    });
+
+    return {
+      ...data,
+      steps: (data.steps || []).map((step: any) => ({
+        title: step.title,
+        description: step.description,
+        fields: (step.fields || []).map(transformField),
+      })),
+    };
+  },
   // Transform cta.default - map buttons array fields
   "cta.default": (data) => ({
     ...data,
@@ -873,8 +938,8 @@ const moduleTransformers: Record<string, (data: any) => any> = {
     return {
       ...data,
       heading: data.heading,
+      viewAllLink: data.viewAllLink || "/blog",
       viewAllText: "View All Posts",
-      onViewAll: data.viewAllLink ? () => { window.location.href = data.viewAllLink; } : undefined,
       posts: limitedPosts.map((post: any) => ({
         _id: post._id,
         title: post.title,

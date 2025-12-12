@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, type CSSProperties } from "react";
-import Button from "@/components/ui/Button";
+import Link from "next/link";
 
 // ============================================================================
 // Shared Utilities
@@ -20,6 +20,12 @@ function getBackgroundStyle(backgroundColor?: string): CSSProperties | undefined
   };
   const mappedColor = colorMap[backgroundColor.toLowerCase()];
   return mappedColor ? { backgroundColor: mappedColor } : { backgroundColor };
+}
+
+// Helper to get blog post URL
+function getBlogPostUrl(slug: string | { current: string }): string {
+  const slugStr = typeof slug === "string" ? slug : slug.current;
+  return `/blog/${slugStr}`;
 }
 
 // ============================================================================
@@ -42,10 +48,10 @@ export interface BlogPost {
   _id?: string;
   title: string;
   slug: string | { current: string };
-  excerpt: string;
+  excerpt?: string;
   // Support both direct URL (string) and Sanity image object
   featuredImage?: string | SanityImage;
-  publishedAt: string;
+  publishedAt?: string;
   author?: {
     name: string;
     avatar?: string;
@@ -76,7 +82,6 @@ interface BlogFeaturedPostProps {
   post: BlogPost;
   backgroundColor?: string;
   className?: string;
-  onReadMore?: (slug: string) => void;
 }
 
 interface BlogGridProps extends BaseBlogProps {
@@ -84,14 +89,12 @@ interface BlogGridProps extends BaseBlogProps {
   showHeader?: boolean;
   heading?: string;
   description?: string;
-  onReadMore?: (slug: string) => void;
 }
 
 interface BlogListProps extends BaseBlogProps {
   showHeader?: boolean;
   heading?: string;
   description?: string;
-  onReadMore?: (slug: string) => void;
 }
 
 interface BlogCarouselProps extends BaseBlogProps {
@@ -100,14 +103,12 @@ interface BlogCarouselProps extends BaseBlogProps {
   showHeader?: boolean;
   heading?: string;
   description?: string;
-  onReadMore?: (slug: string) => void;
 }
 
 interface BlogMinimalProps extends BaseBlogProps {
   heading?: string;
+  viewAllLink?: string;
   viewAllText?: string;
-  onViewAll?: () => void;
-  onPostClick?: (slug: string) => void;
 }
 
 // ============================================================================
@@ -146,7 +147,6 @@ export const BlogFeaturedPost = ({
   post,
   backgroundColor,
   className = "",
-  onReadMore,
 }: BlogFeaturedPostProps) => {
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
 
@@ -163,9 +163,9 @@ export const BlogFeaturedPost = ({
     );
   }
 
-  // Get image URL and slug using helpers
+  // Get image URL and post URL
   const imageUrl = getImageUrl(post.featuredImage);
-  const postSlug = getSlugString(post.slug);
+  const postUrl = getBlogPostUrl(post.slug);
 
   return (
     <section className={`section ${className}`} style={style}>
@@ -173,12 +173,12 @@ export const BlogFeaturedPost = ({
         <article className="glass-card overflow-hidden max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image */}
-            <div className="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-[var(--surface)]">
+            <Link href={postUrl} className="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-[var(--surface)] group">
               {imageUrl ? (
                 <img
                   src={imageUrl}
                   alt={post.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--accent-cyan)] to-[var(--accent-violet)] opacity-20">
@@ -193,23 +193,31 @@ export const BlogFeaturedPost = ({
                   <span className="badge badge-gradient">{post.category}</span>
                 </div>
               )}
-            </div>
+            </Link>
 
             {/* Content */}
             <div className="p-8 md:p-12 flex flex-col justify-center">
-              <div className="flex items-center gap-4 text-sm text-[var(--foreground-muted)] mb-4">
-                <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                {post.readingTime && (
-                  <>
-                    <span>•</span>
-                    <span>{post.readingTime} min read</span>
-                  </>
-                )}
-              </div>
+              {post.publishedAt && (
+                <div className="flex items-center gap-4 text-sm text-[var(--foreground-muted)] mb-4">
+                  <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+                  {post.readingTime && (
+                    <>
+                      <span>•</span>
+                      <span>{post.readingTime} min read</span>
+                    </>
+                  )}
+                </div>
+              )}
 
-              <h2 className="heading-lg mb-4">{post.title}</h2>
+              <Link href={postUrl} className="group">
+                <h2 className="heading-lg mb-4 group-hover:text-[var(--accent-violet)] transition-colors">
+                  {post.title}
+                </h2>
+              </Link>
 
-              <p className="body-lg mb-6 line-clamp-3">{post.excerpt}</p>
+              {post.excerpt && (
+                <p className="body-lg mb-6 line-clamp-3">{post.excerpt}</p>
+              )}
 
               {post.author && (
                 <div className="flex items-center gap-3 mb-6 pb-6 border-b border-[var(--border)]">
@@ -232,12 +240,15 @@ export const BlogFeaturedPost = ({
                 </div>
               )}
 
-              <Button
-                variant="primary"
-                onClick={() => onReadMore?.(postSlug)}
+              <Link
+                href={postUrl}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[var(--accent-violet)] text-white font-semibold hover:bg-[var(--accent-violet)]/90 transition-colors w-fit"
               >
                 Read Full Article
-              </Button>
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12l6-6-6-6" />
+                </svg>
+              </Link>
             </div>
           </div>
         </article>
@@ -258,7 +269,6 @@ export const BlogGrid = ({
   showHeader = true,
   heading = "Latest Articles",
   description,
-  onReadMore,
 }: BlogGridProps) => {
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
   const safePosts = posts ?? [];
@@ -276,19 +286,19 @@ export const BlogGrid = ({
         <div className={`grid ${gridColumns[columns]} gap-8`}>
           {safePosts.map((post) => {
             const imageUrl = getImageUrl(post.featuredImage);
-            const slugStr = getSlugString(post.slug);
+            const postUrl = getBlogPostUrl(post.slug);
             return (
               <article
-                key={slugStr}
-                className="glass-card overflow-hidden flex flex-col h-full"
+                key={post._id || getSlugString(post.slug)}
+                className="glass-card overflow-hidden flex flex-col h-full group"
               >
               {/* Image */}
-              <div className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)]">
+              <Link href={postUrl} className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)]">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
                     alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--accent-cyan)] to-[var(--accent-violet)] opacity-20">
@@ -303,33 +313,41 @@ export const BlogGrid = ({
                     <span className="badge badge-gradient text-xs">{post.category}</span>
                   </div>
                 )}
-              </div>
+              </Link>
 
               {/* Content */}
               <div className="p-6 flex flex-col flex-grow">
-                <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
-                  <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                  {post.readingTime && (
-                    <>
-                      <span>•</span>
-                      <span>{post.readingTime} min read</span>
-                    </>
-                  )}
-                </div>
+                {post.publishedAt && (
+                  <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
+                    <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+                    {post.readingTime && (
+                      <>
+                        <span>•</span>
+                        <span>{post.readingTime} min read</span>
+                      </>
+                    )}
+                  </div>
+                )}
 
-                <h3 className="heading-md mb-3 line-clamp-2">{post.title}</h3>
+                <Link href={postUrl}>
+                  <h3 className="heading-md mb-3 line-clamp-2 group-hover:text-[var(--accent-violet)] transition-colors">
+                    {post.title}
+                  </h3>
+                </Link>
 
-                <p className="body-sm mb-4 line-clamp-3 flex-grow">{post.excerpt}</p>
+                {post.excerpt && (
+                  <p className="body-sm mb-4 line-clamp-3 flex-grow">{post.excerpt}</p>
+                )}
 
-                <button
-                  onClick={() => onReadMore?.(slugStr)}
-                  className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
+                <Link
+                  href={postUrl}
+                  className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors"
                 >
                   <span>Read More</span>
                   <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
                     <path d="M5 12l6-6-6-6" />
                   </svg>
-                </button>
+                </Link>
               </div>
             </article>
             );
@@ -351,7 +369,6 @@ export const BlogList = ({
   showHeader = true,
   heading = "Recent Posts",
   description,
-  onReadMore,
 }: BlogListProps) => {
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
   const safePosts = posts ?? [];
@@ -364,20 +381,20 @@ export const BlogList = ({
         <div className="space-y-6">
           {safePosts.map((post) => {
             const imageUrl = getImageUrl(post.featuredImage);
-            const slugStr = getSlugString(post.slug);
+            const postUrl = getBlogPostUrl(post.slug);
             return (
             <article
-              key={slugStr}
-              className="glass-card overflow-hidden"
+              key={post._id || getSlugString(post.slug)}
+              className="glass-card overflow-hidden group"
             >
               <div className="grid md:grid-cols-[300px_1fr] gap-6">
                 {/* Image */}
-                <div className="relative aspect-[16/9] md:aspect-[4/3] overflow-hidden bg-[var(--surface)]">
+                <Link href={postUrl} className="relative aspect-[16/9] md:aspect-[4/3] overflow-hidden bg-[var(--surface)]">
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--accent-cyan)] to-[var(--accent-violet)] opacity-20">
@@ -392,34 +409,42 @@ export const BlogList = ({
                       <span className="badge badge-gradient text-xs">{post.category}</span>
                     </div>
                   )}
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="flex flex-col justify-center py-2 pr-4">
-                  <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
-                    <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                    {post.readingTime && (
-                      <>
-                        <span>•</span>
-                        <span>{post.readingTime} min read</span>
-                      </>
-                    )}
-                  </div>
+                  {post.publishedAt && (
+                    <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
+                      <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+                      {post.readingTime && (
+                        <>
+                          <span>•</span>
+                          <span>{post.readingTime} min read</span>
+                        </>
+                      )}
+                    </div>
+                  )}
 
-                  <h3 className="heading-md mb-3">{post.title}</h3>
+                  <Link href={postUrl}>
+                    <h3 className="heading-md mb-3 group-hover:text-[var(--accent-violet)] transition-colors">
+                      {post.title}
+                    </h3>
+                  </Link>
 
-                  <p className="body-sm mb-4 line-clamp-2">{post.excerpt}</p>
+                  {post.excerpt && (
+                    <p className="body-sm mb-4 line-clamp-2">{post.excerpt}</p>
+                  )}
 
                   <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => onReadMore?.(slugStr)}
-                      className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
+                    <Link
+                      href={postUrl}
+                      className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors"
                     >
                       <span>Read More</span>
                       <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
                         <path d="M5 12l6-6-6-6" />
                       </svg>
-                    </button>
+                    </Link>
 
                     {post.author && (
                       <div className="flex items-center gap-2">
@@ -464,7 +489,6 @@ export const BlogCarousel = ({
   showHeader = true,
   heading = "Featured Posts",
   description,
-  onReadMore,
 }: BlogCarouselProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -573,19 +597,19 @@ export const BlogCarousel = ({
         >
           {safePosts.map((post) => {
             const imageUrl = getImageUrl(post.featuredImage);
-            const slugStr = getSlugString(post.slug);
+            const postUrl = getBlogPostUrl(post.slug);
             return (
             <article
-              key={slugStr}
-              className="glass-card overflow-hidden flex-shrink-0 w-[350px] snap-start"
+              key={post._id || getSlugString(post.slug)}
+              className="glass-card overflow-hidden flex-shrink-0 w-[350px] snap-start group"
             >
               {/* Image */}
-              <div className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)]">
+              <Link href={postUrl} className="relative aspect-[16/9] overflow-hidden bg-[var(--surface)] block">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
                     alt={post.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--accent-cyan)] to-[var(--accent-violet)] opacity-20">
@@ -600,33 +624,41 @@ export const BlogCarousel = ({
                     <span className="badge badge-gradient text-xs">{post.category}</span>
                   </div>
                 )}
-              </div>
+              </Link>
 
               {/* Content */}
               <div className="p-6">
-                <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
-                  <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                  {post.readingTime && (
-                    <>
-                      <span>•</span>
-                      <span>{post.readingTime} min</span>
-                    </>
-                  )}
-                </div>
+                {post.publishedAt && (
+                  <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-3">
+                    <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+                    {post.readingTime && (
+                      <>
+                        <span>•</span>
+                        <span>{post.readingTime} min</span>
+                      </>
+                    )}
+                  </div>
+                )}
 
-                <h3 className="heading-md mb-3 line-clamp-2">{post.title}</h3>
+                <Link href={postUrl}>
+                  <h3 className="heading-md mb-3 line-clamp-2 group-hover:text-[var(--accent-violet)] transition-colors">
+                    {post.title}
+                  </h3>
+                </Link>
 
-                <p className="body-sm mb-4 line-clamp-3">{post.excerpt}</p>
+                {post.excerpt && (
+                  <p className="body-sm mb-4 line-clamp-3">{post.excerpt}</p>
+                )}
 
-                <button
-                  onClick={() => onReadMore?.(slugStr)}
-                  className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
+                <Link
+                  href={postUrl}
+                  className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors"
                 >
                   <span>Read More</span>
                   <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
                     <path d="M5 12l6-6-6-6" />
                   </svg>
-                </button>
+                </Link>
               </div>
             </article>
             );
@@ -646,9 +678,8 @@ export const BlogMinimal = ({
   backgroundColor,
   className = "",
   heading = "Recent Posts",
+  viewAllLink = "/blog",
   viewAllText = "View All Posts",
-  onViewAll,
-  onPostClick,
 }: BlogMinimalProps) => {
   const style: CSSProperties = getBackgroundStyle(backgroundColor) || {};
   const safePosts = posts ?? [];
@@ -658,61 +689,62 @@ export const BlogMinimal = ({
       <div className="container max-w-3xl">
         <div className="flex items-center justify-between mb-8">
           <h2 className="heading-lg">{heading}</h2>
-          {onViewAll && (
-            <button
-              onClick={onViewAll}
+          {viewAllLink && (
+            <Link
+              href={viewAllLink}
               className="text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] font-semibold text-sm flex items-center gap-2 transition-colors group"
             >
               <span>{viewAllText}</span>
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:translate-x-1">
                 <path d="M5 12l6-6-6-6" />
               </svg>
-            </button>
+            </Link>
           )}
         </div>
 
         <div className="space-y-6">
           {safePosts.map((post, index) => {
             const imageUrl = getImageUrl(post.featuredImage);
-            const slugStr = getSlugString(post.slug);
+            const postUrl = getBlogPostUrl(post.slug);
             return (
             <article
-              key={slugStr}
-              className={`flex items-start gap-6 pb-6 ${
+              key={post._id || getSlugString(post.slug)}
+              className={`flex items-start gap-6 pb-6 group ${
                 index !== safePosts.length - 1 ? "border-b border-[var(--border)]" : ""
               }`}
             >
               <div className="flex-grow">
-                <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-2">
-                  <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-                  {post.category && (
-                    <>
-                      <span>•</span>
-                      <span className="text-[var(--accent-violet)]">{post.category}</span>
-                    </>
-                  )}
-                  {post.readingTime && (
-                    <>
-                      <span>•</span>
-                      <span>{post.readingTime} min read</span>
-                    </>
-                  )}
-                </div>
+                {post.publishedAt && (
+                  <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] mb-2">
+                    <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+                    {post.category && (
+                      <>
+                        <span>•</span>
+                        <span className="text-[var(--accent-violet)]">{post.category}</span>
+                      </>
+                    )}
+                    {post.readingTime && (
+                      <>
+                        <span>•</span>
+                        <span>{post.readingTime} min read</span>
+                      </>
+                    )}
+                  </div>
+                )}
 
-                <button
-                  onClick={() => onPostClick?.(slugStr)}
-                  className="text-left group"
-                >
+                <Link href={postUrl} className="block">
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2 group-hover:text-[var(--accent-violet)] transition-colors">
                     {post.title}
                   </h3>
-                  <p className="body-sm line-clamp-2">{post.excerpt}</p>
-                </button>
+                  {post.excerpt && (
+                    <p className="body-sm line-clamp-2">{post.excerpt}</p>
+                  )}
+                </Link>
               </div>
 
               {imageUrl && (
-                <button
-                  onClick={() => onPostClick?.(slugStr)}
+                <Link
+                  href={postUrl}
                   className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-[var(--surface)] hover:opacity-80 transition-opacity"
                 >
                   <img
@@ -720,7 +752,7 @@ export const BlogMinimal = ({
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
-                </button>
+                </Link>
               )}
             </article>
             );

@@ -760,13 +760,7 @@ const formDynamicProjection = `{
   subheading,
   layout,
   maxWidth,
-  form->{
-    _id,
-    name,
-    identifier,
-    ${formFieldsProjection},
-    settings
-  },
+  "form": { "_ref": form._ref },
   spacing,
   backgroundColor
 }`;

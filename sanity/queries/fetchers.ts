@@ -350,3 +350,32 @@ export async function getPageWithSettingsAndEngagement(slug: string): Promise<{
     engagements: engagements ?? [],
   };
 }
+
+/**
+ * Fetch site settings and global engagements for blog pages
+ * Blog pages don't have page-specific engagements, so we fetch global ones
+ */
+export async function getBlogLayoutData(): Promise<{
+  settings: SiteSettings | undefined;
+  engagements: EngagementData[];
+}> {
+  // Get homepage ID for global engagement targeting
+  const homepageRef = await sanityFetch<{ homepageId?: string } | null>({
+    query: homepageReferenceQuery,
+    tags: ["site-settings"],
+  });
+
+  const [settings, engagements] = await Promise.all([
+    getSiteSettings(),
+    sanityFetch<EngagementData[]>({
+      query: engagementsForHomepageQuery,
+      params: { homepageId: homepageRef?.homepageId || null },
+      tags: ["engagement", "blog-engagement"],
+    }),
+  ]);
+
+  return {
+    settings: settings ?? undefined,
+    engagements: engagements ?? [],
+  };
+}

@@ -4,7 +4,10 @@ import Link from "next/link";
 import { urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
 import { ArrowLeftIcon } from "@/components/icons";
-import { getPostBySlug, getAllPostSlugs } from "../../../../sanity/queries";
+import { getPostBySlug, getAllPostSlugs, getBlogLayoutData } from "../../../../sanity/queries";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
+import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 // Pre-generate all blog post pages at build time
 export async function generateStaticParams() {
@@ -26,7 +29,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const [post, { settings, engagements }] = await Promise.all([
+    getPostBySlug(slug),
+    getBlogLayoutData(),
+  ]);
 
   if (!post) {
     notFound();
@@ -88,50 +94,55 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   };
 
   return (
-    <main className="min-h-screen">
-      <article className="section">
-        <div className="container-sm">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] mb-8 transition-colors"
-          >
-            <ArrowLeftIcon className="w-4 h-4" />
-            Back to Blog
-          </Link>
+    <>
+      <GlobalEngagement engagements={engagements} />
+      <Navigation settings={settings} />
+      <main className="min-h-screen">
+        <article className="section">
+          <div className="container-sm">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] mb-8 transition-colors"
+            >
+              <ArrowLeftIcon className="w-4 h-4" />
+              Back to Blog
+            </Link>
 
-          <header className="mb-12">
-            {post.publishedAt && (
-              <time className="text-sm text-[var(--foreground-subtle)]">
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            )}
-            <h1 className="display-lg mt-4 mb-6">{post.title}</h1>
-            {post.excerpt && (
-              <p className="body-lg">{post.excerpt}</p>
-            )}
-          </header>
+            <header className="mb-12">
+              {post.publishedAt && (
+                <time className="text-sm text-[var(--foreground-subtle)]">
+                  {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              )}
+              <h1 className="display-lg mt-4 mb-6">{post.title}</h1>
+              {post.excerpt && (
+                <p className="body-lg">{post.excerpt}</p>
+              )}
+            </header>
 
-          {post.featuredImage && (
-            <div className="relative aspect-video mb-12 rounded-2xl overflow-hidden">
-              <Image
-                src={urlFor(post.featuredImage).width(1200).height(675).url()}
-                alt={post.featuredImage.alt || post.title}
-                fill
-                className="object-cover"
-                priority
-              />
+            {post.featuredImage && (
+              <div className="relative aspect-video mb-12 rounded-2xl overflow-hidden">
+                <Image
+                  src={urlFor(post.featuredImage).width(1200).height(675).url()}
+                  alt={post.featuredImage.alt || post.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            )}
+
+            <div className="prose-dark">
+              <PortableText value={post.content} components={components} />
             </div>
-          )}
-
-          <div className="prose-dark">
-            <PortableText value={post.content} components={components} />
           </div>
-        </div>
-      </article>
-    </main>
+        </article>
+      </main>
+      <Footer settings={settings} />
+    </>
   );
 }
