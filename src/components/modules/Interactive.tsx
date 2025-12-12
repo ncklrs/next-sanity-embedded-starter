@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useCallback, useRef } from "react";
 import { PortableText } from "@portabletext/react";
 import { ChevronRightIcon } from "@/components/icons";
 import Image from "next/image";
@@ -26,8 +26,8 @@ interface SanityImage {
 }
 
 interface TabItem {
-  label?: string;
-  title?: string; // Sanity field name
+  _key?: string;
+  label: string;
   icon?: string;
   content?: PortableTextBlock[];
   image?: SanityImage;
@@ -203,51 +203,71 @@ export function Tabs({
   className = "",
 }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
-        setActiveTab((prev) => (prev + 1) % tabs.length);
-      } else if (e.key === "ArrowLeft") {
-        setActiveTab((prev) => (prev - 1 + tabs.length) % tabs.length);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [tabs.length]);
+  const tablistRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const isVertical = variant === "vertical";
 
+  // Keyboard navigation scoped to tablist focus
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const isHorizontalNav = !isVertical;
+      const prevKey = isHorizontalNav ? "ArrowLeft" : "ArrowUp";
+      const nextKey = isHorizontalNav ? "ArrowRight" : "ArrowDown";
+
+      if (e.key === nextKey) {
+        e.preventDefault();
+        const nextIndex = (activeTab + 1) % tabs.length;
+        setActiveTab(nextIndex);
+        tabRefs.current[nextIndex]?.focus();
+      } else if (e.key === prevKey) {
+        e.preventDefault();
+        const prevIndex = (activeTab - 1 + tabs.length) % tabs.length;
+        setActiveTab(prevIndex);
+        tabRefs.current[prevIndex]?.focus();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setActiveTab(0);
+        tabRefs.current[0]?.focus();
+      } else if (e.key === "End") {
+        e.preventDefault();
+        const lastIndex = tabs.length - 1;
+        setActiveTab(lastIndex);
+        tabRefs.current[lastIndex]?.focus();
+      }
+    },
+    [activeTab, tabs.length, isVertical]
+  );
+
   const getTabButtonClass = (index: number) => {
     const isActive = activeTab === index;
-    const baseClass = "transition-all duration-300 font-medium";
+    const baseClass =
+      "transition-all duration-[var(--transition-base)] font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-violet)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]";
 
     switch (variant) {
       case "pills":
         return `${baseClass} px-6 py-3 rounded-full ${
           isActive
             ? "bg-[var(--accent-violet)] text-white shadow-lg shadow-[var(--accent-violet)]/30"
-            : "bg-white/5 text-[var(--foreground-muted)] border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20"
+            : "bg-[var(--surface)] text-[var(--foreground-muted)] border border-[var(--border)] hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)] hover:border-[var(--border-hover)]"
         }`;
       case "underline":
         return `${baseClass} px-4 py-3 border-b-2 ${
           isActive
-            ? "border-[var(--accent-violet)] text-white"
-            : "border-transparent text-[var(--foreground-muted)] hover:text-white hover:border-white/20"
+            ? "border-[var(--accent-violet)] text-[var(--foreground)]"
+            : "border-transparent text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:border-[var(--border-hover)]"
         }`;
       case "vertical":
         return `${baseClass} px-6 py-4 rounded-lg text-left w-full ${
           isActive
-            ? "bg-[var(--accent-violet)]/10 text-white border-l-2 border-[var(--accent-violet)]"
-            : "bg-white/5 text-[var(--foreground-muted)] border-l-2 border-transparent hover:bg-white/10 hover:text-white"
+            ? "bg-[var(--accent-violet)]/10 text-[var(--foreground)] border-l-2 border-[var(--accent-violet)]"
+            : "bg-[var(--surface)] text-[var(--foreground-muted)] border-l-2 border-transparent hover:bg-[var(--surface-hover)] hover:text-[var(--foreground)]"
         }`;
       default:
         return `${baseClass} px-6 py-3 rounded-lg ${
           isActive
-            ? "bg-white/10 text-white border border-white/20"
-            : "bg-transparent text-[var(--foreground-muted)] border border-white/10 hover:bg-white/5 hover:text-white hover:border-white/15"
+            ? "bg-[var(--surface-elevated)] text-[var(--foreground)] border border-[var(--border-hover)]"
+            : "bg-transparent text-[var(--foreground-muted)] border border-[var(--border)] hover:bg-[var(--surface)] hover:text-[var(--foreground)] hover:border-[var(--border-hover)]"
         }`;
     }
   };
@@ -262,29 +282,39 @@ export function Tabs({
       <div className="container">
         <SectionHeader title={title} subtitle={subtitle} />
 
-        <div className={`grid ${isVertical ? "md:grid-cols-[300px_1fr] gap-8" : "gap-6"}`}>
+        <div
+          className={`grid ${isVertical ? "md:grid-cols-[280px_1fr] gap-8" : "gap-8"}`}
+        >
           {/* Tab Buttons */}
           <div
-            className={`flex ${
-              isVertical ? "flex-col" : "flex-wrap"
-            } ${variant === "underline" ? "" : "gap-2"} ${
-              !isVertical ? "justify-center" : ""
-            }`}
+            ref={tablistRef}
+            className={`flex ${isVertical ? "flex-col" : "flex-wrap"} ${
+              variant === "underline"
+                ? "border-b border-[var(--border)]"
+                : "gap-2"
+            } ${!isVertical ? "justify-center" : ""}`}
             role="tablist"
+            aria-orientation={isVertical ? "vertical" : "horizontal"}
+            onKeyDown={handleKeyDown}
           >
             {tabs.map((tab, index) => (
               <button
-                key={index}
+                key={tab._key || index}
+                ref={(el) => {
+                  tabRefs.current[index] = el;
+                }}
                 onClick={() => setActiveTab(index)}
                 className={getTabButtonClass(index)}
                 role="tab"
                 aria-selected={activeTab === index}
                 aria-controls={`tab-panel-${index}`}
+                id={`tab-${index}`}
+                tabIndex={activeTab === index ? 0 : -1}
               >
-                <div className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
                   {tab.icon && renderIcon(tab.icon)}
-                  <span>{tab.label || tab.title}</span>
-                </div>
+                  <span>{tab.label}</span>
+                </span>
               </button>
             ))}
           </div>
@@ -293,17 +323,16 @@ export function Tabs({
           <div
             id={`tab-panel-${activeTab}`}
             role="tabpanel"
-            className="min-h-[300px]"
+            aria-labelledby={`tab-${activeTab}`}
+            tabIndex={0}
+            className="min-h-[280px] focus:outline-none"
           >
-            <div
-              key={activeTab}
-              className="animate-fade-in-up"
-            >
+            <div key={activeTab} className="animate-fade-in">
               {currentTab.image && (
-                <div className="relative aspect-video mb-6 rounded-xl overflow-hidden border border-white/10">
+                <div className="relative aspect-video mb-6 rounded-xl overflow-hidden border border-[var(--border)]">
                   <Image
                     src={urlFor(currentTab.image).width(1200).height(675).url()}
-                    alt={currentTab.image.alt || currentTab.label || currentTab.title || ''}
+                    alt={currentTab.image.alt || currentTab.label}
                     fill
                     className="object-cover"
                   />
@@ -316,6 +345,12 @@ export function Tabs({
                     value={currentTab.content}
                     components={portableTextComponents}
                   />
+                </div>
+              )}
+
+              {!currentTab.image && !currentTab.content && (
+                <div className="flex items-center justify-center h-[280px] text-[var(--foreground-muted)] border border-dashed border-[var(--border)] rounded-xl">
+                  <p>No content for this tab</p>
                 </div>
               )}
             </div>
