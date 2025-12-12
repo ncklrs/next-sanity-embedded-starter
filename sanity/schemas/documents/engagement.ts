@@ -443,6 +443,26 @@ export const engagement = defineType({
       hidden: ({ parent }) => parent?.targetingMode !== 'exclude',
       of: [{ type: 'reference', to: [{ type: 'page' }] }],
     }),
+
+    // ─────────────────────────────────────────────
+    // BLOG TARGETING
+    // ─────────────────────────────────────────────
+    defineField({
+      name: 'blogTargeting',
+      title: 'Blog Pages',
+      type: 'string',
+      group: 'targeting',
+      description: 'Control whether this engagement appears on blog listing and blog post pages',
+      options: {
+        list: [
+          { title: 'Follow Page Rules', value: 'default' },
+          { title: 'Always Include Blog', value: 'include' },
+          { title: 'Always Exclude Blog', value: 'exclude' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'default',
+    }),
   ],
   orderings: [
     {

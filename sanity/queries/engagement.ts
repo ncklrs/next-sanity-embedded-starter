@@ -126,6 +126,28 @@ export const engagementsForHomepageQuery = `*[
 ] | order(priority desc) ${engagementProjection}`;
 
 /**
+ * Fetch engagements for blog pages (listing and posts)
+ * Handles blog-specific targeting:
+ * - "include": Always show on blog
+ * - "exclude": Never show on blog
+ * - "default" or undefined: Show if targetingMode is "all"
+ */
+export const engagementsForBlogQuery = `*[
+  ${activeEngagementFilter} &&
+  (
+    // Explicit blog include
+    blogTargeting == "include" ||
+    // Default behavior: show on blog if targeting all pages (and not explicitly excluded)
+    (
+      (!defined(blogTargeting) || blogTargeting == "default") &&
+      targetingMode == "all"
+    )
+  ) &&
+  // Never show if explicitly excluded
+  blogTargeting != "exclude"
+] | order(priority desc) ${engagementProjection}`;
+
+/**
  * Fetch a single engagement by ID
  * Useful for preview/editing
  */

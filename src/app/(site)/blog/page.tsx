@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
-import { getAllPosts, getEngagementsForHomepage } from "../../../../sanity/queries";
+import { getAllPosts, getEngagementsForBlog } from "../../../../sanity/queries";
 import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export const metadata = {
 export default async function BlogPage() {
   const [posts, engagements] = await Promise.all([
     getAllPosts(),
-    getEngagementsForHomepage(),
+    getEngagementsForBlog(),
   ]);
 
   return (

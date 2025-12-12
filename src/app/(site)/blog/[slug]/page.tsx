@@ -4,7 +4,7 @@ import Link from "next/link";
 import { urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
 import { ArrowLeftIcon } from "@/components/icons";
-import { getPostBySlug, getAllPostSlugs, getEngagementsForHomepage } from "../../../../../sanity/queries";
+import { getPostBySlug, getAllPostSlugs, getEngagementsForBlog } from "../../../../../sanity/queries";
 import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 // Pre-generate all blog post pages at build time
@@ -29,7 +29,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const [post, engagements] = await Promise.all([
     getPostBySlug(slug),
-    getEngagementsForHomepage(),
+    getEngagementsForBlog(),
   ]);
 
   if (!post) {

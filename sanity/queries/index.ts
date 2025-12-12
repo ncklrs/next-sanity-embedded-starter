@@ -67,6 +67,7 @@ export {
   allActiveEngagementsQuery,
   engagementsForPageQuery,
   engagementsForHomepageQuery,
+  engagementsForBlogQuery,
   engagementByIdQuery,
 } from "./engagement";
 
@@ -99,6 +100,7 @@ export {
   type EngagementData,
   getEngagementsForPage,
   getEngagementsForHomepage,
+  getEngagementsForBlog,
   getHomepageWithSettingsAndEngagement,
   getPageWithSettingsAndEngagement,
   // Blog layout fetcher

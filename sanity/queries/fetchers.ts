@@ -29,6 +29,7 @@ import {
 import {
   engagementsForPageQuery,
   engagementsForHomepageQuery,
+  engagementsForBlogQuery,
 } from "./engagement";
 import { homepageReferenceQuery } from "./settings";
 
@@ -307,6 +308,17 @@ export async function getEngagementsForHomepage(): Promise<EngagementData[]> {
   });
 }
 
+/**
+ * Fetch engagements for blog pages (listing and posts)
+ * Uses blog-specific targeting rules
+ */
+export async function getEngagementsForBlog(): Promise<EngagementData[]> {
+  return sanityFetch<EngagementData[]>({
+    query: engagementsForBlogQuery,
+    tags: ["engagement", "blog-engagement"],
+  });
+}
+
 // =============================================================================
 // Combined Fetchers with Engagement
 // =============================================================================
@@ -352,26 +364,16 @@ export async function getPageWithSettingsAndEngagement(slug: string): Promise<{
 }
 
 /**
- * Fetch site settings and global engagements for blog pages
- * Blog pages don't have page-specific engagements, so we fetch global ones
+ * Fetch site settings and blog-targeted engagements for blog pages
+ * Uses blog-specific targeting rules (include/exclude blog)
  */
 export async function getBlogLayoutData(): Promise<{
   settings: SiteSettings | undefined;
   engagements: EngagementData[];
 }> {
-  // Get homepage ID for global engagement targeting
-  const homepageRef = await sanityFetch<{ homepageId?: string } | null>({
-    query: homepageReferenceQuery,
-    tags: ["site-settings"],
-  });
-
   const [settings, engagements] = await Promise.all([
     getSiteSettings(),
-    sanityFetch<EngagementData[]>({
-      query: engagementsForHomepageQuery,
-      params: { homepageId: homepageRef?.homepageId || null },
-      tags: ["engagement", "blog-engagement"],
-    }),
+    getEngagementsForBlog(),
   ]);
 
   return {
