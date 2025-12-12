@@ -10,10 +10,16 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const [posts, engagements] = await Promise.all([
-    getAllPosts(),
-    getEngagementsForBlog(),
-  ]);
+  // Skip data fetching when using placeholder credentials (CI builds)
+  const isPlaceholder = !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID === 'placeholder';
+
+  const [posts, engagements] = isPlaceholder
+    ? [[], []]
+    : await Promise.all([
+        getAllPosts(),
+        getEngagementsForBlog(),
+      ]);
 
   return (
     <>

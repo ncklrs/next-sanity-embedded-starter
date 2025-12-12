@@ -2,6 +2,11 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { getSiteSettings } from "../../../sanity/queries";
 
+// Check for placeholder credentials (CI builds)
+const isPlaceholder = () =>
+  !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID === 'placeholder';
+
 /**
  * Site layout that wraps all public-facing pages
  * Provides consistent Navigation and Footer from site settings
@@ -15,7 +20,8 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSiteSettings();
+  // Skip data fetching when using placeholder credentials (CI builds)
+  const settings = isPlaceholder() ? null : await getSiteSettings();
 
   return (
     <>

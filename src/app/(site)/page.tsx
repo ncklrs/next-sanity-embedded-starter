@@ -3,7 +3,19 @@ import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { GlobalEngagement } from "@/components/GlobalEngagement";
 import Link from "next/link";
 
+// Check for placeholder credentials (CI builds)
+const isPlaceholder = () =>
+  !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID === 'placeholder';
+
 export async function generateMetadata() {
+  if (isPlaceholder()) {
+    return {
+      title: "Aurora - Modern SaaS Platform",
+      description: "The next-generation platform for building exceptional digital experiences",
+    };
+  }
+
   const page = await getHomepage();
 
   return {
@@ -13,10 +25,13 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const [page, engagements] = await Promise.all([
-    getHomepage(),
-    getEngagementsForHomepage(),
-  ]);
+  // Skip data fetching when using placeholder credentials (CI builds)
+  const [page, engagements] = isPlaceholder()
+    ? [null, []]
+    : await Promise.all([
+        getHomepage(),
+        getEngagementsForHomepage(),
+      ]);
 
   // If no homepage is configured, show a setup message
   if (!page) {
