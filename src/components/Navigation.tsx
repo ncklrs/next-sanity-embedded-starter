@@ -150,6 +150,42 @@ function MegaMenuContent({ item }: { item: NavLink }) {
 
   return (
     <div className={`grid gap-4 p-6 w-[90vw] max-w-[900px] ${gridCols}`}>
+      {/* Featured Item - First */}
+      {hasFeature && (
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--primary)]/10 via-[var(--surface)] to-[var(--surface)] border border-[var(--border)]">
+          {featured.image && (
+            <div className="aspect-[16/9] relative overflow-hidden">
+              <Image
+                src={urlFor(featured.image).width(400).height(225).url()}
+                alt={featured.title || "Featured"}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] to-transparent" />
+            </div>
+          )}
+          <div className="p-4">
+            {featured.title && (
+              <h4 className="font-semibold text-[var(--foreground)]">{featured.title}</h4>
+            )}
+            {featured.description && (
+              <p className="mt-1 text-sm text-[var(--foreground-muted)] line-clamp-2">
+                {featured.description}
+              </p>
+            )}
+            {featured.link && (
+              <Link
+                href={getNavHref(featured.link)}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] hover:underline"
+              >
+                {featured.link.label || "Learn more"}
+                <ArrowRightIcon className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Navigation Columns */}
       {columns.map((column, colIndex) => (
         <div key={colIndex} className="space-y-3">
@@ -186,42 +222,6 @@ function MegaMenuContent({ item }: { item: NavLink }) {
           </div>
         </div>
       ))}
-
-      {/* Featured Item */}
-      {hasFeature && (
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--primary)]/10 via-[var(--surface)] to-[var(--surface)] border border-[var(--border)]">
-          {featured.image && (
-            <div className="aspect-[16/9] relative overflow-hidden">
-              <Image
-                src={urlFor(featured.image).width(400).height(225).url()}
-                alt={featured.title || "Featured"}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] to-transparent" />
-            </div>
-          )}
-          <div className="p-4">
-            {featured.title && (
-              <h4 className="font-semibold text-[var(--foreground)]">{featured.title}</h4>
-            )}
-            {featured.description && (
-              <p className="mt-1 text-sm text-[var(--foreground-muted)] line-clamp-2">
-                {featured.description}
-              </p>
-            )}
-            {featured.link && (
-              <Link
-                href={getNavHref(featured.link)}
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] hover:underline"
-              >
-                {featured.link.label || "Learn more"}
-                <ArrowRightIcon className="w-4 h-4" />
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -375,14 +375,15 @@ export function Navigation({ settings }: NavigationProps) {
                       </NavigationMenuContent>
                     </>
                   ) : (
-                    <Link href={getNavHref(item)} legacyBehavior passHref>
-                      <NavigationMenuLink
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href={getNavHref(item)}
                         className={`${navigationMenuTriggerStyle()} ${isActiveLink(item) ? "text-[var(--foreground)] bg-[var(--surface)]/50" : ""}`}
                         target={item.linkType === "external" ? "_blank" : undefined}
                       >
                         {item.label}
-                      </NavigationMenuLink>
-                    </Link>
+                      </Link>
+                    </NavigationMenuLink>
                   )}
                 </NavigationMenuItem>
               ))}
