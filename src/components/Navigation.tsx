@@ -226,10 +226,10 @@ function MegaMenuContent({ item }: { item: NavLink }) {
   );
 }
 
-// Simple dropdown content
+// Simple dropdown content - single column list
 function SimpleDropdownContent({ children }: { children: BaseNavLink[] }) {
   return (
-    <div className="grid gap-1 p-4 w-[400px] md:w-[500px] lg:w-[600px] md:grid-cols-2">
+    <div className="flex flex-col gap-1 p-4 w-[320px]">
       {children.map((child, childIndex) => (
         <DropdownLinkItem key={childIndex} item={child} />
       ))}
