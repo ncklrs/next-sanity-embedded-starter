@@ -5,13 +5,35 @@
  * Already well-structured with explicit field selection.
  */
 
-// Navigation link projection - reused across queries
+// Base nav link projection (without children)
+const baseNavLinkProjection = `{
+  label,
+  linkType,
+  internalLink->{ slug },
+  externalUrl,
+  anchor,
+  description,
+  icon
+}`;
+
+// Navigation link projection with children support
 const navLinkProjection = `{
   label,
   linkType,
   internalLink->{ slug },
   externalUrl,
-  anchor
+  anchor,
+  description,
+  icon,
+  children[]${`{
+    label,
+    linkType,
+    internalLink->{ slug },
+    externalUrl,
+    anchor,
+    description,
+    icon
+  }`}
 }`;
 
 // CTA button projection

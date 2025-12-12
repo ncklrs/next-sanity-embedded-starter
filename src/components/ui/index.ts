@@ -2,3 +2,14 @@ export { default as Button } from "./Button";
 export { default as Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./Card";
 export { default as Badge } from "./Badge";
 export { default as Input } from "./Input";
+export {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from "./navigation-menu";

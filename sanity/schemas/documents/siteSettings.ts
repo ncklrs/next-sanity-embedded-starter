@@ -1,7 +1,7 @@
 import { defineField, defineType } from "sanity";
 
-// Reusable nav link object for both header and footer
-const navLinkFields = [
+// Base nav link fields (without children - used for nested items)
+const baseNavLinkFields = [
   {
     name: "label",
     title: "Label",
@@ -43,6 +43,41 @@ const navLinkFields = [
     description: "e.g., #features, #pricing",
     hidden: ({ parent }: { parent?: { linkType?: string } }) =>
       parent?.linkType !== "anchor",
+  },
+  {
+    name: "description",
+    title: "Description",
+    type: "string",
+    description: "Optional description shown in dropdown menus",
+  },
+  {
+    name: "icon",
+    title: "Icon",
+    type: "string",
+    description: "Optional icon name (e.g., 'rocket', 'shield', 'chart')",
+  },
+];
+
+// Nav link fields with children support (for top-level items)
+const navLinkFields = [
+  ...baseNavLinkFields,
+  {
+    name: "children",
+    title: "Dropdown Items",
+    type: "array",
+    description: "Add child links to create a dropdown menu",
+    of: [
+      {
+        type: "object",
+        fields: baseNavLinkFields,
+        preview: {
+          select: {
+            title: "label",
+            subtitle: "description",
+          },
+        },
+      },
+    ],
   },
 ];
 
