@@ -9,6 +9,11 @@ import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 // Pre-generate all blog post pages at build time
 export async function generateStaticParams() {
+  // Skip static generation when using placeholder credentials (CI builds)
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+      process.env.NEXT_PUBLIC_SANITY_PROJECT_ID === 'placeholder') {
+    return [];
+  }
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));
 }
