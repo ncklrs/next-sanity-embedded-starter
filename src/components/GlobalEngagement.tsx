@@ -51,10 +51,10 @@ export function GlobalEngagement({ engagements }: GlobalEngagementProps) {
       )}
 
       {/* Sticky CTA - fixed position */}
-      {stickyCta && stickyCta.text && stickyCta.url && (
+      {stickyCta && stickyCta.text && (
         <StickyCta
           text={stickyCta.text}
-          url={stickyCta.url}
+          url={stickyCta.url || "#"}
           position={stickyCta.position as "bottom-right" | "bottom-left" | "bottom-center"}
           showAfterScroll={stickyCta.showAfterScroll}
           variant={stickyCta.variant as "button" | "pill" | "expanded"}
