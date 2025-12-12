@@ -561,14 +561,21 @@ const galleryCarouselProjection = `{
 }`;
 
 // Blog Feature module projections
-const blogPostRef = `->{
+// Fields to fetch for each blog post (used in both references and latest queries)
+const blogPostFields = `{
   _id,
   title,
-  slug,
+  "slug": slug.current,
   excerpt,
   featuredImage${imageFields},
-  publishedAt
+  publishedAt,
+  "author": author->{name, "avatar": image.asset->url},
+  "category": categories[0]->title,
+  "readingTime": round(length(pt::text(body)) / 5 / 200)
 }`;
+
+// Dereference for explicit post references
+const blogPostRef = `->${blogPostFields}`;
 
 const blogFeaturedPostProjection = `{
   _type,
@@ -576,11 +583,16 @@ const blogFeaturedPostProjection = `{
   badge,
   heading,
   headingHighlight,
-  post${blogPostRef},
+  subheading,
+  showExcerpt,
+  "post": featuredPost${blogPostRef},
   spacing,
   backgroundColor
 }`;
 
+// For modules with postSelection (latest vs specific), use conditional fetching
+// Note: GROQ doesn't support dynamic range limits, so we fetch up to 12 posts for "latest"
+// and let the component limit based on postsToShow
 const blogGridProjection = `{
   _type,
   _key,
@@ -588,12 +600,16 @@ const blogGridProjection = `{
   heading,
   headingHighlight,
   subheading,
-  posts[]${blogPostRef},
+  postSelection,
+  postsToShow,
   columns,
-  showMoreLink,
-  moreText,
+  showExcerpt,
   spacing,
-  backgroundColor
+  backgroundColor,
+  "posts": select(
+    postSelection == "specific" => posts[]${blogPostRef},
+    *[_type == "post"] | order(publishedAt desc)[0...12]${blogPostFields}
+  )
 }`;
 
 const blogListProjection = `{
@@ -603,11 +619,14 @@ const blogListProjection = `{
   heading,
   headingHighlight,
   subheading,
-  posts[]${blogPostRef},
-  showMoreLink,
-  moreText,
+  postSelection,
+  postsToShow,
   spacing,
-  backgroundColor
+  backgroundColor,
+  "posts": select(
+    postSelection == "specific" => posts[]${blogPostRef},
+    *[_type == "post"] | order(publishedAt desc)[0...20]${blogPostFields}
+  )
 }`;
 
 const blogCarouselProjection = `{
@@ -617,21 +636,30 @@ const blogCarouselProjection = `{
   heading,
   headingHighlight,
   subheading,
-  posts[]${blogPostRef},
+  postSelection,
+  postsToShow,
   autoplay,
   spacing,
-  backgroundColor
+  backgroundColor,
+  "posts": select(
+    postSelection == "specific" => posts[]${blogPostRef},
+    *[_type == "post"] | order(publishedAt desc)[0...12]${blogPostFields}
+  )
 }`;
 
 const blogMinimalProjection = `{
   _type,
   _key,
   heading,
-  posts[]${blogPostRef},
-  showMoreLink,
-  moreText,
+  postSelection,
+  postsToShow,
+  viewAllLink,
   spacing,
-  backgroundColor
+  backgroundColor,
+  "posts": select(
+    postSelection == "specific" => posts[]${blogPostRef},
+    *[_type == "post"] | order(publishedAt desc)[0...10]${blogPostFields}
+  )
 }`;
 
 // Form module projections

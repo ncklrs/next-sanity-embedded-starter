@@ -769,6 +769,126 @@ const moduleTransformers: Record<string, (data: any) => any> = {
       testimonials: (data.testimonials || []).map(transformTestimonial),
     };
   },
+
+  // Blog Feature module transformers
+  blogFeaturedPost: (data) => ({
+    ...data,
+    // Map Sanity post data to component's BlogPost interface
+    post: data.post ? {
+      _id: data.post._id,
+      title: data.post.title,
+      slug: data.post.slug,
+      excerpt: data.post.excerpt,
+      featuredImage: data.post.featuredImage?.asset?.url ||
+        (data.post.featuredImage?.asset?._ref ? urlFor(data.post.featuredImage).width(1200).url() : undefined),
+      publishedAt: data.post.publishedAt,
+      author: data.post.author,
+      category: data.post.category,
+      readingTime: data.post.readingTime,
+    } : undefined,
+  }),
+
+  blogGrid: (data) => {
+    const limit = data.postsToShow || 6;
+    const allPosts = data.posts || [];
+    const limitedPosts = allPosts.slice(0, limit);
+
+    return {
+      ...data,
+      heading: data.heading,
+      description: data.subheading,
+      columns: data.columns || 3,
+      showHeader: !!(data.heading || data.subheading),
+      posts: limitedPosts.map((post: any) => ({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        featuredImage: post.featuredImage?.asset?.url ||
+          (post.featuredImage?.asset?._ref ? urlFor(post.featuredImage).width(800).url() : undefined),
+        publishedAt: post.publishedAt,
+        author: post.author,
+        category: post.category,
+        readingTime: post.readingTime,
+      })),
+    };
+  },
+
+  blogList: (data) => {
+    const limit = data.postsToShow || 5;
+    const allPosts = data.posts || [];
+    const limitedPosts = allPosts.slice(0, limit);
+
+    return {
+      ...data,
+      heading: data.heading,
+      description: data.subheading,
+      showHeader: !!(data.heading || data.subheading),
+      posts: limitedPosts.map((post: any) => ({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        featuredImage: post.featuredImage?.asset?.url ||
+          (post.featuredImage?.asset?._ref ? urlFor(post.featuredImage).width(600).url() : undefined),
+        publishedAt: post.publishedAt,
+        author: post.author,
+        category: post.category,
+        readingTime: post.readingTime,
+      })),
+    };
+  },
+
+  blogCarousel: (data) => {
+    const limit = data.postsToShow || 8;
+    const allPosts = data.posts || [];
+    const limitedPosts = allPosts.slice(0, limit);
+
+    return {
+      ...data,
+      heading: data.heading,
+      description: data.subheading,
+      showHeader: !!(data.heading || data.subheading),
+      autoPlay: data.autoplay,
+      posts: limitedPosts.map((post: any) => ({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        featuredImage: post.featuredImage?.asset?.url ||
+          (post.featuredImage?.asset?._ref ? urlFor(post.featuredImage).width(700).url() : undefined),
+        publishedAt: post.publishedAt,
+        author: post.author,
+        category: post.category,
+        readingTime: post.readingTime,
+      })),
+    };
+  },
+
+  blogMinimal: (data) => {
+    const limit = data.postsToShow || 3;
+    const allPosts = data.posts || [];
+    const limitedPosts = allPosts.slice(0, limit);
+
+    return {
+      ...data,
+      heading: data.heading,
+      viewAllText: "View All Posts",
+      onViewAll: data.viewAllLink ? () => { window.location.href = data.viewAllLink; } : undefined,
+      posts: limitedPosts.map((post: any) => ({
+        _id: post._id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        featuredImage: post.featuredImage?.asset?.url ||
+          (post.featuredImage?.asset?._ref ? urlFor(post.featuredImage).width(200).url() : undefined),
+        publishedAt: post.publishedAt,
+        author: post.author,
+        category: post.category,
+        readingTime: post.readingTime,
+      })),
+    };
+  },
 };
 
 /**
