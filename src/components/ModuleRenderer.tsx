@@ -483,6 +483,79 @@ const moduleTransformers: Record<string, (data: any) => any> = {
   },
 
   // ─────────────────────────────────────────────
+  // Logo Cloud & Social Proof Transformers
+  // ─────────────────────────────────────────────
+
+  // Transform logoCloudSimple - map nested image structure to component format
+  logoCloudSimple: (data) => ({
+    ...data,
+    logos: (data.logos || []).map((logo: any) => {
+      let src = "";
+      if (logo.asset?.url) {
+        src = logo.asset.url;
+      } else if (logo.asset?._ref) {
+        src = urlFor(logo).width(200).url();
+      }
+      return {
+        src,
+        alt: logo.name || "",
+        href: logo.link,
+      };
+    }),
+  }),
+
+  logoCloudMarquee: (data) => ({
+    ...data,
+    logos: (data.logos || []).map((logo: any) => {
+      let src = "";
+      if (logo.asset?.url) {
+        src = logo.asset.url;
+      } else if (logo.asset?._ref) {
+        src = urlFor(logo).width(200).url();
+      }
+      return {
+        src,
+        alt: logo.name || "",
+        href: logo.link,
+      };
+    }),
+  }),
+
+  logoCloudGrid: (data) => ({
+    ...data,
+    logos: (data.logos || []).map((logo: any) => {
+      let src = "";
+      if (logo.asset?.url) {
+        src = logo.asset.url;
+      } else if (logo.asset?._ref) {
+        src = urlFor(logo).width(200).url();
+      }
+      return {
+        src,
+        alt: logo.name || "",
+        href: logo.link,
+      };
+    }),
+  }),
+
+  // Transform socialProof.logos - map nested image structure to component format
+  "socialProof.logos": (data) => ({
+    ...data,
+    logos: (data.logos || []).map((logo: any) => {
+      let image = "";
+      if (logo.asset?.url) {
+        image = logo.asset.url;
+      } else if (logo.asset?._ref) {
+        image = urlFor(logo).width(200).url();
+      }
+      return {
+        name: logo.name || "",
+        image,
+      };
+    }),
+  }),
+
+  // ─────────────────────────────────────────────
   // Gallery Module Transformers
   // ─────────────────────────────────────────────
 

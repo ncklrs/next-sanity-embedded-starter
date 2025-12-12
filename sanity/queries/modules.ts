@@ -381,12 +381,21 @@ const ctaStatsProjection = `{
   backgroundColor
 }`;
 
+// Shared logo field projection (for nested image structure)
+const logoItemFields = `{
+  name,
+  "asset": image.asset,
+  "hotspot": image.hotspot,
+  "crop": image.crop,
+  link
+}`;
+
 // Social Proof module projections
 const socialProofLogosProjection = `{
   _type,
   _key,
   heading,
-  logos[]{ asset, alt, companyName },
+  logos[]${logoItemFields},
   style,
   spacing,
   backgroundColor
@@ -406,7 +415,8 @@ const logoCloudSimpleProjection = `{
   _type,
   _key,
   heading,
-  logos[]{ asset, alt, companyName, url },
+  logos[]${logoItemFields},
+  style,
   spacing,
   backgroundColor
 }`;
@@ -415,7 +425,7 @@ const logoCloudMarqueeProjection = `{
   _type,
   _key,
   heading,
-  logos[]{ asset, alt, companyName, url },
+  logos[]${logoItemFields},
   speed,
   direction,
   spacing,
@@ -426,7 +436,7 @@ const logoCloudGridProjection = `{
   _type,
   _key,
   heading,
-  logos[]{ asset, alt, companyName, url },
+  logos[]${logoItemFields},
   columns,
   spacing,
   backgroundColor
