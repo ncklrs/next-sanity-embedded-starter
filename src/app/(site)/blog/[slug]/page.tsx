@@ -4,9 +4,7 @@ import Link from "next/link";
 import { urlFor } from "@/lib/sanity";
 import { PortableText } from "@portabletext/react";
 import { ArrowLeftIcon } from "@/components/icons";
-import { getPostBySlug, getAllPostSlugs, getBlogLayoutData } from "../../../../sanity/queries";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
+import { getPostBySlug, getAllPostSlugs, getEngagementsForHomepage } from "../../../../../sanity/queries";
 import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 // Pre-generate all blog post pages at build time
@@ -29,9 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [post, { settings, engagements }] = await Promise.all([
+  const [post, engagements] = await Promise.all([
     getPostBySlug(slug),
-    getBlogLayoutData(),
+    getEngagementsForHomepage(),
   ]);
 
   if (!post) {
@@ -96,7 +94,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   return (
     <>
       <GlobalEngagement engagements={engagements} />
-      <Navigation settings={settings} />
       <main className="min-h-screen">
         <article className="section">
           <div className="container-sm">
@@ -142,7 +139,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
         </article>
       </main>
-      <Footer settings={settings} />
     </>
   );
 }

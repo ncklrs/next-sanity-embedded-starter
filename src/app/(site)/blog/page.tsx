@@ -1,9 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity";
-import { getAllPosts, getBlogLayoutData } from "../../../sanity/queries";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
+import { getAllPosts, getEngagementsForHomepage } from "../../../../sanity/queries";
 import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 export const metadata = {
@@ -12,15 +10,14 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const [posts, { settings, engagements }] = await Promise.all([
+  const [posts, engagements] = await Promise.all([
     getAllPosts(),
-    getBlogLayoutData(),
+    getEngagementsForHomepage(),
   ]);
 
   return (
     <>
       <GlobalEngagement engagements={engagements} />
-      <Navigation settings={settings} />
       <main className="min-h-screen">
         <section className="section">
           <div className="container">
@@ -85,7 +82,6 @@ export default async function BlogPage() {
           </div>
         </section>
       </main>
-      <Footer settings={settings} />
     </>
   );
 }
