@@ -58,14 +58,18 @@ const baseNavLinkFields = [
   },
 ];
 
-// Nav link fields with children support (for top-level items)
-const navLinkFields = [
-  ...baseNavLinkFields,
+// Column definition for mega menu dropdowns
+const columnFields = [
   {
-    name: "children",
-    title: "Dropdown Items",
+    name: "title",
+    title: "Column Title",
+    type: "string",
+    description: "Optional heading for this column",
+  },
+  {
+    name: "links",
+    title: "Links",
     type: "array",
-    description: "Add child links to create a dropdown menu",
     of: [
       {
         type: "object",
@@ -76,6 +80,112 @@ const navLinkFields = [
             subtitle: "description",
           },
         },
+      },
+    ],
+  },
+];
+
+// Nav link fields with children support (for top-level items)
+const navLinkFields = [
+  ...baseNavLinkFields,
+  {
+    name: "dropdownStyle",
+    title: "Dropdown Style",
+    type: "string",
+    options: {
+      list: [
+        { title: "Simple List", value: "simple" },
+        { title: "Columns (Mega Menu)", value: "columns" },
+      ],
+      layout: "radio",
+    },
+    initialValue: "simple",
+    description: "Choose how dropdown items are organized",
+  },
+  {
+    name: "children",
+    title: "Dropdown Items",
+    type: "array",
+    description: "Add child links for a simple dropdown",
+    hidden: ({ parent }: { parent?: { dropdownStyle?: string } }) =>
+      parent?.dropdownStyle === "columns",
+    of: [
+      {
+        type: "object",
+        fields: baseNavLinkFields,
+        preview: {
+          select: {
+            title: "label",
+            subtitle: "description",
+          },
+        },
+      },
+    ],
+  },
+  {
+    name: "columns",
+    title: "Dropdown Columns",
+    type: "array",
+    description: "Organize links into columns for a mega menu",
+    hidden: ({ parent }: { parent?: { dropdownStyle?: string } }) =>
+      parent?.dropdownStyle !== "columns",
+    of: [
+      {
+        type: "object",
+        name: "column",
+        title: "Column",
+        fields: columnFields,
+        preview: {
+          select: {
+            title: "title",
+            links: "links",
+          },
+          prepare({
+            title,
+            links,
+          }: {
+            title?: string;
+            links?: any[];
+          }) {
+            return {
+              title: title || "Untitled Column",
+              subtitle: `${links?.length || 0} links`,
+            };
+          },
+        },
+      },
+    ],
+  },
+  {
+    name: "featuredItem",
+    title: "Featured Item",
+    type: "object",
+    description: "Optional highlighted item shown in mega menu",
+    hidden: ({ parent }: { parent?: { dropdownStyle?: string } }) =>
+      parent?.dropdownStyle !== "columns",
+    fields: [
+      {
+        name: "title",
+        title: "Title",
+        type: "string",
+      },
+      {
+        name: "description",
+        title: "Description",
+        type: "text",
+        rows: 2,
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        options: { hotspot: true },
+      },
+      {
+        name: "link",
+        title: "Link",
+        type: "object",
+        fields: baseNavLinkFields.slice(0, 5), // Just the link fields without description/icon
       },
     ],
   },

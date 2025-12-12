@@ -16,7 +16,7 @@ const baseNavLinkProjection = `{
   icon
 }`;
 
-// Navigation link projection with children support
+// Navigation link projection with children and columns support
 const navLinkProjection = `{
   label,
   linkType,
@@ -25,6 +25,7 @@ const navLinkProjection = `{
   anchor,
   description,
   icon,
+  dropdownStyle,
   children[]${`{
     label,
     linkType,
@@ -33,7 +34,36 @@ const navLinkProjection = `{
     anchor,
     description,
     icon
-  }`}
+  }`},
+  columns[]{
+    title,
+    links[]${`{
+      label,
+      linkType,
+      internalLink->{ slug },
+      externalUrl,
+      anchor,
+      description,
+      icon
+    }`}
+  },
+  featuredItem{
+    title,
+    description,
+    image{
+      asset,
+      alt,
+      hotspot,
+      crop
+    },
+    link{
+      label,
+      linkType,
+      internalLink->{ slug },
+      externalUrl,
+      anchor
+    }
+  }
 }`;
 
 // CTA button projection

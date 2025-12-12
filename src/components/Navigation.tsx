@@ -5,13 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Button, NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui";
-import { MenuIcon, XIcon, AuroraLogo, ChevronDownIcon, ChevronUpIcon } from "@/components/icons";
+import { MenuIcon, XIcon, AuroraLogo, ChevronDownIcon, ChevronUpIcon, ArrowRightIcon } from "@/components/icons";
 import { urlFor } from "@/lib/sanity";
-
-// Icon mapping for dropdown items
-const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
-  // Add more icons as needed from your icons.tsx
-};
 
 const BUTTON_VARIANT_CLASSES: Record<string, string> = {
   primary: "btn btn-primary",
@@ -26,7 +21,7 @@ const BUTTON_SIZE_CLASSES: Record<string, string> = {
   lg: "btn-lg",
 };
 
-interface NavLink {
+interface BaseNavLink {
   label: string;
   linkType: "internal" | "external" | "anchor";
   internalLink?: { slug: { current: string } };
@@ -34,7 +29,25 @@ interface NavLink {
   anchor?: string;
   description?: string;
   icon?: string;
-  children?: NavLink[];
+}
+
+interface NavColumn {
+  title?: string;
+  links?: BaseNavLink[];
+}
+
+interface FeaturedItem {
+  title?: string;
+  description?: string;
+  image?: any;
+  link?: BaseNavLink;
+}
+
+interface NavLink extends BaseNavLink {
+  dropdownStyle?: "simple" | "columns";
+  children?: BaseNavLink[];
+  columns?: NavColumn[];
+  featuredItem?: FeaturedItem;
 }
 
 interface CtaButton {
@@ -64,41 +77,7 @@ export interface NavigationProps {
   };
 }
 
-// Dropdown Link Item Component
-function DropdownLinkItem({ item, onClick }: { item: NavLink; onClick?: () => void }) {
-  const href = getNavHref(item);
-  const isExternal = item.linkType === "external";
-
-  return (
-    <Link
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-      onClick={onClick}
-      className="group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-[var(--surface)] focus:bg-[var(--surface)]"
-    >
-      <div className="flex items-start gap-3">
-        {item.icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--primary)] group-hover:bg-[var(--primary)]/10 transition-colors">
-            <span className="text-lg">{item.icon}</span>
-          </div>
-        )}
-        <div className="flex-1">
-          <div className="text-sm font-medium text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
-            {item.label}
-          </div>
-          {item.description && (
-            <p className="mt-1 text-sm leading-snug text-[var(--foreground-muted)]">
-              {item.description}
-            </p>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function getNavHref(item: NavLink) {
+function getNavHref(item: BaseNavLink) {
   switch (item.linkType) {
     case "internal":
       return item.internalLink?.slug?.current ? `/${item.internalLink.slug.current}` : "/";
@@ -116,6 +95,188 @@ function getCtaHref(button: CtaButton) {
     return button.internalLink?.slug?.current ? `/${button.internalLink.slug.current}` : "/";
   }
   return button.externalUrl || "#";
+}
+
+function hasDropdown(item: NavLink): boolean {
+  if (item.dropdownStyle === "columns") {
+    return (item.columns && item.columns.length > 0) || false;
+  }
+  return (item.children && item.children.length > 0) || false;
+}
+
+// Simple dropdown link item
+function DropdownLinkItem({ item, onClick }: { item: BaseNavLink; onClick?: () => void }) {
+  const href = getNavHref(item);
+  const isExternal = item.linkType === "external";
+
+  return (
+    <Link
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      onClick={onClick}
+      className="group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-colors hover:bg-[var(--surface)] focus:bg-[var(--surface)]"
+    >
+      <div className="flex items-start gap-3">
+        {item.icon && (
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--primary)] group-hover:bg-[var(--primary)]/10 transition-colors">
+            <span className="text-lg">{item.icon}</span>
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
+            {item.label}
+          </div>
+          {item.description && (
+            <p className="mt-1 text-sm leading-snug text-[var(--foreground-muted)] line-clamp-2">
+              {item.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// Column-based mega menu content
+function MegaMenuContent({ item }: { item: NavLink }) {
+  const columns = item.columns || [];
+  const featured = item.featuredItem;
+  const hasFeature = featured?.title || featured?.image;
+
+  // Calculate grid columns based on content
+  const columnCount = columns.length + (hasFeature ? 1 : 0);
+  const gridCols = columnCount <= 2 ? "md:grid-cols-2" : columnCount <= 3 ? "md:grid-cols-3" : "md:grid-cols-4";
+
+  return (
+    <div className={`grid gap-4 p-6 w-[90vw] max-w-[900px] ${gridCols}`}>
+      {/* Navigation Columns */}
+      {columns.map((column, colIndex) => (
+        <div key={colIndex} className="space-y-3">
+          {column.title && (
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-muted)] px-3">
+              {column.title}
+            </h3>
+          )}
+          <div className="space-y-1">
+            {column.links?.map((link, linkIndex) => (
+              <Link
+                key={linkIndex}
+                href={getNavHref(link)}
+                target={link.linkType === "external" ? "_blank" : undefined}
+                className="group flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--surface)]"
+              >
+                {link.icon && (
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[var(--surface)] text-[var(--primary)] group-hover:bg-[var(--primary)]/10 transition-colors">
+                    <span className="text-base">{link.icon}</span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
+                    {link.label}
+                  </div>
+                  {link.description && (
+                    <p className="mt-0.5 text-xs leading-snug text-[var(--foreground-muted)] line-clamp-2">
+                      {link.description}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Featured Item */}
+      {hasFeature && (
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--primary)]/10 via-[var(--surface)] to-[var(--surface)] border border-[var(--border)]">
+          {featured.image && (
+            <div className="aspect-[16/9] relative overflow-hidden">
+              <Image
+                src={urlFor(featured.image).width(400).height(225).url()}
+                alt={featured.title || "Featured"}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] to-transparent" />
+            </div>
+          )}
+          <div className="p-4">
+            {featured.title && (
+              <h4 className="font-semibold text-[var(--foreground)]">{featured.title}</h4>
+            )}
+            {featured.description && (
+              <p className="mt-1 text-sm text-[var(--foreground-muted)] line-clamp-2">
+                {featured.description}
+              </p>
+            )}
+            {featured.link && (
+              <Link
+                href={getNavHref(featured.link)}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] hover:underline"
+              >
+                {featured.link.label || "Learn more"}
+                <ArrowRightIcon className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Simple dropdown content
+function SimpleDropdownContent({ children }: { children: BaseNavLink[] }) {
+  return (
+    <div className="grid gap-1 p-4 w-[400px] md:w-[500px] lg:w-[600px] md:grid-cols-2">
+      {children.map((child, childIndex) => (
+        <DropdownLinkItem key={childIndex} item={child} />
+      ))}
+    </div>
+  );
+}
+
+// Mobile column section
+function MobileColumnSection({
+  column,
+  onLinkClick
+}: {
+  column: NavColumn;
+  onLinkClick: () => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {column.title && (
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-muted)] px-3 pt-2">
+          {column.title}
+        </h4>
+      )}
+      {column.links?.map((link, linkIndex) => (
+        <Link
+          key={linkIndex}
+          href={getNavHref(link)}
+          className="block py-2 px-3 rounded-lg text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-colors"
+          onClick={onLinkClick}
+          target={link.linkType === "external" ? "_blank" : undefined}
+        >
+          <div className="flex items-center gap-3">
+            {link.icon && (
+              <span className="text-[var(--primary)]">{link.icon}</span>
+            )}
+            <div>
+              <div className="font-medium text-sm">{link.label}</div>
+              {link.description && (
+                <div className="text-xs text-[var(--foreground-muted)] mt-0.5 line-clamp-1">
+                  {link.description}
+                </div>
+              )}
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
 }
 
 export function Navigation({ settings }: NavigationProps) {
@@ -166,7 +327,7 @@ export function Navigation({ settings }: NavigationProps) {
     });
   }, []);
 
-  const isActiveLink = (item: NavLink): boolean => {
+  const isActiveLink = (item: BaseNavLink): boolean => {
     const href = getNavHref(item);
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
@@ -200,17 +361,17 @@ export function Navigation({ settings }: NavigationProps) {
             <NavigationMenuList>
               {navItems.map((item, index) => (
                 <NavigationMenuItem key={index}>
-                  {item.children && item.children.length > 0 ? (
+                  {hasDropdown(item) ? (
                     <>
                       <NavigationMenuTrigger className="nav-link">
                         {item.label}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <div className="grid gap-1 p-4 w-[400px] md:w-[500px] lg:w-[600px] md:grid-cols-2">
-                          {item.children.map((child, childIndex) => (
-                            <DropdownLinkItem key={childIndex} item={child} />
-                          ))}
-                        </div>
+                        {item.dropdownStyle === "columns" ? (
+                          <MegaMenuContent item={item} />
+                        ) : (
+                          <SimpleDropdownContent children={item.children || []} />
+                        )}
                       </NavigationMenuContent>
                     </>
                   ) : (
@@ -270,7 +431,7 @@ export function Navigation({ settings }: NavigationProps) {
           <div className="flex flex-col p-4">
             {navItems.map((item, index) => (
               <div key={index} className="border-b border-[var(--border)]/50 last:border-b-0">
-                {item.children && item.children.length > 0 ? (
+                {hasDropdown(item) ? (
                   <div>
                     <button
                       onClick={() => toggleExpanded(index)}
@@ -288,33 +449,66 @@ export function Navigation({ settings }: NavigationProps) {
                     {/* Submenu items with smooth expand animation */}
                     <div
                       className={`overflow-hidden transition-all duration-200 ease-out ${
-                        expandedItems.has(index) ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                        expandedItems.has(index) ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <div className="pl-4 pb-2 space-y-1">
-                        {item.children.map((child, childIndex) => (
-                          <Link
-                            key={childIndex}
-                            href={getNavHref(child)}
-                            className="block py-2.5 px-3 rounded-lg text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-colors"
-                            onClick={closeMobileMenu}
-                            target={child.linkType === "external" ? "_blank" : undefined}
-                          >
-                            <div className="flex items-center gap-3">
-                              {child.icon && (
-                                <span className="text-[var(--primary)]">{child.icon}</span>
-                              )}
-                              <div>
-                                <div className="font-medium text-sm">{child.label}</div>
-                                {child.description && (
-                                  <div className="text-xs text-[var(--foreground-muted)] mt-0.5">
-                                    {child.description}
+                      <div className="pl-2 pb-2 space-y-1">
+                        {item.dropdownStyle === "columns" ? (
+                          // Render columns for mobile
+                          <>
+                            {item.columns?.map((column, colIndex) => (
+                              <MobileColumnSection
+                                key={colIndex}
+                                column={column}
+                                onLinkClick={closeMobileMenu}
+                              />
+                            ))}
+                            {/* Featured item in mobile */}
+                            {item.featuredItem?.title && (
+                              <div className="mt-3 pt-3 border-t border-[var(--border)]/50">
+                                <Link
+                                  href={item.featuredItem.link ? getNavHref(item.featuredItem.link) : "#"}
+                                  className="block p-3 rounded-lg bg-gradient-to-r from-[var(--primary)]/10 to-transparent hover:from-[var(--primary)]/20 transition-colors"
+                                  onClick={closeMobileMenu}
+                                >
+                                  <div className="font-medium text-sm text-[var(--foreground)]">
+                                    {item.featuredItem.title}
                                   </div>
-                                )}
+                                  {item.featuredItem.description && (
+                                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5 line-clamp-2">
+                                      {item.featuredItem.description}
+                                    </div>
+                                  )}
+                                </Link>
                               </div>
-                            </div>
-                          </Link>
-                        ))}
+                            )}
+                          </>
+                        ) : (
+                          // Render simple children for mobile
+                          item.children?.map((child, childIndex) => (
+                            <Link
+                              key={childIndex}
+                              href={getNavHref(child)}
+                              className="block py-2.5 px-3 rounded-lg text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-colors"
+                              onClick={closeMobileMenu}
+                              target={child.linkType === "external" ? "_blank" : undefined}
+                            >
+                              <div className="flex items-center gap-3">
+                                {child.icon && (
+                                  <span className="text-[var(--primary)]">{child.icon}</span>
+                                )}
+                                <div>
+                                  <div className="font-medium text-sm">{child.label}</div>
+                                  {child.description && (
+                                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5">
+                                      {child.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </Link>
+                          ))
+                        )}
                       </div>
                     </div>
                   </div>
