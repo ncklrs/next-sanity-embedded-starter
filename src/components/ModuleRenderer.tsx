@@ -481,6 +481,95 @@ const moduleTransformers: Record<string, (data: any) => any> = {
       // Content is portable text array - will be rendered in Modal component
     };
   },
+
+  // ─────────────────────────────────────────────
+  // Gallery Module Transformers
+  // ─────────────────────────────────────────────
+
+  // Shared gallery image transformer
+  galleryGrid: (data) => {
+    const spacingMap: Record<string, "sm" | "md" | "lg"> = {
+      small: "sm",
+      medium: "md",
+      large: "lg",
+    };
+    return {
+      ...data,
+      description: data.subheading,
+      spacing: spacingMap[data.spacing] || "md",
+      images: (data.images || []).map((img: any) => {
+        let src = "";
+        if (img.asset?.url) {
+          src = img.asset.url;
+        } else if (img.asset?._ref) {
+          src = urlFor(img).width(1200).url();
+        }
+        return {
+          id: img._key || img.asset?._ref || Math.random().toString(36),
+          src,
+          alt: img.alt || "",
+          title: img.caption,
+          size: img.size,
+        };
+      }),
+    };
+  },
+
+  galleryMasonry: (data) => {
+    const spacingMap: Record<string, "sm" | "md" | "lg"> = {
+      small: "sm",
+      medium: "md",
+      large: "lg",
+    };
+    return {
+      ...data,
+      description: data.subheading,
+      spacing: spacingMap[data.spacing] || "md",
+      images: (data.images || []).map((img: any) => {
+        let src = "";
+        if (img.asset?.url) {
+          src = img.asset.url;
+        } else if (img.asset?._ref) {
+          src = urlFor(img).width(1200).url();
+        }
+        return {
+          id: img._key || img.asset?._ref || Math.random().toString(36),
+          src,
+          alt: img.alt || "",
+          title: img.caption,
+          size: img.size,
+        };
+      }),
+    };
+  },
+
+  galleryCarousel: (data) => {
+    const spacingMap: Record<string, "sm" | "md" | "lg"> = {
+      small: "sm",
+      medium: "md",
+      large: "lg",
+    };
+    return {
+      ...data,
+      description: data.subheading,
+      spacing: spacingMap[data.spacing] || "md",
+      images: (data.images || []).map((img: any) => {
+        let src = "";
+        if (img.asset?.url) {
+          src = img.asset.url;
+        } else if (img.asset?._ref) {
+          src = urlFor(img).width(1600).url();
+        }
+        return {
+          id: img._key || img.asset?._ref || Math.random().toString(36),
+          src,
+          alt: img.alt || "",
+          title: img.caption,
+          size: img.size,
+        };
+      }),
+    };
+  },
 };
 
 /**

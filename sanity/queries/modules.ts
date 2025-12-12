@@ -484,12 +484,15 @@ const faqSimpleProjection = `{
 }`;
 
 // Gallery module projections
+// Note: Schema has images[].image (nested image object), so we extract and flatten
 const galleryImageFields = `{
-  asset,
+  _key,
+  "asset": image.asset,
+  "hotspot": image.hotspot,
+  "crop": image.crop,
   alt,
   caption,
-  hotspot,
-  crop
+  size
 }`;
 
 const galleryGridProjection = `{
@@ -501,6 +504,7 @@ const galleryGridProjection = `{
   subheading,
   images[]${galleryImageFields},
   columns,
+  enableLightbox,
   spacing,
   backgroundColor
 }`;
@@ -513,6 +517,7 @@ const galleryMasonryProjection = `{
   headingHighlight,
   subheading,
   images[]${galleryImageFields},
+  enableLightbox,
   spacing,
   backgroundColor
 }`;
@@ -526,6 +531,7 @@ const galleryCarouselProjection = `{
   subheading,
   images[]${galleryImageFields},
   autoplay,
+  showThumbnails,
   spacing,
   backgroundColor
 }`;

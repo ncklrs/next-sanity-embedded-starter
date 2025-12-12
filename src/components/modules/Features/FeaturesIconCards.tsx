@@ -91,18 +91,13 @@ export default function FeaturesIconCards({
               </h3>
               <p className="body-lg mb-4">{feature.description}</p>
 
-              {/* Optional Link with Arrow */}
+              {/* Optional Link */}
               {feature.link && (
                 <a
                   href={feature.link.url || feature.link.href}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-violet)] hover:text-[var(--accent-cyan)] transition-colors group/link"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-violet)] hover:text-white transition-colors group/link"
                 >
                   <span>{feature.link.text}</span>
-                  {renderIcon("arrowRight", {
-                    className:
-                      "w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-200",
-                    "aria-hidden": "true",
-                  })}
                 </a>
               )}
 
