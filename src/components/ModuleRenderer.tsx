@@ -439,37 +439,48 @@ const moduleTransformers: Record<string, (data: any) => any> = {
   // Engagement Module Transformers
   // ─────────────────────────────────────────────
 
-  // Transform announcementBar - pass through with icon handling
-  announcementBar: (data) => ({
-    ...data,
-    // Icon is already a string (emoji or icon name), component handles display
-  }),
+  // Transform announcementBar - don't pass backgroundColor (component handles variants)
+  announcementBar: (data) => {
+    const { backgroundColor, ...rest } = data;
+    return {
+      ...rest,
+      // Don't pass backgroundColor as CSS value - component uses variant for styling
+    };
+  },
 
-  // Transform countdown - map button to cta format
-  countdown: (data) => ({
-    ...data,
-    cta: data.button ? {
-      text: data.button.text,
-      url: data.button.link,
-      variant: data.button.variant || "primary",
-    } : undefined,
-  }),
+  // Transform countdown - handle both legacy cta format and new button format
+  countdown: (data) => {
+    // Handle legacy cta format or new button format
+    const ctaData = data.cta || data.button;
+    return {
+      ...data,
+      cta: ctaData ? {
+        text: ctaData.text,
+        url: ctaData.url || ctaData.link, // Handle both url and link field names
+        variant: ctaData.variant || "primary",
+      } : undefined,
+    };
+  },
 
   // Transform stickyCta - pass through (fields already match)
   stickyCta: (data) => ({
     ...data,
   }),
 
-  // Transform modal - map button to cta and handle content
-  modal: (data) => ({
-    ...data,
-    cta: data.button ? {
-      text: data.button.text,
-      url: data.button.link,
-      variant: data.button.variant || "primary",
-    } : undefined,
-    // Content is portable text - component handles rendering
-  }),
+  // Transform modal - map button to cta, content stays as portable text for now
+  modal: (data) => {
+    // Handle legacy cta format or new button format
+    const ctaData = data.cta || data.button;
+    return {
+      ...data,
+      cta: ctaData ? {
+        text: ctaData.text,
+        url: ctaData.url || ctaData.link,
+        variant: ctaData.variant || "primary",
+      } : undefined,
+      // Content is portable text array - will be rendered in Modal component
+    };
+  },
 };
 
 /**

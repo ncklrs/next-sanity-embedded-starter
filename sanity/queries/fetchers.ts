@@ -26,6 +26,11 @@ import {
   postBySlugQuery,
   allPostSlugsQuery,
 } from "./posts";
+import {
+  engagementsForPageQuery,
+  engagementsForHomepageQuery,
+} from "./engagement";
+import { homepageReferenceQuery } from "./settings";
 
 // =============================================================================
 // Type Definitions
@@ -111,6 +116,37 @@ export interface SiteSettings {
     bottomLinks?: any[];
     copyrightText?: string;
   };
+}
+
+export interface EngagementData {
+  _id: string;
+  name: string;
+  engagementType: 'announcementBar' | 'stickyCta' | 'exitIntentModal' | 'newsletterPopup';
+  priority: number;
+  // Type-specific fields (flattened by GROQ select)
+  // AnnouncementBar
+  message?: string;
+  link?: { text?: string; url?: string };
+  dismissible?: boolean;
+  variant?: string;
+  backgroundColor?: string;
+  // StickyCta
+  text?: string;
+  url?: string;
+  icon?: string;
+  position?: string;
+  showAfterScroll?: number;
+  // ExitIntentModal & NewsletterPopup
+  title?: string;
+  image?: { asset: any; alt?: string; hotspot?: any; crop?: any };
+  cta?: { text?: string; url?: string; variant?: string };
+  showOnce?: boolean;
+  // NewsletterPopup specific
+  placeholder?: string;
+  buttonText?: string;
+  successMessage?: string;
+  trigger?: string;
+  triggerValue?: number;
 }
 
 // =============================================================================
@@ -236,4 +272,81 @@ export async function getPageWithSettings(slug: string): Promise<{
     getSiteSettings(),
   ]);
   return { page: page ?? undefined, settings: settings ?? undefined };
+}
+
+// =============================================================================
+// Engagement Fetchers
+// =============================================================================
+
+/**
+ * Fetch engagements for a specific page by slug
+ */
+export async function getEngagementsForPage(pageSlug: string): Promise<EngagementData[]> {
+  return sanityFetch<EngagementData[]>({
+    query: engagementsForPageQuery,
+    params: { pageSlug },
+    tags: ["engagement", `page-engagement:${pageSlug}`],
+  });
+}
+
+/**
+ * Fetch engagements for homepage
+ * First gets the homepage ID, then fetches engagements targeting it
+ */
+export async function getEngagementsForHomepage(): Promise<EngagementData[]> {
+  // Get homepage ID for include/exclude targeting
+  const homepageRef = await sanityFetch<{ homepageId?: string } | null>({
+    query: homepageReferenceQuery,
+    tags: ["site-settings"],
+  });
+
+  return sanityFetch<EngagementData[]>({
+    query: engagementsForHomepageQuery,
+    params: { homepageId: homepageRef?.homepageId || null },
+    tags: ["engagement", "homepage-engagement"],
+  });
+}
+
+// =============================================================================
+// Combined Fetchers with Engagement
+// =============================================================================
+
+/**
+ * Fetch homepage data, site settings, and engagements in parallel
+ */
+export async function getHomepageWithSettingsAndEngagement(): Promise<{
+  page: PageData | undefined;
+  settings: SiteSettings | undefined;
+  engagements: EngagementData[];
+}> {
+  const [page, settings, engagements] = await Promise.all([
+    getHomepage(),
+    getSiteSettings(),
+    getEngagementsForHomepage(),
+  ]);
+  return {
+    page: page ?? undefined,
+    settings: settings ?? undefined,
+    engagements: engagements ?? [],
+  };
+}
+
+/**
+ * Fetch page data, site settings, and engagements in parallel
+ */
+export async function getPageWithSettingsAndEngagement(slug: string): Promise<{
+  page: PageData | undefined;
+  settings: SiteSettings | undefined;
+  engagements: EngagementData[];
+}> {
+  const [page, settings, engagements] = await Promise.all([
+    getPageBySlug(slug),
+    getSiteSettings(),
+    getEngagementsForPage(slug),
+  ]);
+  return {
+    page: page ?? undefined,
+    settings: settings ?? undefined,
+    engagements: engagements ?? [],
+  };
 }

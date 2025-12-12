@@ -7,7 +7,7 @@ import { visionTool } from "@sanity/vision";
 import { unsplashImageAsset } from "sanity-plugin-asset-source-unsplash";
 import { media } from "sanity-plugin-media";
 import { assist } from "@sanity/assist";
-import { CogIcon, DocumentsIcon, ControlsIcon } from "@sanity/icons";
+import { CogIcon, DocumentsIcon, ControlsIcon, BellIcon } from "@sanity/icons";
 import { schemaTypes } from "./sanity/schemas";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
@@ -24,6 +24,7 @@ const structuredTypes = new Set([
   "form",
   "formSubmission",
   "subscriber",
+  "engagement",
   "media.tag",
   "sanity.assist.schemaType.annotations",
   "assist.instruction.context",
@@ -37,6 +38,11 @@ const structure: StructureResolver = (S) =>
       // Content
       S.documentTypeListItem("page").title("Pages"),
       S.documentTypeListItem("post").title("Posts"),
+
+      // Engagement
+      S.documentTypeListItem("engagement")
+        .title("Engagement")
+        .icon(BellIcon),
 
       // Forms group
       S.listItem()

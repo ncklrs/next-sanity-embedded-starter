@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import {
   getPageBySlug,
-  getPageWithSettings,
+  getPageWithSettingsAndEngagement,
   getAllPageSlugs,
 } from "../../../sanity/queries";
 import { ModuleRenderer } from "@/components/ModuleRenderer";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { GlobalEngagement } from "@/components/GlobalEngagement";
 
 // Pre-generate all page routes at build time
 export async function generateStaticParams() {
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { page, settings } = await getPageWithSettings(slug);
+  const { page, settings, engagements } = await getPageWithSettingsAndEngagement(slug);
 
   if (!page) {
     notFound();
@@ -36,6 +37,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   return (
     <>
+      <GlobalEngagement engagements={engagements} />
       <Navigation settings={settings} />
       <main>
         <ModuleRenderer modules={page.modules || []} />

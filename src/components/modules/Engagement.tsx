@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { XIcon } from "@/components/icons";
 
 // ============================================================================
@@ -435,7 +436,7 @@ interface FormModule {
 export interface ModalProps {
   id: string;
   title?: string;
-  content: ReactNode;
+  content: ReactNode | PortableTextBlock[];
   image?: string;
   cta?: CTAConfig;
   trigger?: "exit-intent" | "time-delay" | "scroll-depth" | "manual";
@@ -444,6 +445,11 @@ export interface ModalProps {
   variant?: "default" | "fullscreen" | "slide-in";
   onClose?: () => void;
   formModule?: FormModule;
+}
+
+// Helper to check if content is Portable Text
+function isPortableText(content: any): content is PortableTextBlock[] {
+  return Array.isArray(content) && content.length > 0 && content[0]?._type === "block";
 }
 
 // ============================================================================
@@ -774,8 +780,12 @@ export function Modal({
           {title && (
             <h2 className="heading-lg mb-6">{title}</h2>
           )}
-          <div className="body-lg mb-8 text-[var(--foreground-muted)]">
-            {content}
+          <div className="body-lg mb-8 text-[var(--foreground-muted)] prose prose-invert max-w-none">
+            {isPortableText(content) ? (
+              <PortableText value={content} />
+            ) : (
+              content
+            )}
           </div>
 
           {cta && (

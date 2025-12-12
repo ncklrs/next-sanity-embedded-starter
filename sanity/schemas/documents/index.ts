@@ -4,3 +4,4 @@ export { siteSettings } from "./siteSettings";
 export { formSubmission } from "./formSubmission";
 export { subscriber } from "./subscriber";
 export { form } from "./form";
+export { engagement } from "./engagement";

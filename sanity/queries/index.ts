@@ -62,6 +62,14 @@ export {
   recentSubscribersQuery,
 } from "./subscribers";
 
+// Engagement queries
+export {
+  allActiveEngagementsQuery,
+  engagementsForPageQuery,
+  engagementsForHomepageQuery,
+  engagementByIdQuery,
+} from "./engagement";
+
 // Module projections (for custom queries)
 export { moduleProjection, moduleProjections, sharedFields } from "./modules";
 
@@ -87,4 +95,10 @@ export {
   // Combined fetchers
   getHomepageWithSettings,
   getPageWithSettings,
+  // Engagement fetchers
+  type EngagementData,
+  getEngagementsForPage,
+  getEngagementsForHomepage,
+  getHomepageWithSettingsAndEngagement,
+  getPageWithSettingsAndEngagement,
 } from "./fetchers";
