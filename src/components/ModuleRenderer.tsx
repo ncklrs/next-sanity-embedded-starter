@@ -643,6 +643,132 @@ const moduleTransformers: Record<string, (data: any) => any> = {
       }),
     };
   },
+
+  // ─────────────────────────────────────────────
+  // Testimonials Module Transformers
+  // ─────────────────────────────────────────────
+
+  // Helper to transform a single testimonial from Sanity flat format to component nested format
+  testimonialsGrid: (data) => {
+    const transformTestimonial = (t: any) => {
+      let avatarUrl = "";
+      if (t.avatar?.asset?.url) {
+        avatarUrl = t.avatar.asset.url;
+      } else if (t.avatar?.asset?._ref) {
+        avatarUrl = urlFor(t.avatar).width(96).height(96).url();
+      }
+      return {
+        _key: t._key,
+        content: t.content,
+        rating: t.rating ?? 5,
+        author: {
+          name: t.author,
+          role: t.role || "",
+          company: t.company,
+          avatar: avatarUrl || undefined,
+        },
+        companyLogo: t.companyLogo?.asset?.url || (t.companyLogo?.asset?._ref ? urlFor(t.companyLogo).width(120).url() : undefined),
+      };
+    };
+
+    return {
+      ...data,
+      title: data.heading,
+      subtitle: data.subheading,
+      testimonials: (data.testimonials || []).map(transformTestimonial),
+    };
+  },
+
+  testimonialsCarousel: (data) => {
+    const transformTestimonial = (t: any) => {
+      let avatarUrl = "";
+      if (t.avatar?.asset?.url) {
+        avatarUrl = t.avatar.asset.url;
+      } else if (t.avatar?.asset?._ref) {
+        avatarUrl = urlFor(t.avatar).width(96).height(96).url();
+      }
+      return {
+        _key: t._key,
+        content: t.content,
+        rating: t.rating ?? 5,
+        author: {
+          name: t.author,
+          role: t.role || "",
+          company: t.company,
+          avatar: avatarUrl || undefined,
+        },
+        companyLogo: t.companyLogo?.asset?.url || (t.companyLogo?.asset?._ref ? urlFor(t.companyLogo).width(120).url() : undefined),
+      };
+    };
+
+    return {
+      ...data,
+      title: data.heading,
+      subtitle: data.subheading,
+      testimonials: (data.testimonials || []).map(transformTestimonial),
+    };
+  },
+
+  testimonialsFeatured: (data) => {
+    const transformTestimonial = (t: any) => {
+      let avatarUrl = "";
+      if (t.avatar?.asset?.url) {
+        avatarUrl = t.avatar.asset.url;
+      } else if (t.avatar?.asset?._ref) {
+        avatarUrl = urlFor(t.avatar).width(96).height(96).url();
+      }
+      return {
+        _key: t._key,
+        content: t.content,
+        rating: t.rating ?? 5,
+        author: {
+          name: t.author,
+          role: t.role || "",
+          company: t.company,
+          avatar: avatarUrl || undefined,
+        },
+        companyLogo: t.logo?.asset?.url || (t.logo?.asset?._ref ? urlFor(t.logo).width(120).url() : undefined),
+      };
+    };
+
+    return {
+      ...data,
+      title: data.heading,
+      subtitle: data.subheading,
+      featured: data.featured ? transformTestimonial(data.featured) : undefined,
+      supporting: (data.supporting || []).map(transformTestimonial),
+    };
+  },
+
+  testimonialsCarouselLarge: (data) => {
+    const transformTestimonial = (t: any) => {
+      let avatarUrl = "";
+      if (t.avatar?.asset?.url) {
+        avatarUrl = t.avatar.asset.url;
+      } else if (t.avatar?.asset?._ref) {
+        avatarUrl = urlFor(t.avatar).width(128).height(128).url();
+      }
+      return {
+        _key: t._key,
+        content: t.content,
+        rating: t.rating ?? 5,
+        author: {
+          name: t.author,
+          role: t.role || "",
+          company: t.company,
+          avatar: avatarUrl || undefined,
+        },
+        companyLogo: t.companyLogo?.asset?.url || (t.companyLogo?.asset?._ref ? urlFor(t.companyLogo).width(160).url() : undefined),
+      };
+    };
+
+    return {
+      ...data,
+      title: data.heading || "",
+      subtitle: data.subheading,
+      testimonials: (data.testimonials || []).map(transformTestimonial),
+    };
+  },
 };
 
 /**

@@ -336,23 +336,38 @@ export function Countdown({
 // ============================================================================
 
 export interface StickyCtaProps {
+  id?: string;
   text: string;
   url: string;
   icon?: ReactNode;
   position?: "bottom-right" | "bottom-left" | "bottom-center";
   showAfterScroll?: number;
   variant?: "button" | "pill" | "expanded";
+  dismissible?: boolean;
 }
 
 export function StickyCta({
+  id,
   text,
   url,
   icon,
   position = "bottom-right",
   showAfterScroll = 300,
   variant = "button",
+  dismissible = false,
 }: StickyCtaProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  // Check localStorage for dismissed state on mount
+  useEffect(() => {
+    if (dismissible && id) {
+      const dismissed = localStorage.getItem(`sticky-cta-dismissed-${id}`);
+      if (dismissed === "true") {
+        setIsDismissed(true);
+      }
+    }
+  }, [dismissible, id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -365,6 +380,15 @@ export function StickyCta({
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [showAfterScroll]);
+
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDismissed(true);
+    if (id) {
+      localStorage.setItem(`sticky-cta-dismissed-${id}`, "true");
+    }
+  };
 
   const getPositionClasses = () => {
     const base = "fixed z-50";
@@ -389,26 +413,49 @@ export function StickyCta({
     }
   };
 
+  // Don't render if dismissed
+  if (isDismissed) return null;
+
   return (
-    <a
-      href={url}
-      className={`${getPositionClasses()} ${getVariantClasses()} transition-all duration-300 ${
+    <div
+      className={`${getPositionClasses()} transition-all duration-300 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
-      } ${variant === "pill" || variant === "expanded" ? "bg-gradient-to-r from-[var(--accent-violet)] to-[var(--accent-cyan)] text-white font-semibold hover:shadow-2xl hover:scale-105" : ""}`}
-      style={{
-        backdropFilter: variant === "expanded" ? "blur(12px)" : undefined,
-      }}
+      }`}
     >
-      {icon && variant === "expanded" && (
-        <div className="w-6 h-6 flex-shrink-0">{icon}</div>
+      {/* Dismiss button */}
+      {dismissible && (
+        <button
+          onClick={handleDismiss}
+          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-800 border border-gray-600 text-gray-400 hover:text-white hover:bg-gray-700 flex items-center justify-center transition-colors z-10"
+          aria-label="Dismiss"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       )}
-      <span>{text}</span>
-      {!icon && variant !== "pill" && (
-        <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-        </svg>
-      )}
-    </a>
+      <a
+        href={url}
+        className={`${getVariantClasses()} block ${
+          variant === "pill" || variant === "expanded"
+            ? "bg-gradient-to-r from-[var(--accent-violet)] to-[var(--accent-cyan)] text-white font-semibold hover:shadow-2xl hover:scale-105"
+            : ""
+        }`}
+        style={{
+          backdropFilter: variant === "expanded" ? "blur(12px)" : undefined,
+        }}
+      >
+        {icon && variant === "expanded" && (
+          <div className="w-6 h-6 flex-shrink-0">{icon}</div>
+        )}
+        <span>{text}</span>
+        {!icon && variant !== "pill" && (
+          <svg className="w-5 h-5 ml-2 inline" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        )}
+      </a>
+    </div>
   );
 }
 

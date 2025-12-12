@@ -465,21 +465,35 @@ export function Navigation({ settings }: NavigationProps) {
                               />
                             ))}
                             {/* Featured item in mobile */}
-                            {item.featuredItem?.title && (
+                            {(item.featuredItem?.title || item.featuredItem?.image) && (
                               <div className="mt-3 pt-3 border-t border-[var(--border)]/50">
                                 <Link
                                   href={item.featuredItem.link ? getNavHref(item.featuredItem.link) : "#"}
-                                  className="block p-3 rounded-lg bg-gradient-to-r from-[var(--primary)]/10 to-transparent hover:from-[var(--primary)]/20 transition-colors"
+                                  className="block rounded-lg overflow-hidden bg-gradient-to-r from-[var(--primary)]/10 to-transparent hover:from-[var(--primary)]/20 transition-colors"
                                   onClick={closeMobileMenu}
                                 >
-                                  <div className="font-medium text-sm text-[var(--foreground)]">
-                                    {item.featuredItem.title}
-                                  </div>
-                                  {item.featuredItem.description && (
-                                    <div className="text-xs text-[var(--foreground-muted)] mt-0.5 line-clamp-2">
-                                      {item.featuredItem.description}
+                                  {item.featuredItem.image && (
+                                    <div className="aspect-[16/9] relative overflow-hidden">
+                                      <Image
+                                        src={urlFor(item.featuredItem.image).width(400).height(225).url()}
+                                        alt={item.featuredItem.title || "Featured"}
+                                        fill
+                                        className="object-cover"
+                                      />
                                     </div>
                                   )}
+                                  <div className="p-3">
+                                    {item.featuredItem.title && (
+                                      <div className="font-medium text-sm text-[var(--foreground)]">
+                                        {item.featuredItem.title}
+                                      </div>
+                                    )}
+                                    {item.featuredItem.description && (
+                                      <div className="text-xs text-[var(--foreground-muted)] mt-0.5 line-clamp-2">
+                                        {item.featuredItem.description}
+                                      </div>
+                                    )}
+                                  </div>
                                 </Link>
                               </div>
                             )}

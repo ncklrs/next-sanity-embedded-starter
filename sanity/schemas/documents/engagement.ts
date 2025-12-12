@@ -207,6 +207,15 @@ export const engagement = defineType({
       initialValue: 'button',
       hidden: ({ parent }) => parent?.engagementType !== 'stickyCta',
     }),
+    defineField({
+      name: 'stickyDismissible',
+      title: 'Dismissible',
+      type: 'boolean',
+      group: 'settings',
+      initialValue: true,
+      description: 'Allow users to dismiss the sticky CTA (persists in localStorage)',
+      hidden: ({ parent }) => parent?.engagementType !== 'stickyCta',
+    }),
 
     // ─────────────────────────────────────────────
     // EXIT INTENT MODAL FIELDS

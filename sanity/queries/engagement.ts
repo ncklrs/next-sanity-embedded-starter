@@ -55,7 +55,8 @@ const engagementProjection = `{
       "icon": stickyIcon,
       "position": stickyPosition,
       "showAfterScroll": stickyShowAfterScroll,
-      "variant": stickyVariant
+      "variant": stickyVariant,
+      "dismissible": stickyDismissible
     },
     engagementType == "exitIntentModal" => {
       "title": exitTitle,

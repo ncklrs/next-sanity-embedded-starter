@@ -215,12 +215,14 @@ const pricingSimpleProjection = `{
 
 // Testimonials module projections
 const testimonialFields = `{
-  quote,
+  _key,
+  content,
   author,
   role,
   company,
   avatar${imageFields},
-  rating
+  rating,
+  companyLogo${imageFields}
 }`;
 
 const testimonialsGridProjection = `{
@@ -252,8 +254,20 @@ const testimonialsCarouselProjection = `{
 const testimonialsFeaturedProjection = `{
   _type,
   _key,
-  testimonial${testimonialFields},
-  companyLogo${imageFields},
+  badge,
+  heading,
+  headingHighlight,
+  subheading,
+  featured{
+    _key,
+    content,
+    author,
+    role,
+    company,
+    avatar${imageFields},
+    logo${imageFields}
+  },
+  supporting[]${testimonialFields},
   spacing,
   backgroundColor
 }`;
