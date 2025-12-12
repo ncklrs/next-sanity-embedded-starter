@@ -108,6 +108,70 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
     },
     bottomLinks[]${navLinkProjection},
     copyrightText
+  },
+  // Global Engagement Settings
+  globalEngagement{
+    announcementBar{
+      enabled,
+      message,
+      link{
+        text,
+        url
+      },
+      dismissible,
+      variant,
+      backgroundColor,
+      schedule{
+        startDate,
+        endDate
+      }
+    },
+    stickyCta{
+      enabled,
+      text,
+      url,
+      icon,
+      position,
+      showAfterScroll,
+      variant,
+      "excludePageSlugs": excludePages[]->slug.current
+    },
+    exitIntentModal{
+      enabled,
+      title,
+      message,
+      image{
+        asset,
+        alt,
+        hotspot,
+        crop
+      },
+      cta{
+        text,
+        url,
+        variant
+      },
+      showOnce,
+      variant,
+      "excludePageSlugs": excludePages[]->slug.current
+    },
+    newsletterPopup{
+      enabled,
+      title,
+      message,
+      image{
+        asset,
+        alt,
+        hotspot,
+        crop
+      },
+      placeholder,
+      buttonText,
+      successMessage,
+      trigger,
+      triggerValue,
+      showOnce
+    }
   }
 }`;
 

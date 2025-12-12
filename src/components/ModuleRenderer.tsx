@@ -434,6 +434,42 @@ const moduleTransformers: Record<string, (data: any) => any> = {
     })),
     stats: data.stats || [],
   }),
+
+  // ─────────────────────────────────────────────
+  // Engagement Module Transformers
+  // ─────────────────────────────────────────────
+
+  // Transform announcementBar - pass through with icon handling
+  announcementBar: (data) => ({
+    ...data,
+    // Icon is already a string (emoji or icon name), component handles display
+  }),
+
+  // Transform countdown - map button to cta format
+  countdown: (data) => ({
+    ...data,
+    cta: data.button ? {
+      text: data.button.text,
+      url: data.button.link,
+      variant: data.button.variant || "primary",
+    } : undefined,
+  }),
+
+  // Transform stickyCta - pass through (fields already match)
+  stickyCta: (data) => ({
+    ...data,
+  }),
+
+  // Transform modal - map button to cta and handle content
+  modal: (data) => ({
+    ...data,
+    cta: data.button ? {
+      text: data.button.text,
+      url: data.button.link,
+      variant: data.button.variant || "primary",
+    } : undefined,
+    // Content is portable text - component handles rendering
+  }),
 };
 
 /**

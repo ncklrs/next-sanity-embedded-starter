@@ -422,6 +422,7 @@ interface FormField {
   type: 'text' | 'email' | 'phone' | 'textarea' | 'select';
   required?: boolean;
   placeholder?: string;
+  options?: string[]; // For select fields
 }
 
 interface FormModule {
@@ -514,6 +515,26 @@ function ModalForm({ formModule }: { formModule: FormModule }) {
             rows={4}
             className={baseClasses}
           />
+        );
+      case 'select':
+        return (
+          <select
+            name={field.name}
+            id={field.name}
+            required={field.required}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            className={`${baseClasses} appearance-none cursor-pointer`}
+          >
+            <option value="" disabled>
+              {field.placeholder || 'Select an option'}
+            </option>
+            {field.options?.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         );
       default:
         return (

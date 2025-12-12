@@ -199,6 +199,7 @@ export const siteSettings = defineType({
     { name: "general", title: "General", default: true },
     { name: "header", title: "Header Navigation" },
     { name: "footer", title: "Footer Navigation" },
+    { name: "engagement", title: "Engagement" },
     { name: "seo", title: "SEO & Social" },
   ],
   fields: [
@@ -453,6 +454,363 @@ export const siteSettings = defineType({
           title: "Copyright Text",
           type: "string",
           description: "Copyright text (year will be added automatically)",
+        }),
+      ],
+    }),
+
+    // ─────────────────────────────────────────────
+    // Global Engagement Settings
+    // ─────────────────────────────────────────────
+    defineField({
+      name: "globalEngagement",
+      title: "Global Engagement",
+      type: "object",
+      group: "engagement",
+      description: "Site-wide engagement elements that appear on all pages",
+      fields: [
+        // Global Announcement Bar
+        defineField({
+          name: "announcementBar",
+          title: "Announcement Bar",
+          type: "object",
+          description: "Top-of-page announcement shown site-wide",
+          fields: [
+            defineField({
+              name: "enabled",
+              title: "Enabled",
+              type: "boolean",
+              initialValue: false,
+            }),
+            defineField({
+              name: "message",
+              title: "Message",
+              type: "string",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "link",
+              title: "Link",
+              type: "object",
+              hidden: ({ parent }) => !parent?.enabled,
+              fields: [
+                { name: "text", title: "Link Text", type: "string" },
+                {
+                  name: "url",
+                  title: "URL",
+                  type: "url",
+                  validation: (rule: any) =>
+                    rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto", "tel"] }),
+                },
+              ],
+            }),
+            defineField({
+              name: "dismissible",
+              title: "Dismissible",
+              type: "boolean",
+              initialValue: true,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "variant",
+              title: "Variant",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Default", value: "default" },
+                  { title: "Gradient", value: "gradient" },
+                  { title: "Highlight", value: "highlight" },
+                ],
+              },
+              initialValue: "default",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "backgroundColor",
+              title: "Background Color",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Default", value: "default" },
+                  { title: "Muted", value: "muted" },
+                  { title: "Accent", value: "accent" },
+                  { title: "Warning", value: "warning" },
+                  { title: "Success", value: "success" },
+                  { title: "Error", value: "error" },
+                ],
+              },
+              initialValue: "default",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "schedule",
+              title: "Schedule",
+              type: "object",
+              description: "Optional scheduling for the announcement",
+              hidden: ({ parent }) => !parent?.enabled,
+              fields: [
+                { name: "startDate", title: "Start Date", type: "datetime" },
+                { name: "endDate", title: "End Date", type: "datetime" },
+              ],
+            }),
+          ],
+        }),
+
+        // Global Sticky CTA
+        defineField({
+          name: "stickyCta",
+          title: "Sticky CTA",
+          type: "object",
+          description: "Floating call-to-action button shown site-wide",
+          fields: [
+            defineField({
+              name: "enabled",
+              title: "Enabled",
+              type: "boolean",
+              initialValue: false,
+            }),
+            defineField({
+              name: "text",
+              title: "Button Text",
+              type: "string",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "url",
+              hidden: ({ parent }) => !parent?.enabled,
+              validation: (rule: any) =>
+                rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto", "tel"] }),
+            }),
+            defineField({
+              name: "icon",
+              title: "Icon",
+              type: "string",
+              description: "Icon name or emoji",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "position",
+              title: "Position",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Bottom Right", value: "bottom-right" },
+                  { title: "Bottom Left", value: "bottom-left" },
+                  { title: "Bottom Center", value: "bottom-center" },
+                ],
+              },
+              initialValue: "bottom-right",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "showAfterScroll",
+              title: "Show After Scroll (px)",
+              type: "number",
+              initialValue: 300,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "variant",
+              title: "Variant",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Button", value: "button" },
+                  { title: "Pill", value: "pill" },
+                  { title: "Expanded", value: "expanded" },
+                ],
+              },
+              initialValue: "button",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "excludePages",
+              title: "Exclude from Pages",
+              type: "array",
+              description: "Pages where this CTA should not appear",
+              hidden: ({ parent }) => !parent?.enabled,
+              of: [{ type: "reference", to: [{ type: "page" }] }],
+            }),
+          ],
+        }),
+
+        // Global Exit Intent Modal
+        defineField({
+          name: "exitIntentModal",
+          title: "Exit Intent Modal",
+          type: "object",
+          description: "Modal shown when user tries to leave the site",
+          fields: [
+            defineField({
+              name: "enabled",
+              title: "Enabled",
+              type: "boolean",
+              initialValue: false,
+            }),
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "message",
+              title: "Message",
+              type: "text",
+              rows: 3,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "cta",
+              title: "Call to Action",
+              type: "object",
+              hidden: ({ parent }) => !parent?.enabled,
+              fields: [
+                { name: "text", title: "Button Text", type: "string" },
+                {
+                  name: "url",
+                  title: "URL",
+                  type: "url",
+                  validation: (rule: any) =>
+                    rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto", "tel"] }),
+                },
+                {
+                  name: "variant",
+                  title: "Variant",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Primary", value: "primary" },
+                      { title: "Secondary", value: "secondary" },
+                    ],
+                  },
+                  initialValue: "primary",
+                },
+              ],
+            }),
+            defineField({
+              name: "showOnce",
+              title: "Show Once Per Session",
+              type: "boolean",
+              initialValue: true,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "variant",
+              title: "Modal Variant",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Default", value: "default" },
+                  { title: "Fullscreen", value: "fullscreen" },
+                  { title: "Slide In", value: "slide-in" },
+                ],
+              },
+              initialValue: "default",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "excludePages",
+              title: "Exclude from Pages",
+              type: "array",
+              description: "Pages where this modal should not appear",
+              hidden: ({ parent }) => !parent?.enabled,
+              of: [{ type: "reference", to: [{ type: "page" }] }],
+            }),
+          ],
+        }),
+
+        // Newsletter Popup
+        defineField({
+          name: "newsletterPopup",
+          title: "Newsletter Popup",
+          type: "object",
+          description: "Timed popup for newsletter signup",
+          fields: [
+            defineField({
+              name: "enabled",
+              title: "Enabled",
+              type: "boolean",
+              initialValue: false,
+            }),
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "message",
+              title: "Message",
+              type: "text",
+              rows: 2,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "placeholder",
+              title: "Email Placeholder",
+              type: "string",
+              initialValue: "Enter your email",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "buttonText",
+              title: "Button Text",
+              type: "string",
+              initialValue: "Subscribe",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "successMessage",
+              title: "Success Message",
+              type: "string",
+              initialValue: "Thanks for subscribing!",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "trigger",
+              title: "Trigger",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Time Delay", value: "time-delay" },
+                  { title: "Scroll Depth", value: "scroll-depth" },
+                ],
+              },
+              initialValue: "time-delay",
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "triggerValue",
+              title: "Trigger Value",
+              type: "number",
+              description: "Seconds for time-delay, percentage (0-100) for scroll-depth",
+              initialValue: 10,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+            defineField({
+              name: "showOnce",
+              title: "Show Once Per Session",
+              type: "boolean",
+              initialValue: true,
+              hidden: ({ parent }) => !parent?.enabled,
+            }),
+          ],
         }),
       ],
     }),
