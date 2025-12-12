@@ -1,6 +1,8 @@
 # Next.js + Sanity Embedded Studio Starter
 
-A production-ready [Next.js 15](https://nextjs.org) template with embedded [Sanity Studio](https://www.sanity.io/docs/studio/embedding-sanity-studio), featuring a modular page builder with 60+ content modules, dynamic forms, engagement tools, and a complete blog system.
+A production-ready [Next.js 16](https://nextjs.org) template with embedded [Sanity Studio](https://www.sanity.io/docs/studio/embedding-sanity-studio), featuring a modular page builder with 60+ content modules, dynamic forms, engagement tools, and a complete blog system.
+
+**[Live Demo](https://sanity-aurora.vercel.app/)** | **[Deploy Your Own](#deployment)**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fncklrs%2Fnext-sanity-aurora&env=NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET&envDescription=Sanity%20project%20credentials&envLink=https%3A%2F%2Fsanity.io%2Fmanage&project-name=sanity-aurora&repository-name=sanity-aurora)
 
