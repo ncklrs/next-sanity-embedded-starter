@@ -1,21 +1,20 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Bebas Neue - Bold condensed display font for street art/graffiti aesthetic
-const bebasNeue = Bebas_Neue({
+// Outfit - A bold, geometric display font for headings (similar aesthetic to Satoshi)
+const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-satoshi",
   display: "swap",
-  weight: ["400"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-// Space Grotesk - Modern geometric sans for body text
-const spaceGrotesk = Space_Grotesk({
+// Plus Jakarta Sans - Clean, modern body text
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 // JetBrains Mono - Premium monospace for code
@@ -26,19 +25,12 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumi Spray - Paint With Light",
-  description: "Revolutionary digital graffiti installation. Wave LED lights to create stunning real-time artwork. For events, museums, and brand activations.",
-  keywords: ["digital graffiti", "light painting", "interactive art", "event technology", "brand activation", "museum installation"],
+  title: "Aurora - Modern SaaS Platform",
+  description: "The next-generation platform for building exceptional digital experiences",
   openGraph: {
-    title: "Lumi Spray - Paint With Light",
-    description: "Revolutionary digital graffiti installation. Wave LED lights to create stunning real-time artwork.",
+    title: "Aurora - Modern SaaS Platform",
+    description: "The next-generation platform for building exceptional digital experiences",
     type: "website",
-    siteName: "Lumi Spray",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lumi Spray - Paint With Light",
-    description: "Revolutionary digital graffiti installation. Wave LED lights to create stunning real-time artwork.",
   },
 };
 
@@ -50,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${bebasNeue.variable} ${spaceGrotesk.variable} ${jetbrains.variable} antialiased`}
+        className={`${outfit.variable} ${jakarta.variable} ${jetbrains.variable} antialiased`}
       >
         {children}
       </body>
