@@ -689,18 +689,153 @@ export function SettingsIcon(props: IconProps) {
   );
 }
 
-// Logo component
+// Spray Can Icon for Lumi Spray
+export function SprayCanIcon(props: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M3 3h.01" />
+      <path d="M7 3h.01" />
+      <path d="M11 3h.01" />
+      <path d="M3 7h.01" />
+      <path d="M7 7h.01" />
+      <path d="M11 7h.01" />
+      <rect x="8" y="11" width="8" height="10" rx="1" />
+      <path d="M12 11V8" />
+      <path d="M10 8h4" />
+    </svg>
+  );
+}
+
+// Light Wand Icon
+export function LightWandIcon(props: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M15 4V2" />
+      <path d="M15 16v-2" />
+      <path d="M8 9h2" />
+      <path d="M20 9h2" />
+      <path d="M17.8 11.8L19 13" />
+      <path d="M15 9h.01" />
+      <path d="M17.8 6.2L19 5" />
+      <path d="M11 6.2L9.8 5" />
+      <path d="M2 22l10-10" />
+      <path d="M9.9 14.1l2 2" />
+    </svg>
+  );
+}
+
+// Smartphone Icon
+export function SmartphoneIcon(props: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" />
+    </svg>
+  );
+}
+
+// Layout Icon
+export function LayoutIcon(props: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+      <line x1="9" y1="21" x2="9" y2="9" />
+    </svg>
+  );
+}
+
+// Logo component - Lumi Spray branding
 export function AuroraLogo({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className="relative w-8 h-8">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-cyan)] via-[var(--accent-violet)] to-[var(--accent-rose)] rounded-lg rotate-12 opacity-80" />
-        <div className="absolute inset-0.5 bg-[var(--background)] rounded-lg rotate-12" />
-        <div className="absolute inset-1 bg-gradient-to-br from-[var(--accent-cyan)] via-[var(--accent-violet)] to-[var(--accent-rose)] rounded-md rotate-12" />
+    <div className={`flex items-center gap-3 ${className}`}>
+      {/* Spray paint splatter icon with glow */}
+      <div className="relative w-10 h-10">
+        {/* Outer glow */}
+        <div
+          className="absolute inset-0 rounded-full blur-md opacity-60"
+          style={{
+            background: 'linear-gradient(135deg, var(--spray-cyan) 0%, var(--spray-magenta) 100%)'
+          }}
+        />
+        {/* Icon container */}
+        <div
+          className="relative w-10 h-10 rounded-full flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, var(--spray-cyan) 0%, var(--spray-magenta) 100%)'
+          }}
+        >
+          {/* Inner light burst */}
+          <svg viewBox="0 0 40 40" className="w-6 h-6 text-white">
+            <circle cx="20" cy="20" r="4" fill="currentColor" />
+            <path d="M20 6 L20 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M20 26 L20 34" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M6 20 L14 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M26 20 L34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10.1 10.1 L15.75 15.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M24.25 24.25 L29.9 29.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10.1 29.9 L15.75 24.25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path d="M24.25 15.75 L29.9 10.1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </div>
       </div>
-      <span className="text-xl font-bold tracking-tight" style={{ fontFamily: "var(--font-satoshi)" }}>
-        Aurora
-      </span>
+      {/* Brand name */}
+      <div className="flex flex-col leading-none">
+        <span
+          className="text-2xl font-bold tracking-tight uppercase"
+          style={{
+            fontFamily: "var(--font-satoshi)",
+            background: 'linear-gradient(135deg, var(--spray-cyan) 0%, var(--spray-magenta) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
+          Lumi
+        </span>
+        <span
+          className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--foreground-muted)]"
+          style={{ fontFamily: "var(--font-jakarta)" }}
+        >
+          Spray
+        </span>
+      </div>
     </div>
   );
 }

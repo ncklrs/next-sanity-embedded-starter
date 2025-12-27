@@ -1,61 +1,76 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   MIDNIGHT AURORA - Modern SaaS Theme
-   A dark-mode-first design system with vibrant gradients and glassmorphism
+   LUMI SPRAY - Neon Noir Street Art Theme
+   Dark immersive experience with electric neon spray paint aesthetics
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   COLOR TOKENS
+   COLOR TOKENS - Electric Neon Palette
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Base colors - Dark Mode Default */
-  --background: #0a0a0f;
-  --background-secondary: #12121a;
-  --background-tertiary: #1a1a26;
-  --foreground: #f4f4f7;
-  --foreground-muted: #9ca3af;
-  --foreground-subtle: #6b7280;
+  /* Base colors - Deep Noir */
+  --background: #050508;
+  --background-secondary: #0a0a10;
+  --background-tertiary: #111118;
+  --foreground: #f8f8fc;
+  --foreground-muted: #a0a0b8;
+  --foreground-subtle: #6a6a82;
 
-  /* Surface colors for cards/panels */
-  --surface: rgba(26, 26, 38, 0.8);
-  --surface-elevated: rgba(36, 36, 52, 0.9);
-  --surface-hover: rgba(46, 46, 66, 0.9);
+  /* Surface colors - Dark glass with neon hints */
+  --surface: rgba(18, 18, 28, 0.85);
+  --surface-elevated: rgba(28, 28, 42, 0.9);
+  --surface-hover: rgba(38, 38, 58, 0.95);
 
-  /* Border colors */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.15);
-  --border-focus: rgba(139, 92, 246, 0.5);
+  /* Border colors - Subtle glow */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(0, 240, 255, 0.2);
+  --border-focus: rgba(0, 240, 255, 0.5);
 
-  /* Primary gradient - Cyan to Violet */
-  --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
-  --gradient-primary-soft: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(139, 92, 246, 0.15) 50%, rgba(236, 72, 153, 0.15) 100%);
+  /* Primary gradient - Electric Spray */
+  --gradient-primary: linear-gradient(135deg, #00f0ff 0%, #ff00aa 50%, #f0ff00 100%);
+  --gradient-primary-soft: linear-gradient(135deg, rgba(0, 240, 255, 0.12) 0%, rgba(255, 0, 170, 0.12) 50%, rgba(240, 255, 0, 0.08) 100%);
 
-  /* Accent colors */
-  --accent-cyan: #06b6d4;
-  --accent-violet: #8b5cf6;
-  --accent-rose: #ec4899;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
+  /* Spray paint gradients */
+  --gradient-cyan-pink: linear-gradient(135deg, #00f0ff 0%, #ff00aa 100%);
+  --gradient-pink-yellow: linear-gradient(135deg, #ff00aa 0%, #f0ff00 100%);
+  --gradient-neon: linear-gradient(90deg, #00f0ff, #ff00aa, #f0ff00, #00ff88);
+
+  /* Accent colors - Electric Neon */
+  --accent-cyan: #00f0ff;
+  --accent-violet: #bf00ff;
+  --accent-rose: #ff00aa;
+  --accent-emerald: #00ff88;
+  --accent-amber: #f0ff00;
+
+  /* Spray can colors */
+  --spray-cyan: #00f0ff;
+  --spray-magenta: #ff00aa;
+  --spray-yellow: #f0ff00;
+  --spray-green: #00ff88;
+  --spray-orange: #ff6b00;
+  --spray-purple: #bf00ff;
 
   /* Semantic colors */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
+  --success: #00ff88;
+  --warning: #f0ff00;
+  --error: #ff3366;
+  --info: #00f0ff;
 
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 20px;
+  /* Glassmorphism - Darker, more immersive */
+  --glass-bg: rgba(10, 10, 18, 0.7);
+  --glass-border: rgba(0, 240, 255, 0.08);
+  --glass-blur: 24px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.3);
-  --shadow-glow-cyan: 0 0 40px rgba(6, 182, 212, 0.3);
+  /* Shadows - Neon glow effects */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 60px rgba(0, 240, 255, 0.25), 0 0 120px rgba(255, 0, 170, 0.15);
+  --shadow-glow-cyan: 0 0 40px rgba(0, 240, 255, 0.4);
+  --shadow-glow-pink: 0 0 40px rgba(255, 0, 170, 0.4);
+  --shadow-glow-yellow: 0 0 40px rgba(240, 255, 0, 0.3);
 
   /* Spacing scale */
   --space-xs: 0.25rem;
@@ -82,33 +97,8 @@
   --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Light mode override */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #fafbfc;
-    --background-secondary: #f4f5f7;
-    --background-tertiary: #e8eaed;
-    --foreground: #0f172a;
-    --foreground-muted: #475569;
-    --foreground-subtle: #94a3b8;
-
-    --surface: rgba(255, 255, 255, 0.9);
-    --surface-elevated: rgba(255, 255, 255, 0.95);
-    --surface-hover: rgba(248, 250, 252, 1);
-
-    --border: rgba(0, 0, 0, 0.08);
-    --border-hover: rgba(0, 0, 0, 0.15);
-
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(0, 0, 0, 0.06);
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
-    --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.15);
-  }
-}
+/* Lumi Spray is always dark mode for immersive experience */
+/* Light mode intentionally disabled for brand consistency */
 
 /* ─────────────────────────────────────────────────────────────────────────────
    TAILWIND THEME INTEGRATION
@@ -157,59 +147,88 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   TYPOGRAPHY
+   TYPOGRAPHY - Bold Street Art Aesthetic
    ───────────────────────────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-satoshi), system-ui, sans-serif;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   color: var(--foreground);
+  text-transform: uppercase;
 }
 
 .display-xl {
-  font-size: clamp(3rem, 8vw, 5rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(3.5rem, 10vw, 6.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 80px rgba(0, 240, 255, 0.3);
 }
 
 .display-lg {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.035em;
 }
 
 .heading-lg {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .heading-md {
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 600;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 .body-lg {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.7;
   color: var(--foreground-muted);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .body-sm {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   line-height: 1.6;
   color: var(--foreground-subtle);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-/* Gradient text - primary style used throughout */
+/* Gradient text - neon spray paint style */
 .gradient-text,
 .text-gradient {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.4));
+}
+
+/* Spray paint drip effect for special headings */
+.spray-text {
+  position: relative;
+  background: var(--gradient-cyan-pink);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.5));
+}
+
+/* Neon glow text */
+.neon-text {
+  color: var(--spray-cyan);
+  text-shadow:
+    0 0 10px var(--spray-cyan),
+    0 0 20px var(--spray-cyan),
+    0 0 40px var(--spray-cyan),
+    0 0 80px var(--spray-magenta);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -266,30 +285,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: var(--gradient-cyan-pink);
   color: white;
-  box-shadow: var(--shadow-md), 0 0 20px rgba(139, 92, 246, 0.3);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-md), 0 0 30px rgba(0, 240, 255, 0.3), 0 0 60px rgba(255, 0, 170, 0.2);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg), 0 0 30px rgba(139, 92, 246, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg), 0 0 50px rgba(0, 240, 255, 0.5), 0 0 100px rgba(255, 0, 170, 0.3);
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-secondary {
-  background: var(--surface);
-  color: var(--foreground);
-  border: 1px solid var(--border);
+  background: rgba(0, 240, 255, 0.08);
+  color: var(--spray-cyan);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .btn-secondary:hover {
-  background: var(--surface-hover);
-  border-color: var(--border-hover);
-  transform: translateY(-1px);
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--spray-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
 }
 
 .btn-ghost {
@@ -380,32 +406,37 @@ h1, h2, h3, h4, h5, h6 {
 
 .badge-gradient {
   background: var(--gradient-primary-soft);
-  border-color: rgba(139, 92, 246, 0.2);
-  color: var(--accent-violet);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: var(--spray-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.2);
-  color: var(--accent-emerald);
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: var(--spray-green);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.15);
 }
 
 .badge-new {
-  background: rgba(6, 182, 212, 0.15);
-  border-color: rgba(6, 182, 212, 0.2);
-  color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: var(--spray-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.2);
-  color: var(--accent-amber);
+  background: rgba(240, 255, 0, 0.1);
+  border-color: rgba(240, 255, 0, 0.3);
+  color: var(--spray-yellow);
+  box-shadow: 0 0 15px rgba(240, 255, 0, 0.15);
 }
 
 .badge-error {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(255, 51, 102, 0.12);
+  border-color: rgba(255, 51, 102, 0.3);
   color: var(--error);
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.15);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -628,13 +659,13 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-/* Gradient orbs - GPU accelerated for smooth performance */
+/* Spray paint orbs - vibrant neon glow effects */
 .hero-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.4;
-  animation: float 20s ease-in-out infinite;
+  filter: blur(120px);
+  opacity: 0.5;
+  animation: spray-float 25s ease-in-out infinite;
   /* GPU acceleration for smoother animation */
   will-change: transform;
   transform: translate3d(0, 0, 0);
@@ -642,66 +673,74 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-orb-1 {
-  width: 600px;
-  height: 600px;
-  background: var(--accent-violet);
-  top: -20%;
-  right: -10%;
+  width: 700px;
+  height: 700px;
+  background: var(--spray-cyan);
+  top: -25%;
+  right: -15%;
   animation-delay: 0s;
+  opacity: 0.4;
 }
 
 .hero-orb-2 {
-  width: 500px;
-  height: 500px;
-  background: var(--accent-cyan);
-  bottom: -10%;
-  left: -10%;
-  animation-delay: -7s;
+  width: 600px;
+  height: 600px;
+  background: var(--spray-magenta);
+  bottom: -15%;
+  left: -15%;
+  animation-delay: -8s;
+  opacity: 0.35;
 }
 
 .hero-orb-3 {
-  width: 400px;
-  height: 400px;
-  background: var(--accent-rose);
-  top: 40%;
-  left: 30%;
-  animation-delay: -14s;
+  width: 450px;
+  height: 450px;
+  background: var(--spray-yellow);
+  top: 35%;
+  left: 25%;
+  animation-delay: -16s;
+  opacity: 0.25;
 }
 
-@keyframes float {
+/* Spray motion - organic, paint-like movement */
+@keyframes spray-float {
   0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
-  25% {
-    transform: translate3d(30px, -30px, 0) scale(1.05);
+  20% {
+    transform: translate3d(40px, -40px, 0) scale(1.08) rotate(2deg);
   }
-  50% {
-    transform: translate3d(-20px, 20px, 0) scale(0.95);
+  40% {
+    transform: translate3d(-30px, 30px, 0) scale(0.92) rotate(-1deg);
   }
-  75% {
-    transform: translate3d(-30px, -20px, 0) scale(1.02);
+  60% {
+    transform: translate3d(-50px, -30px, 0) scale(1.05) rotate(3deg);
+  }
+  80% {
+    transform: translate3d(25px, 40px, 0) scale(0.95) rotate(-2deg);
   }
 }
 
-/* Noise overlay */
+/* Noise overlay - spray paint grain texture */
 .noise-overlay {
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04;
   pointer-events: none;
+  mix-blend-mode: overlay;
 }
 
-/* Grid overlay */
+/* Grid overlay - urban/industrial feel */
 .grid-overlay {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -908,8 +947,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .input:focus {
   outline: none;
-  border-color: var(--accent-violet);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  border-color: var(--spray-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15), 0 0 20px rgba(0, 240, 255, 0.1);
 }
 
 .input-group {
@@ -1085,8 +1124,108 @@ h1, h2, h3, h4, h5, h6 {
    SELECTION STYLING
    ───────────────────────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(0, 240, 255, 0.3);
   color: var(--foreground);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LUMI SPRAY SPECIFIC UTILITIES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Spray paint glow effects */
+.glow-pink {
+  box-shadow: var(--shadow-glow-pink);
+}
+
+.glow-yellow {
+  box-shadow: var(--shadow-glow-yellow);
+}
+
+.glow-neon {
+  box-shadow:
+    0 0 20px rgba(0, 240, 255, 0.3),
+    0 0 40px rgba(255, 0, 170, 0.2),
+    0 0 60px rgba(240, 255, 0, 0.1);
+}
+
+/* Spray border effect */
+.spray-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: var(--surface);
+  background-clip: padding-box;
+}
+
+.spray-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: var(--gradient-neon);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  filter: blur(4px);
+}
+
+/* Animated spray border */
+@keyframes spray-border-animate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.spray-border-animated::before {
+  background-size: 200% 200%;
+  animation: spray-border-animate 4s ease-in-out infinite;
+}
+
+/* Pricing card neon border on hover */
+.pricing-card-neon {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.pricing-card-neon::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: var(--gradient-cyan-pink);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pricing-card-neon:hover::before {
+  opacity: 0.5;
+  filter: blur(8px);
+}
+
+/* Popular/featured highlight */
+.featured-glow {
+  box-shadow:
+    0 0 30px rgba(0, 240, 255, 0.3),
+    0 0 60px rgba(0, 240, 255, 0.15),
+    inset 0 0 30px rgba(0, 240, 255, 0.05);
+}
+
+/* Spray paint splatter decoration */
+.spray-splatter {
+  position: relative;
+}
+
+.spray-splatter::after {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 70% 60%, rgba(255, 0, 170, 0.1) 0%, transparent 35%),
+              radial-gradient(circle at 40% 80%, rgba(240, 255, 0, 0.08) 0%, transparent 30%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
